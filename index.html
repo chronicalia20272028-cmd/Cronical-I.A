@@ -110,12 +110,69 @@
             width: 100%;
             padding: 15px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             background: linear-gradient(transparent, #000000 40%);
             position: relative;
         }
 
-        /* Menu Popup posicionado corretamente acima do botão mais */
+        /* Caixa de Pré-visualização do Ficheiro/Foto Anexado */
+        .preview-container {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 10px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: #111827;
+            border: 1px solid #374151;
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .preview-container.active {
+            display: flex;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        .preview-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-info {
+            flex: 1;
+            font-size: 13px;
+            color: #d1d5db;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .remove-preview {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .remove-preview:hover {
+            background: #1f2937;
+            color: #ef4444;
+        }
+
+        /* Menu Popup de Anexos */
         .attachment-menu {
             position: absolute;
             bottom: 85px;
@@ -205,6 +262,7 @@
             color: #ffffff;
         }
 
+        /* Efeito de Microfone a Gravar com Ondas Sonoras Simuladas */
         .mic-btn.recording {
             color: #ef4444;
             background: rgba(239, 68, 68, 0.15);
@@ -264,6 +322,16 @@
     </div>
 
     <div class="input-wrapper">
+        <!-- Pré-visualização do Anexo -->
+        <div class="preview-container" id="previewContainer">
+            <img id="previewThumb" class="preview-thumb" src="" alt="Preview">
+            <div class="preview-info" id="previewName">ficheiro.png</div>
+            <button class="remove-preview" id="removePreview" aria-label="Remover anexo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+
+        <!-- Menu Popup de Anexos -->
         <div class="attachment-menu" id="attachmentMenu">
             <button class="menu-item" id="btnPhoto">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -274,6 +342,10 @@
                 Enviar Ficheiro
             </button>
         </div>
+
+        <!-- Inputs Ocultos para Ficheiros Reais -->
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+        <input type="file" id="fileInput" style="display: none;">
 
         <div class="input-area">
             <button class="plus-btn" id="plusButton" aria-label="Adicionar anexo">
@@ -310,7 +382,17 @@
         const btnPhoto = document.getElementById('btnPhoto');
         const btnFile = document.getElementById('btnFile');
         const micButton = document.getElementById('micButton');
+        
+        const imageInput = document.getElementById('imageInput');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewThumb = document.getElementById('previewThumb');
+        const previewName = document.getElementById('previewName');
+        const removePreview = document.getElementById('removePreview');
 
+        let selectedFile = null;
+
+        // Gestão do menu de anexos
         plusButton.addEventListener('click', (e) => {
             e.stopPropagation();
             attachmentMenu.classList.toggle('active');
@@ -324,16 +406,49 @@
             e.stopPropagation();
         });
 
+        // Acionar seleções de ficheiros reais
         btnPhoto.addEventListener('click', () => {
-            alert('Funcionalidade de selecionar foto em breve!');
             attachmentMenu.classList.remove('active');
+            imageInput.click();
         });
 
         btnFile.addEventListener('click', () => {
-            alert('Funcionalidade de selecionar ficheiro em breve!');
             attachmentMenu.classList.remove('active');
+            fileInput.click();
         });
 
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                previewName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewThumb.src = e.target.result;
+                    previewContainer.classList.add('active');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                previewName.textContent = file.name;
+                previewThumb.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'%3E%3C/polyline%3E%3C/path%3E%3C/polyline%3E%3Cline x1='16' y1='13' x2='8' y2='13'%3E%3C/line%3E%3Cline x1='16' y1='17' x2='8' y2='17'%3E%3C/line%3E%3C/svg%3E";
+                previewContainer.classList.add('active');
+            }
+        });
+
+        removePreview.addEventListener('click', () => {
+            selectedFile = null;
+            imageInput.value = '';
+            fileInput.value = '';
+            previewContainer.classList.remove('active');
+        });
+
+        // Mecanismo de Voz Avançado com Envio Automático
         let recognition = null;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -344,7 +459,7 @@
 
             recognition.onstart = () => {
                 micButton.classList.add('recording');
-                userInput.placeholder = "A ouvir...";
+                userInput.placeholder = "A ouvir a sua voz...";
             };
 
             recognition.onresult = (event) => {
@@ -360,7 +475,11 @@
             recognition.onend = () => {
                 micButton.classList.remove('recording');
                 userInput.placeholder = "Pergunte à Chronical...";
-                userInput.focus();
+                
+                // Envio automático inteligente se houver texto transcrito
+                if (userInput.value.trim() !== '') {
+                    sendMessage();
+                }
             };
         }
 
@@ -378,14 +497,28 @@
 
         async function sendMessage() {
             const text = userInput.value.trim();
-            if (!text) return;
+            if (!text && !selectedFile) return;
 
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
-            userMsg.textContent = text;
+            
+            if (selectedFile) {
+                userMsg.textContent = text ? `${text} [Anexo: ${selectedFile.name}]` : `[Anexo: ${selectedFile.name}]`;
+            } else {
+                userMsg.textContent = text;
+            }
+            
             chatMessages.appendChild(userMsg);
             
             userInput.value = '';
+            
+            // Limpar pré-visualização após o envio
+            const currentFile = selectedFile;
+            selectedFile = null;
+            imageInput.value = '';
+            fileInput.value = '';
+            previewContainer.classList.remove('active');
+
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             const typingIndicator = document.createElement('div');
@@ -395,6 +528,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
+                // Se quiseres adaptar para FormData no futuro para enviar ficheiros binários ao backend Python:
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
