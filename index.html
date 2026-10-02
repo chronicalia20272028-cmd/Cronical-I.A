@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A.</title>
-    <!-- Biblioteca Marked.js para renderizar Markdown nas respostas da I.A. -->
+    <!-- Biblioteca Marked.js para renderizar Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
@@ -34,7 +34,6 @@
             font-weight: 500;
             letter-spacing: 1px;
             background: #000000;
-            border-bottom: none; 
             z-index: 10;
         }
 
@@ -64,6 +63,7 @@
             word-wrap: break-word;
             border-radius: 20px;
             animation: fadeIn 0.3s ease forwards;
+            position: relative;
         }
 
         .ai-message {
@@ -73,7 +73,7 @@
             border-bottom-left-radius: 4px;
         }
 
-        /* Estilização para elementos Markdown gerados pela I.A. */
+        /* Estilização para Markdown e Botão de Ouvir */
         .ai-message p { margin-bottom: 8px; }
         .ai-message p:last-child { margin-bottom: 0; }
         .ai-message strong { color: #ffffff; font-weight: 600; }
@@ -81,6 +81,23 @@
         .ai-message code { background: #111827; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; }
         .ai-message pre { background: #111827; padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 8px; }
         .ai-message pre code { background: transparent; padding: 0; }
+
+        .tts-btn {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            transition: color 0.2s;
+        }
+
+        .tts-btn:hover {
+            color: #ffffff;
+        }
 
         .user-message {
             background-color: #2563eb;
@@ -127,17 +144,15 @@
             position: relative;
         }
 
+        /* Gestão de Múltiplos Anexos (Fila) */
         .preview-container {
             width: 100%;
             max-width: 800px;
             margin-bottom: 10px;
             display: none;
-            align-items: center;
             gap: 10px;
-            background: #111827;
-            border: 1px solid #374151;
-            padding: 8px 12px;
-            border-radius: 12px;
+            overflow-x: auto;
+            padding-bottom: 5px;
         }
 
         .preview-container.active {
@@ -145,24 +160,39 @@
             animation: fadeIn 0.2s ease forwards;
         }
 
+        .preview-card {
+            background: #111827;
+            border: 1px solid #374151;
+            padding: 6px 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            max-width: 200px;
+        }
+
         .preview-thumb {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
             object-fit: cover;
             background: #1f2937;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 10px;
+            color: #9ca3af;
+            font-weight: bold;
         }
 
         .preview-info {
-            flex: 1;
-            font-size: 13px;
+            font-size: 12px;
             color: #d1d5db;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 110px;
         }
 
         .remove-preview {
@@ -170,18 +200,17 @@
             border: none;
             color: #9ca3af;
             cursor: pointer;
-            padding: 4px;
+            padding: 2px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 50%;
         }
 
         .remove-preview:hover {
-            background: #1f2937;
             color: #ef4444;
         }
 
+        /* Menu Popup de Anexos */
         .attachment-menu {
             position: absolute;
             bottom: 85px;
@@ -271,31 +300,38 @@
             color: #ffffff;
         }
 
-        .mic-btn.recording {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.15);
-            animation: pulse-mic 1.5s infinite;
-        }
-
-        @keyframes pulse-mic {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        /* Ondas Sonoras Animadas Reais */
-        .sound-wave {
+        /* Área de Gravação com Ondas, Temporizador e Botão Cancelar */
+        .recording-box {
             display: none;
             flex: 1;
             align-items: center;
-            justify-content: center;
-            gap: 4px;
-            height: 24px;
-            padding: 0 10px;
+            justify-content: space-between;
+            padding: 0 15px;
+            height: 38px;
         }
 
-        .sound-wave.active {
+        .recording-box.active {
             display: flex;
+        }
+
+        .recording-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rec-timer {
+            font-size: 13px;
+            color: #ef4444;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .sound-wave {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 18px;
         }
 
         .wave-bar {
@@ -311,11 +347,28 @@
         .wave-bar:nth-child(3) { animation-delay: 0.2s; }
         .wave-bar:nth-child(4) { animation-delay: 0.4s; }
         .wave-bar:nth-child(5) { animation-delay: 0.15s; }
-        .wave-bar:nth-child(6) { animation-delay: 0.35s; }
 
         @keyframes waveAnim {
             0%, 100% { transform: scaleY(0.2); opacity: 0.4; }
             50% { transform: scaleY(1); opacity: 1; }
+        }
+
+        .cancel-rec-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cancel-rec-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
         }
 
         .input-area input {
@@ -353,7 +406,23 @@
             transform: scale(1.05);
         }
 
-        ::-webkit-scrollbar { width: 4px; }
+        /* Efeito visual ao arrastar ficheiros para a janela */
+        body.dragover::after {
+            content: "Largue os ficheiros aqui para anexar";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(37, 99, 235, 0.85);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
     </style>
@@ -361,17 +430,18 @@
 <body>
     <div class="header">Chronical I.A.</div>
     <div class="chat-container" id="chatMessages">
-        <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
+        <div class="message ai-message">
+            Olá! Como posso ajudar você hoje?
+            <button class="tts-btn" onclick="speakText('Olá! Como posso ajudar você hoje?')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                Ouvir resposta
+            </button>
+        </div>
     </div>
 
     <div class="input-wrapper">
-        <div class="preview-container" id="previewContainer">
-            <img id="previewThumb" class="preview-thumb" src="" alt="Preview">
-            <div class="preview-info" id="previewName">ficheiro.png</div>
-            <button class="remove-preview" id="removePreview" aria-label="Remover anexo">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-        </div>
+        <!-- Fila de Pré-visualização de Múltiplos Anexos -->
+        <div class="preview-container" id="previewContainer"></div>
 
         <div class="attachment-menu" id="attachmentMenu">
             <button class="menu-item" id="btnPhoto">
@@ -384,8 +454,8 @@
             </button>
         </div>
 
-        <input type="file" id="imageInput" accept="image/*" style="display: none;">
-        <input type="file" id="fileInput" style="display: none;">
+        <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+        <input type="file" id="fileInput" multiple style="display: none;">
 
         <div class="input-area">
             <button class="plus-btn" id="plusButton" aria-label="Adicionar anexo">
@@ -394,17 +464,24 @@
                 </svg>
             </button>
 
-            <!-- Campo de Texto -->
+            <!-- Campo de Texto normal -->
             <input type="text" id="userInput" placeholder="Pergunte à Chronical..." autocomplete="off" autofocus>
             
-            <!-- Ondas Sonoras Animadas (aparecem durante a gravação de voz) -->
-            <div class="sound-wave" id="soundWave">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
+            <!-- Caixa de Gravação de Voz (Ondas, Temporizador e Cancelar) -->
+            <div class="recording-box" id="recordingBox">
+                <div class="recording-left">
+                    <div class="sound-wave">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <span class="rec-timer" id="recTimer">0:00</span>
+                </div>
+                <button class="cancel-rec-btn" id="cancelRecBtn" title="Cancelar gravação">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
             </div>
 
             <button class="mic-btn" id="micButton" aria-label="Falar por voz">
@@ -433,17 +510,21 @@
         const btnPhoto = document.getElementById('btnPhoto');
         const btnFile = document.getElementById('btnFile');
         const micButton = document.getElementById('micButton');
-        const soundWave = document.getElementById('soundWave');
+        const recordingBox = document.getElementById('recordingBox');
+        const recTimer = document.getElementById('recTimer');
+        const cancelRecBtn = document.getElementById('cancelRecBtn');
         
         const imageInput = document.getElementById('imageInput');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
-        const previewThumb = document.getElementById('previewThumb');
-        const previewName = document.getElementById('previewName');
-        const removePreview = document.getElementById('removePreview');
 
-        let selectedFile = null;
+        let attachedFiles = [];
+        let recognition = null;
+        let timerInterval = null;
+        let secondsElapsed = 0;
+        let isCancelled = false;
 
+        // Gestão do menu de anexos
         plusButton.addEventListener('click', (e) => {
             e.stopPropagation();
             attachmentMenu.classList.toggle('active');
@@ -467,38 +548,75 @@
             fileInput.click();
         });
 
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                selectedFile = file;
-                previewName.textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    previewThumb.src = e.target.result;
-                    previewContainer.classList.add('active');
+        // Adicionar múltiplos ficheiros à fila
+        function handleFiles(files) {
+            for (let file of files) {
+                attachedFiles.push(file);
+            }
+            renderPreviews();
+        }
+
+        imageInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function renderPreviews() {
+            previewContainer.innerHTML = '';
+            if (attachedFiles.length === 0) {
+                previewContainer.classList.remove('active');
+                return;
+            }
+
+            previewContainer.classList.add('active');
+            attachedFiles.forEach((file, index) => {
+                const card = document.createElement('div');
+                card.className = 'preview-card';
+
+                const thumb = document.createElement('div');
+                thumb.className = 'preview-thumb';
+
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        thumb.style.backgroundImage = `url(${e.target.result})`;
+                        thumb.style.backgroundSize = 'cover';
+                        thumb.textContent = '';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    thumb.textContent = file.name.split('.').pop().toUpperCase().slice(0, 4);
+                }
+
+                const info = document.createElement('div');
+                info.className = 'preview-info';
+                info.textContent = file.name;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-preview';
+                removeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+                removeBtn.onclick = () => {
+                    attachedFiles.splice(index, 1);
+                    renderPreviews();
                 };
-                reader.readAsDataURL(file);
+
+                card.appendChild(thumb);
+                card.appendChild(info);
+                card.appendChild(removeBtn);
+                previewContainer.appendChild(card);
+            });
+        }
+
+        // Drag and Drop global
+        window.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('dragover'); });
+        window.addEventListener('dragleave', (e) => { e.preventDefault(); document.body.classList.remove('dragover'); });
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            document.body.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
             }
         });
 
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                selectedFile = file;
-                previewName.textContent = file.name;
-                previewThumb.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'%3E%3C/polyline%3E%3C/path%3E%3C/polyline%3E%3Cline x1='16' y1='13' x2='8' y2='13'%3E%3C/line%3E%3Cline x1='16' y1='17' x2='8' y2='17'%3E%3C/line%3E%3C/svg%3E";
-                previewContainer.classList.add('active');
-            }
-        });
-
-        removePreview.addEventListener('click', () => {
-            selectedFile = null;
-            imageInput.value = '';
-            fileInput.value = '';
-            previewContainer.classList.remove('active');
-        });
-
-        let recognition = null;
+        // Reconhecimento de Voz Avançado (com temporizador e cancelar)
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -507,32 +625,56 @@
             recognition.interimResults = true;
 
             recognition.onstart = () => {
+                isCancelled = false;
                 micButton.classList.add('recording');
                 userInput.style.display = 'none';
-                soundWave.classList.add('active');
+                recordingBox.classList.add('active');
+                
+                secondsElapsed = 0;
+                recTimer.textContent = "0:00";
+                timerInterval = setInterval(() => {
+                    secondsElapsed++;
+                    let mins = Math.floor(secondsElapsed / 60);
+                    let secs = secondsElapsed % 60;
+                    recTimer.textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }, 1000);
             };
 
             recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                userInput.value = transcript;
+                if (!isCancelled) {
+                    userInput.value = event.results[0][0].transcript;
+                }
             };
 
             recognition.onerror = () => {
-                micButton.classList.remove('recording');
-                soundWave.classList.remove('active');
-                userInput.style.display = 'block';
+                stopRecordingUI();
             };
 
             recognition.onend = () => {
-                micButton.classList.remove('recording');
-                soundWave.classList.remove('active');
-                userInput.style.display = 'block';
+                clearInterval(timerInterval);
+                stopRecordingUI();
                 
-                if (userInput.value.trim() !== '') {
+                if (!isCancelled && userInput.value.trim() !== '') {
                     sendMessage();
                 }
             };
         }
+
+        function stopRecordingUI() {
+            clearInterval(timerInterval);
+            micButton.classList.remove('recording');
+            recordingBox.classList.remove('active');
+            userInput.style.display = 'block';
+        }
+
+        cancelRecBtn.addEventListener('click', () => {
+            isCancelled = true;
+            userInput.value = '';
+            if (recognition) {
+                try { recognition.stop(); } catch(e){}
+            }
+            stopRecordingUI();
+        });
 
         micButton.addEventListener('click', () => {
             if (!recognition) {
@@ -546,23 +688,35 @@
             }
         });
 
+        // Síntese de Voz (Text-to-Speech)
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'pt-BR';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('O seu navegador não suporta síntese de voz.');
+            }
+        }
+
         async function sendMessage() {
             const text = userInput.value.trim();
-            if (!text && !selectedFile) return;
+            if (!text && attachedFiles.length === 0) return;
 
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
             
-            if (selectedFile) {
-                userMsg.textContent = text ? `${text} [Anexo: ${selectedFile.name}]` : `[Anexo: ${selectedFile.name}]`;
-            } else {
-                userMsg.textContent = text;
+            let displayContent = text;
+            if (attachedFiles.length > 0) {
+                const names = attachedFiles.map(f => f.name).join(', ');
+                displayContent = text ? `${text} [Anexos: ${names}]` : `[Anexos: ${names}]`;
             }
-            
+            userMsg.textContent = displayContent;
             chatMessages.appendChild(userMsg);
             
             userInput.value = '';
-            selectedFile = null;
+            attachedFiles = [];
             imageInput.value = '';
             fileInput.value = '';
             previewContainer.classList.remove('active');
@@ -588,10 +742,16 @@
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
                 
-                // Renderizar resposta com suporte a Markdown (negrito, listas, blocos)
                 const rawResponse = data.response || data.reply || "Resposta recebida.";
                 aiMsg.innerHTML = marked.parse(rawResponse);
+
+                // Adicionar botão de leitura de voz na mensagem da I.A.
+                const ttsBtn = document.createElement('button');
+                ttsBtn.className = 'tts-btn';
+                ttsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Ouvir resposta';
+                ttsBtn.onclick = () => speakText(rawResponse.replace(/<[^>]*>?/gm, '')); // Remove tags HTML para ler limpo
                 
+                aiMsg.appendChild(ttsBtn);
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
