@@ -58,7 +58,7 @@
 
         .message {
             max-width: 85%;
-            padding: 16px 20px;
+            padding: 16px 20px 32px 20px; /* Espaço extra embaixo para o botão flutuar */
             font-size: clamp(14px, 2vw, 15.5px);
             line-height: 1.6;
             word-wrap: break-word;
@@ -110,16 +110,11 @@
             color: #ffffff;
         }
 
-        .message-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            padding-top: 8px;
-        }
-
+        /* Botão de Ouvir integrado no canto inferior sem linhas separadoras */
         .action-btn {
+            position: absolute;
+            bottom: 8px;
+            left: 18px;
             background: transparent;
             border: none;
             color: #94a3b8;
@@ -130,7 +125,7 @@
             font-size: 12px;
             font-weight: 500;
             transition: color 0.2s;
-            padding: 4px 8px;
+            padding: 4px 6px;
             border-radius: 6px;
         }
 
@@ -145,6 +140,7 @@
             align-self: flex-end;
             border-bottom-right-radius: 6px;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            padding-bottom: 16px; /* User message não precisa do espaço extra */
         }
 
         .typing-indicator {
@@ -186,7 +182,6 @@
             position: relative;
         }
 
-        /* Fila de Anexos Moderna */
         .preview-container {
             width: 100%;
             max-width: 850px;
@@ -254,7 +249,6 @@
             color: #ef4444;
         }
 
-        /* Menu Popup de Anexos Atualizado */
         .attachment-menu {
             position: absolute;
             bottom: 95px;
@@ -356,7 +350,6 @@
             background: rgba(239, 68, 68, 0.1);
         }
 
-        /* Caixa de Gravação Dinâmica Moderna */
         .recording-box {
             display: none;
             flex: 1;
@@ -463,7 +456,6 @@
             transform: scale(1.06);
         }
 
-        /* Efeito de Arrastar e Soltar Global */
         body.dragover::after {
             content: "Solte os ficheiros aqui para anexar";
             position: fixed;
@@ -490,17 +482,14 @@
     <div class="chat-container" id="chatMessages">
         <div class="message ai-message">
             Olá! Como posso ajudar você hoje?
-            <div class="message-actions">
-                <button class="action-btn" onclick="toggleSpeech(this, 'Olá! Como posso ajudar você hoje?')">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                    Ouvir
-                </button>
-            </div>
+            <button class="action-btn" onclick="toggleSpeech(this, 'Olá! Como posso ajudar você hoje?')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                Ouvir
+            </button>
         </div>
     </div>
 
     <div class="input-wrapper">
-        <!-- Fila de Pré-visualização de Anexos -->
         <div class="preview-container" id="previewContainer"></div>
 
         <div class="attachment-menu" id="attachmentMenu">
@@ -524,10 +513,8 @@
                 </svg>
             </button>
 
-            <!-- Input de Texto -->
             <input type="text" id="userInput" placeholder="Mensagem para a Chronical..." autocomplete="off" autofocus>
             
-            <!-- Caixa de Voz Dinâmica -->
             <div class="recording-box" id="recordingBox">
                 <div class="recording-left">
                     <div class="sound-wave">
@@ -585,7 +572,6 @@
         let isCancelled = false;
         let currentSpeakingBtn = null;
 
-        // Menu de Anexos
         plusButton.addEventListener('click', (e) => {
             e.stopPropagation();
             attachmentMenu.classList.toggle('active');
@@ -665,7 +651,6 @@
             });
         }
 
-        // Drag and Drop Global
         window.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('dragover'); });
         window.addEventListener('dragleave', (e) => { e.preventDefault(); document.body.classList.remove('dragover'); });
         window.addEventListener('drop', (e) => {
@@ -676,7 +661,6 @@
             }
         });
 
-        // Reconhecimento de Voz Live-Transcript
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -745,7 +729,6 @@
             }
         });
 
-        // Síntese de Voz Interativa com Estado (Ouvir / Parar)
         function toggleSpeech(btn, text) {
             if (!('speechSynthesis' in window)) {
                 alert('O seu navegador não suporta síntese de voz.');
@@ -764,13 +747,8 @@
             currentSpeakingBtn = btn;
             btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Parar';
 
-            utterance.onend = () => {
-                resetSpeechButton();
-            };
-
-            utterance.onerror = () => {
-                resetSpeechButton();
-            };
+            utterance.onend = () => { resetSpeechButton(); };
+            utterance.onerror = () => { resetSpeechButton(); };
 
             window.speechSynthesis.speak(utterance);
         }
@@ -782,7 +760,6 @@
             }
         }
 
-        // Processador de Blocos de Código com Botão Copiar
         function enhanceCodeBlocks(element) {
             const preTags = element.querySelectorAll('pre');
             preTags.forEach(pre => {
@@ -851,18 +828,12 @@
                 aiMsg.innerHTML = marked.parse(rawResponse);
                 enhanceCodeBlocks(aiMsg);
 
-                // Barra de Ações Inferior na Mensagem da I.A.
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'message-actions';
-
                 const ttsBtn = document.createElement('button');
                 ttsBtn.className = 'action-btn';
                 ttsBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Ouvir';
                 ttsBtn.onclick = () => toggleSpeech(ttsBtn, rawResponse.replace(/<[^>]*>?/gm, ''));
                 
-                actionsDiv.appendChild(ttsBtn);
-                aiMsg.appendChild(actionsDiv);
-                
+                aiMsg.appendChild(ttsBtn);
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
