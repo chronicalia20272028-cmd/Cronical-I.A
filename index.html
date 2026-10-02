@@ -115,15 +115,15 @@
             position: relative;
         }
 
+        /* Menu Popup posicionado corretamente acima do botão mais */
         .attachment-menu {
             position: absolute;
             bottom: 85px;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
+            left: calc(50% - 350px);
             background: #111827;
             border: 1px solid #374151;
             border-radius: 16px;
-            width: 220px;
+            width: 200px;
             padding: 8px;
             display: flex;
             flex-direction: column;
@@ -135,301 +135,16 @@
             z-index: 100;
         }
 
-        .attachment-menu.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            color: #e2e8f0;
-            background: transparent;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            text-align: left;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        .menu-item:hover {
-            background: #1f2937;
-        }
-
-        .menu-item svg {
-            width: 18px;
-            height: 18px;
-            stroke: #9ca3af;
-        }
-
-        .input-area {
-            display: flex;
-            width: 100%;
-            max-width: 800px;
-            gap: 6px;
-            background: #111827;
-            padding: 8px;
-            border-radius: 40px;
-            border: 1px solid #374151;
-            align-items: center;
-        }
-
-        .icon-btn {
-            background: transparent;
-            color: #9ca3af;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .icon-btn:hover {
-            background: #1f2937;
-            color: #ffffff;
-        }
-
-        /* Efeito de gravação ativa (piscar em vermelho subtil) */
-        .icon-btn.recording {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.15);
-            animation: pulse-mic 1.5s infinite;
-        }
-
-        @keyframes pulse-mic {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .input-area input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 16px;
-            outline: none;
-            padding-left: 5px;
-            width: 100%;
-        }
-
-        .input-area input::placeholder {
-            color: #9ca3af;
-        }
-
-        .input-area button.send-btn {
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .input-area button.send-btn:hover {
-            background: #e5e7eb;
-            transform: scale(1.05);
-        }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
-    </style>
-</head>
-<body>
-    <div class="header">Chronical I.A.</div>
-    <div class="chat-container" id="chatMessages">
-        <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
-    </div>
-
-    <div class="input-wrapper">
-        <div class="attachment-menu" id="attachmentMenu">
-            <button class="menu-item" id="btnPhoto">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                Enviar Foto
-            </button>
-            <button class="menu-item" id="btnFile">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                Enviar Ficheiro
-            </button>
-        </div>
-
-        <div class="input-area">
-            <!-- Botão Mais (+) -->
-            <button class="icon-btn" id="plusButton" aria-label="Adicionar anexo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
-
-            <!-- Novo Botão de Voz (Microfone Moderno) -->
-            <button class="icon-btn" id="micButton" aria-label="Gravar voz">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M19 10v1a7 7 0 0 1-14 0v-1" stroke="currentColor" stroke-Para introduzirmos um mecanismo de voz moderno e atualizado (estilo assistente de última geração, como o Advanced Voice Mode), vamos colocar um ícone de microfone elegante dentro da barra de escrita. 
-
-Quando o utilizador clica no microfone, ativamos a API nativa de reconhecimento de voz do navegador (`webkitSpeechRecognition`), que transcreve a fala diretamente para texto na caixa de input em tempo real, acompanhado por um efeito visual de gravação ativa!
-
-Aqui tens o código completo e atualizado com o microfone integrado:
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chronical I.A.</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body, html {
-            height: 100vh;
-            width: 100vw;
-            background-color: #000000;
-            color: #e2e8f0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            padding: 20px;
-            font-size: 20px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            background: #000000;
-            border-bottom: none; 
-            z-index: 10;
-        }
-
-        .chat-container {
-            flex: 1;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            overflow-y: auto;
-            scroll-behavior: smooth;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message {
-            max-width: 85%;
-            padding: 14px 20px;
-            font-size: clamp(14px, 2vw, 16px);
-            line-height: 1.5;
-            word-wrap: break-word;
-            border-radius: 20px;
-            animation: fadeIn 0.3s ease forwards;
-        }
-
-        .ai-message {
-            background-color: #1f2937;
-            color: #f9fafb;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .user-message {
-            background-color: #2563eb;
-            color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            padding: 14px 20px;
-            background-color: #1f2937;
-            align-self: flex-start;
-            border-radius: 20px;
-            border-bottom-left-radius: 4px;
-            animation: fadeIn 0.3s ease forwards;
-        }
-
-        .typing-dot {
-            width: 7px;
-            height: 7px;
-            background-color: #9ca3af;
-            border-radius: 50%;
-            animation: blink 1.4s infinite both;
-        }
-
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes blink {
-            0% { opacity: .2; }
-            20% { opacity: 1; }
-            100% { opacity: .2; }
-        }
-
-        .input-wrapper {
-            width: 100%;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            background: linear-gradient(transparent, #000000 40%);
-            position: relative;
-        }
-
-        .attachment-menu {
-            position: absolute;
-            bottom: 85px;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: #111827;
-            border: 1px solid #374151;
-            border-radius: 16px;
-            width: 220px;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-            z-index: 100;
+        @media (max-width: 840px) {
+            .attachment-menu {
+                left: 20px;
+            }
         }
 
         .attachment-menu.active {
             opacity: 1;
             visibility: visible;
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
         }
 
         .menu-item {
@@ -490,7 +205,6 @@ Aqui tens o código completo e atualizado com o microfone integrado:
             color: #ffffff;
         }
 
-        /* Efeito visual quando o microfone está a gravar */
         .mic-btn.recording {
             color: #ef4444;
             background: rgba(239, 68, 68, 0.15);
@@ -563,14 +277,13 @@ Aqui tens o código completo e atualizado com o microfone integrado:
 
         <div class="input-area">
             <button class="plus-btn" id="plusButton" aria-label="Adicionar anexo">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
 
             <input type="text" id="userInput" placeholder="Pergunte à Chronical..." autocomplete="off" autofocus>
             
-            <!-- Botão de Microfone Moderno -->
             <button class="mic-btn" id="micButton" aria-label="Falar por voz">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
@@ -581,7 +294,7 @@ Aqui tens o código completo e atualizado com o microfone integrado:
             </button>
 
             <button class="send-btn" id="sendButton" aria-label="Enviar">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
@@ -621,7 +334,6 @@ Aqui tens o código completo e atualizado com o microfone integrado:
             attachmentMenu.classList.remove('active');
         });
 
-        // Mecanismo de Reconhecimento de Voz (Speech-to-Text)
         let recognition = null;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
