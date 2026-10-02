@@ -58,7 +58,7 @@
 
         .message {
             max-width: 85%;
-            padding: 16px 20px 32px 20px; /* Espaço extra embaixo para o botão flutuar */
+            padding: 16px 20px 32px 20px;
             font-size: clamp(14px, 2vw, 15.5px);
             line-height: 1.6;
             word-wrap: break-word;
@@ -75,7 +75,6 @@
             border-bottom-left-radius: 6px;
         }
 
-        /* Estilização Avançada para Markdown */
         .ai-message p { margin-bottom: 10px; }
         .ai-message p:last-child { margin-bottom: 0; }
         .ai-message strong { color: #ffffff; font-weight: 600; }
@@ -110,7 +109,7 @@
             color: #ffffff;
         }
 
-        /* Botão de Ouvir integrado no canto inferior sem linhas separadoras */
+        /* Botão de Ouvir com ondas integradas quando ativo */
         .action-btn {
             position: absolute;
             bottom: 8px;
@@ -121,7 +120,7 @@
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-size: 12px;
             font-weight: 500;
             transition: color 0.2s;
@@ -134,13 +133,35 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
+        .action-btn.speaking {
+            color: #2563eb;
+        }
+
+        .speaking-waves {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 12px;
+        }
+
+        .speak-bar {
+            width: 2.5px;
+            height: 100%;
+            background-color: #2563eb;
+            border-radius: 2px;
+            animation: waveAnim 0.8s infinite ease-in-out;
+        }
+
+        .speak-bar:nth-child(2) { animation-delay: 0.2s; }
+        .speak-bar:nth-child(3) { animation-delay: 0.4s; }
+
         .user-message {
             background-color: #2563eb;
             color: white;
             align-self: flex-end;
             border-bottom-right-radius: 6px;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-            padding-bottom: 16px; /* User message não precisa do espaço extra */
+            padding-bottom: 16px;
         }
 
         .typing-indicator {
@@ -571,6 +592,7 @@
         let secondsElapsed = 0;
         let isCancelled = false;
         let currentSpeakingBtn = null;
+        let silenceTimer = null;
 
         plusButton.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -661,6 +683,7 @@
             }
         });
 
+        // Reconhecimento de Voz Aprimorado com Auto-envio inteligente por pausa
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -691,18 +714,30 @@
                         transcript += event.results[i][0].transcript;
                     }
                     userInput.value = transcript;
+
+                    // Reinicia o detetor de pausa ao falar (auto-envio após 2.5s de silêncio opcional)
+                    clearTimeout(silenceTimer);
+                    silenceTimer = setTimeout(() => {
+                        if (micButton.classList.contains('recording') && userInput.value.trim().length > 0) {
+                            recognition.stop();
+                            stopRecordingUI();
+                            sendMessage();
+                        }
+                    }, 2500);
                 }
             };
 
             recognition.onerror = () => { stopRecordingUI(); };
             recognition.onend = () => {
                 clearInterval(timerInterval);
+                clearTimeout(silenceTimer);
                 stopRecordingUI();
             };
         }
 
         function stopRecordingUI() {
             clearInterval(timerInterval);
+            clearTimeout(silenceTimer);
             micButton.classList.remove('recording');
             recordingBox.classList.remove('active');
             userInput.style.display = 'block';
@@ -711,6 +746,7 @@
         cancelRecBtn.addEventListener('click', () => {
             isCancelled = true;
             userInput.value = '';
+            clearTimeout(silenceTimer);
             if (recognition) {
                 try { recognition.stop(); } catch(e){}
             }
@@ -729,6 +765,7 @@
             }
         });
 
+        // Síntese de Voz Nativa Ultra-Natural com Seleção de Melhor Voz e Ondas Animadas
         function toggleSpeech(btn, text) {
             if (!('speechSynthesis' in window)) {
                 alert('O seu navegador não suporta síntese de voz.');
@@ -744,8 +781,23 @@
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'pt-BR';
             
+            // Selecionar automaticamente a voz natural mais fluida em português disponível
+            const voices = window.speechSynthesis.getVoices();
+            const ptVoice = voices.find(v => v.lang === 'pt-BR' && (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Natural'))) || voices.find(v => v.lang.startsWith('pt'));
+            if (ptVoice) {
+                utterance.voice = ptVoice;
+            }
+
             currentSpeakingBtn = btn;
-            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> Parar';
+            btn.classList.add('speaking');
+            btn.innerHTML = `
+                <div class="speaking-waves">
+                    <div class="speak-bar"></div>
+                    <div class="speak-bar"></div>
+                    <div class="speak-bar"></div>
+                </div>
+                Parar
+            `;
 
             utterance.onend = () => { resetSpeechButton(); };
             utterance.onerror = () => { resetSpeechButton(); };
@@ -755,9 +807,15 @@
 
         function resetSpeechButton() {
             if (currentSpeakingBtn) {
+                currentSpeakingBtn.classList.remove('speaking');
                 currentSpeakingBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Ouvir';
                 currentSpeakingBtn = null;
             }
+        }
+
+        // Pré-carregar as vozes para garantir disponibilidade imediata
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
         }
 
         function enhanceCodeBlocks(element) {
