@@ -14,7 +14,7 @@
         body, html {
             height: 100vh;
             width: 100vw;
-            background-color: #000000; /* Fundo totalmente preto */
+            background-color: #000000;
             color: #e2e8f0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
@@ -22,7 +22,6 @@
             overflow: hidden;
         }
 
-        /* Cabeçalho minimalista integrado com o fundo preto */
         .header {
             display: flex;
             justify-content: center;
@@ -50,6 +49,12 @@
             scroll-behavior: smooth;
         }
 
+        /* Animação suave de surgimento da mensagem */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .message {
             max-width: 85%;
             padding: 14px 20px;
@@ -57,23 +62,52 @@
             line-height: 1.5;
             word-wrap: break-word;
             border-radius: 20px;
+            animation: fadeIn 0.3s ease forwards;
         }
 
         .ai-message {
-            background-color: #1f2937; /* Cinza escuro para destacar no preto */
+            background-color: #1f2937;
             color: #f9fafb;
             align-self: flex-start;
             border-bottom-left-radius: 4px;
         }
 
         .user-message {
-            background-color: #2563eb; /* Azul para as suas mensagens */
+            background-color: #2563eb;
             color: white;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
 
-        /* Área de escrita */
+        /* Estilo para o indicador de "a escrever..." */
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 14px 20px;
+            background-color: #1f2937;
+            align-self: flex-start;
+            border-radius: 20px;
+            border-bottom-left-radius: 4px;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #9ca3af;
+            border-radius: 50%;
+            animation: blink 1.4s infinite both;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes blink {
+            0% { opacity: .2; }
+            20% { opacity: 1; }
+            100% { opacity: .2; }
+        }
+
         .input-wrapper {
             width: 100%;
             padding: 15px;
@@ -87,8 +121,8 @@
             width: 100%;
             max-width: 800px;
             gap: 10px;
-            background: #111827; /* Fundo da barra de pesquisa em cinza muito escuro */
-            padding: 8px 8px 8px 20px; /* Ajustado para abraçar o botão redondo */
+            background: #111827;
+            padding: 8px 8px 8px 20px;
             border-radius: 40px;
             border: 1px solid #374151;
             align-items: center;
@@ -108,14 +142,13 @@
             color: #9ca3af;
         }
 
-        /* Novo Botão Moderno com Ícone */
         .input-area button {
-            background: #ffffff; /* Botão branco para contraste máximo */
-            color: #000000;      /* Seta preta */
+            background: #ffffff;
+            color: #000000;
             border: none;
             width: 38px;
             height: 38px;
-            border-radius: 50%; /* Torna o botão num círculo perfeito */
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -129,7 +162,6 @@
             transform: scale(1.05);
         }
 
-        /* Scrollbar discreta */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
     </style>
@@ -141,8 +173,7 @@
     </div>
     <div class="input-wrapper">
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Escreva a sua mensagem..." autocomplete="off">
-            <!-- Ícone de seta embutido diretamente no HTML (SVG) -->
+            <input type="text" id="userInput" placeholder="Escreva a sua mensagem..." autocomplete="off" autofocus>
             <button id="sendButton" aria-label="Enviar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -160,11 +191,20 @@
             const text = userInput.value.trim();
             if (!text) return;
 
+            // Mensagem do utilizador
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
             userMsg.textContent = text;
             chatMessages.appendChild(userMsg);
+            
             userInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Criar e mostrar indicador de "a escrever"
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            chatMessages.appendChild(typingIndicator);
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
@@ -175,18 +215,30 @@
                 });
                 const data = await response.json();
 
+                // Remover o indicador de escrita
+                chatMessages.removeChild(typingIndicator);
+
+                // Mensagem da IA
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
                 aiMsg.textContent = data.response || data.reply || "Resposta recebida.";
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
+                // Remover o indicador de escrita em caso de erro
+                if (chatMessages.contains(typingIndicator)) {
+                    chatMessages.removeChild(typingIndicator);
+                }
+
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'message ai-message';
                 errorMsg.textContent = "Erro ao comunicar com o servidor.";
                 chatMessages.appendChild(errorMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+
+            // Devolve o foco automaticamente para o input
+            userInput.focus();
         }
 
         sendButton.addEventListener('click', sendMessage);
