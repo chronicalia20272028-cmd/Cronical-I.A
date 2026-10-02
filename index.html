@@ -22,7 +22,6 @@
             overflow: hidden;
         }
 
-        /* Cabeçalho limpo sem borda em baixo */
         .header {
             display: flex;
             justify-content: center;
@@ -113,18 +112,93 @@
             display: flex;
             justify-content: center;
             background: linear-gradient(transparent, #000000 40%);
+            position: relative;
+        }
+
+        /* Menu Popup de Anexos */
+        .attachment-menu {
+            position: absolute;
+            bottom: 85px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 16px;
+            width: 220px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .attachment-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            color: #e2e8f0;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1f2937;
+        }
+
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: #9ca3af;
         }
 
         .input-area {
             display: flex;
             width: 100%;
             max-width: 800px;
-            gap: 10px;
+            gap: 8px;
             background: #111827;
-            padding: 8px 8px 8px 20px;
+            padding: 8px;
             border-radius: 40px;
             border: 1px solid #374151;
             align-items: center;
+        }
+
+        /* Botão de Mais (+) */
+        .plus-btn {
+            background: transparent;
+            color: #9ca3af;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .plus-btn:hover {
+            background: #1f2937;
+            color: #ffffff;
         }
 
         .input-area input {
@@ -134,6 +208,7 @@
             color: white;
             font-size: 16px;
             outline: none;
+            padding-left: 5px;
             width: 100%;
         }
 
@@ -141,7 +216,7 @@
             color: #9ca3af;
         }
 
-        .input-area button {
+        .input-area button.send-btn {
             background: #ffffff;
             color: #000000;
             border: none;
@@ -156,12 +231,11 @@
             flex-shrink: 0;
         }
 
-        .input-area button:hover {
+        .input-area button.send-btn:hover {
             background: #e5e7eb;
             transform: scale(1.05);
         }
 
-        /* Scrollbar totalmente integrada e limpa */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
@@ -172,11 +246,31 @@
     <div class="chat-container" id="chatMessages">
         <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
     </div>
+
     <div class="input-wrapper">
+        <!-- Menu Flutuante de Anexos -->
+        <div class="attachment-menu" id="attachmentMenu">
+            <button class="menu-item" id="btnPhoto">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Enviar Foto
+            </button>
+            <button class="menu-item" id="btnFile">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Enviar Ficheiro
+            </button>
+        </div>
+
         <div class="input-area">
-            <!-- Texto alterado para "Pergunte à Chronical..." -->
+            <!-- Botão de Mais (+) para o Menu -->
+            <button class="plus-btn" id="plusButton" aria-label="Adicionar anexo">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
             <input type="text" id="userInput" placeholder="Pergunte à Chronical..." autocomplete="off" autofocus>
-            <button id="sendButton" aria-label="Enviar">
+            
+            <button class="send-btn" id="sendButton" aria-label="Enviar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -188,6 +282,36 @@
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
+        const plusButton = document.getElementById('plusButton');
+        const attachmentMenu = document.getElementById('attachmentMenu');
+        const btnPhoto = document.getElementById('btnPhoto');
+        const btnFile = document.getElementById('btnFile');
+
+        // Alternar visibilidade do menu de anexos ao clicar no botão (+)
+        plusButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            attachmentMenu.classList.toggle('active');
+        });
+
+        // Fechar o menu ao clicar fora
+        document.addEventListener('click', () => {
+            attachmentMenu.classList.remove('active');
+        });
+
+        attachmentMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // Ações dos itens do menu (podes ligar a inputs de ficheiro reais depois)
+        btnPhoto.addEventListener('click', () => {
+            alert('Funcionalidade de selecionar foto em breve!');
+            attachmentMenu.classList.remove('active');
+        });
+
+        btnFile.addEventListener('click', () => {
+            alert('Funcionalidade de selecionar ficheiro em breve!');
+            attachmentMenu.classList.remove('active');
+        });
 
         async function sendMessage() {
             const text = userInput.value.trim();
