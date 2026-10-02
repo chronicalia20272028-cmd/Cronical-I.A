@@ -1,146 +1,201 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A.</title>
-    <!-- Tailwind CSS para um design de elite -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #131314; color: #e3e3e3; }
-        .chat-container::-webkit-scrollbar { width: 6px; }
-        .chat-container::-webkit-scrollbar-thumb { background: #282a2c; border-radius: 4px; }
+        :root {
+            /* O tamanho da fonte e espaçamento adaptam-se milimetricamente de smartwatches a TVs 4K */
+            --font-size: clamp(9px, 1.6vw, 18px);
+            --spacing: clamp(3px, 1vw, 14px);
+            --border-radius: clamp(4px, 1.5vw, 12px);
+            
+            --bg-color: #030712;
+            --panel-bg: #111827;
+            --text-main: #f9fafb;
+            --border-color: #1f2937;
+            --user-bubble: #2563eb;
+            --ai-bubble: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Contentor Mestre: Centraliza em ecrãs grandes (PCs/TVs) e preenche 100% em ecrãs minúsculos (Smartwatches/Telemóveis) */
+        .screen-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: var(--spacing);
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            max-height: 98vh;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: var(--spacing);
+            background-color: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border-color);
+            font-size: var(--font-size);
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing);
+        }
+
+        .message {
+            padding: calc(var(--spacing) * 0.8) calc(var(--spacing) * 1.2);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size);
+            max-width: 88%;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background-color: var(--user-bubble);
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .ai-message {
+            background-color: var(--ai-bubble);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: var(--spacing);
+            padding: var(--spacing);
+            background-color: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: var(--spacing);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: var(--font-size);
+            outline: none;
+        }
+
+        .chat-input-area input:focus {
+            border-color: #3b82f6;
+        }
+
+        .chat-input-area button {
+            padding: var(--spacing) calc(var(--spacing) * 1.5);
+            border-radius: var(--border-radius);
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            font-size: var(--font-size);
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .chat-input-area button:hover {
+            background-color: #1d4ed8;
+        }
     </style>
 </head>
-<body class="flex flex-col h-screen justify-between">
-
-    <!-- Barra Superior -->
-    <header class="flex justify-between items-center px-6 py-4 border-b border-[#282a2c] bg-[#131314] sticky top-0 z-10">
-        <h1 class="text-lg font-bold bg-gradient-to-r from-[#8ab4f8] to-[#c58af9] bg-clip-text text-transparent">✨ Chronical I.A.</h1>
-        <span class="text-xs bg-[#1e1f20] border border-[#3c4043] text-[#9aa0a6] px-3 py-1 rounded-full">Gemini 2.0 Core</span>
-    </header>
-
-    <!-- Área de Mensagens -->
-    <main id="chat-messages" class="chat-container flex-1 overflow-y-auto px-4 py-6 max-w-3xl w-full mx-auto space-y-6">
-        <!-- Mensagem Inicial do Bot -->
-        <div class="flex items-start space-x-3">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#8ab4f8] to-[#c58af9] flex items-center justify-center text-black font-bold text-sm">✨</div>
-            <div class="bg-[#1e1f20] border border-[#282a2c] p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-lg">
-                Olá! Sou a <b>Chronical I.A.</b> Como posso ajudar-te a elevar os teus projetos hoje?
+<body>
+    <div class="screen-wrapper">
+        <div class="chat-container">
+            <div class="chat-header">Chronical I.A.</div>
+            <div id="chatMessages" class="chat-messages">
+                <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="userInput" placeholder="Escreva a sua mensagem..." autocomplete="off">
+                <button id="sendButton">Enviar</button>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- Barra Inferior de Input -->
-    <footer class="p-4 bg-[#131314] max-w-3xl w-full mx-auto">
-        <form id="chat-form" class="relative flex items-center bg-[#1e1f20] border border-[#3c4043] rounded-3xl p-2 shadow-2xl focus-within:border-[#8ab4f8] transition-all">
-            
-            <!-- Botão "+" para Anexos -->
-            <label for="file-input" class="cursor-pointer w-10 h-10 rounded-full bg-[#282a2c] hover:bg-[#3c4043] flex items-center justify-center text-[#8ab4f8] font-bold text-xl transition-all ml-1">
-                +
-            </label>
-            <input type="file" id="file-input" class="hidden" multiple accept="image/*,.txt,.csv">
-
-            <!-- Caixa de Texto -->
-            <input type="text" id="user-input" placeholder="Pergunte à Chronical I.A..." class="flex-1 bg-transparent border-none outline-none px-4 text-sm text-[#e3e3e3] placeholder-[#71767b]">
-
-            <!-- Botão de Enviar -->
-            <button type="submit" class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-black font-semibold w-10 h-10 rounded-full flex items-center justify-center transition-all mr-1">
-                ➔
-            </button>
-        </form>
-        <div id="file-status" class="text-xs text-[#9aa0a6] mt-2 px-4"></div>
-    </footer>
-
-    <!-- Script JavaScript para ligar ao Backend -->
     <script>
-        const form = document.getElementById('chat-form');
-        const input = document.getElementById('user-input');
-        const messagesContainer = document.getElementById('chat-messages');
-        const fileInput = document.getElementById('file-input');
-        const fileStatus = document.getElementById('file-status');
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
 
-        let selectedFiles = [];
+        async function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
 
-        fileInput.addEventListener('change', (e) => {
-            selectedFiles = e.target.files;
-            if (selectedFiles.length > 0) {
-                fileStatus.innerText = `📎 ${selectedFiles.length} ficheiro(s) selecionado(s) pronto(s) para envio.`;
-            } else {
-                fileStatus.innerText = "";
-            }
-        });
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const texto = input.value.trim();
-            if (!texto && selectedFiles.length === 0) return;
-
-            let displayHtml = texto;
-            if (selectedFiles.length > 0) {
-                displayHtml += `<br><span class="text-xs text-[#8ab4f8]">*(📎 ${selectedFiles.length} anexo(s))*</span>`;
-            }
-
-            messagesContainer.innerHTML += `
-                <div class="flex items-start space-x-3 justify-end">
-                    <div class="bg-[#282a2c] p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed text-white shadow-lg">
-                        ${displayHtml}
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-[#3c4043] flex items-center justify-center text-white font-bold text-sm">👤</div>
-                </div>
-            `;
-
-            input.value = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            const formData = new FormData();
-            formData.append("mensagem", texto || "Analise estes ficheiros anexos.");
-            for (let i = 0; i < selectedFiles.length; i++) {
-                formData.append("ficheiros", selectedFiles[i]);
-            }
-
-            const loadingId = 'loading-' + Date.now();
-            messagesContainer.innerHTML += `
-                <div id="${loadingId}" class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#8ab4f8] to-[#c58af9] flex items-center justify-center text-black font-bold text-sm">✨</div>
-                    <div class="bg-[#1e1f20] border border-[#282a2c] p-4 rounded-2xl text-sm text-[#9aa0a6] animate-pulse">
-                        A pensar...
-                    </div>
-                </div>
-            `;
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            // Adicionar mensagem do utilizador ao chat
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.textContent = text;
+            chatMessages.appendChild(userMsg);
+            userInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                const response = await fetch('/api/chat', {
+                // Requisição para o backend FastAPI (ajuste a rota '/chat' se necessário para a que configurou no Python)
+                const response = await fetch('/chat', {
                     method: 'POST',
-                    body: formData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
                 });
-
                 const data = await response.json();
-                document.getElementById(loadingId).remove();
 
-                if (response.ok) {
-                    messagesContainer.innerHTML += `
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#8ab4f8] to-[#c58af9] flex items-center justify-center text-black font-bold text-sm">✨</div>
-                            <div class="bg-[#1e1f20] border border-[#282a2c] p-4 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-lg">
-                                ${data.resposta.replace(/\n/g, '<br>')}
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    messagesContainer.innerHTML += `<div class="text-red-400 text-sm p-2">Erro: ${data.detail}</div>`;
-                }
-            } catch (err) {
-                document.getElementById(loadingId).remove();
-                messagesContainer.innerHTML += `<div class="text-red-400 text-sm p-2">Erro de ligação ao servidor backend.</div>`;
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai-message';
+                aiMsg.textContent = data.response || data.reply || "Resposta recebida.";
+                chatMessages.appendChild(aiMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (error) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message ai-message';
+                errorMsg.textContent = "Erro ao comunicar com o servidor.";
+                chatMessages.appendChild(errorMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+        }
 
-            selectedFiles = [];
-            fileInput.value = '';
-            fileStatus.innerText = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
         });
     </script>
 </body>
