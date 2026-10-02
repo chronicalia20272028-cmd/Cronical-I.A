@@ -5,123 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A.</title>
     <style>
-        :root {
-            --bg: #0b0f19; /* Fundo noturno profundo */
-            --text: #e2e8f0;
-            --accent: #3b82f6;
-            --ai-bubble: #1e293b; /* Cinza azulado para a IA */
-            --user-bubble: #2563eb; /* Azul vibrante para o utilizador */
+        * {
+            box-sizing: border-box; /* Isto resolve o problema do botão cortado */
+            margin: 0;
+            padding: 0;
         }
-        
+
         body, html {
-            margin: 0; 
-            padding: 0; 
-            height: 100vh; 
-            background-color: var(--bg); 
-            color: var(--text);
+            height: 100vh;
+            width: 100vw;
+            /* Mantém o teu fundo original por trás, mas garante que a estrutura não quebra */
+            background-color: transparent; 
+            color: #e2e8f0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex; 
-            flex-direction: column; 
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
 
-        /* Cabeçalho moderno com efeito de vidro (blur) */
+        /* Título perfeitamente centrado e com efeito de vidro */
         .header {
-            text-align: center; 
-            padding: 20px; 
-            font-size: 20px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 22px;
             font-weight: 600;
-            background: rgba(11, 15, 25, 0.8); 
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            letter-spacing: 1px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px); /* Desfoca o que está por trás */
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 10;
         }
 
-        /* Área centralizada de mensagens */
+        /* Área de mensagens bem alinhada */
         .chat-container {
-            flex: 1; 
-            overflow-y: auto; 
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            display: flex; 
-            flex-direction: column; 
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-            max-width: 800px; 
-            margin: 0 auto; 
-            width: 100%; 
+            overflow-y: auto;
             scroll-behavior: smooth;
         }
 
-        /* Balões muito arredondados (sem cantos quadrados) */
+        /* Balões com efeito Glassmorphism (Vidro Translúcido) */
         .message {
-            max-width: 85%; 
-            padding: 14px 20px; 
+            max-width: 85%;
+            padding: 14px 20px;
             font-size: clamp(14px, 2vw, 16px);
-            line-height: 1.5; 
-            word-wrap: break-word; 
-            border-radius: 24px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .ai-message {
-            background-color: var(--ai-bubble); 
+            /* Fundo semitransparente escuro para destacar no teu fundo azul */
+            background-color: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             align-self: flex-start;
-            border-bottom-left-radius: 6px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .user-message {
-            background-color: var(--user-bubble); 
-            color: white; 
+            /* Fundo azul vibrante semitransparente */
+            background-color: rgba(37, 99, 235, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
             align-self: flex-end;
-            border-bottom-right-radius: 6px; 
-            box-shadow: 0 4px 6px rgba(37,99,235,0.2);
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
         }
 
-        /* Área de escrita flutuante (estilo pílula) */
+        /* Área de escrita flutuante fixa */
         .input-wrapper {
-            padding: 15px 20px 25px; 
-            background: linear-gradient(transparent, var(--bg) 30%);
+            width: 100%;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(transparent, rgba(0,0,0,0.5) 50%);
         }
 
         .input-area {
-            display: flex; 
-            gap: 10px; 
-            max-width: 800px; 
-            margin: 0 auto;
-            background: #1e293b; 
-            padding: 8px; 
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 8px;
             border-radius: 40px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); 
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .input-area input {
-            flex: 1; 
-            background: transparent; 
-            border: none; 
+            flex: 1;
+            background: transparent;
+            border: none;
             color: white;
-            padding: 10px 20px; 
-            font-size: 16px; 
+            padding: 10px 15px;
+            font-size: 16px;
             outline: none;
+            width: 100%; /* Garante que não empurra o botão para fora */
+        }
+
+        .input-area input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .input-area button {
-            background: var(--accent); 
-            color: white; 
+            background: #3b82f6;
+            color: white;
             border: none;
-            padding: 12px 24px; 
-            border-radius: 30px; 
+            padding: 12px 24px;
+            border-radius: 30px;
             font-weight: 600;
-            cursor: pointer; 
-            transition: 0.2s;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap; /* Impede que o texto "Enviar" quebre para duas linhas */
         }
 
-        .input-area button:hover { 
-            background: #2563eb; 
+        .input-area button:hover {
+            background: #2563eb;
+            transform: scale(1.05);
         }
 
-        /* Scrollbar elegante e minimalista */
+        /* Scrollbar mais bonita */
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
