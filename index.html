@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A.</title>
+    <!-- Biblioteca Marked.js para renderizar Markdown nas respostas da I.A. -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -71,6 +73,15 @@
             border-bottom-left-radius: 4px;
         }
 
+        /* Estilização para elementos Markdown gerados pela I.A. */
+        .ai-message p { margin-bottom: 8px; }
+        .ai-message p:last-child { margin-bottom: 0; }
+        .ai-message strong { color: #ffffff; font-weight: 600; }
+        .ai-message ul, .ai-message ol { margin-left: 20px; margin-bottom: 8px; }
+        .ai-message code { background: #111827; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; }
+        .ai-message pre { background: #111827; padding: 10px; border-radius: 8px; overflow-x: auto; margin-top: 8px; }
+        .ai-message pre code { background: transparent; padding: 0; }
+
         .user-message {
             background-color: #2563eb;
             color: white;
@@ -116,7 +127,6 @@
             position: relative;
         }
 
-        /* Caixa de Pré-visualização do Ficheiro/Foto Anexado */
         .preview-container {
             width: 100%;
             max-width: 800px;
@@ -172,7 +182,6 @@
             color: #ef4444;
         }
 
-        /* Menu Popup de Anexos */
         .attachment-menu {
             position: absolute;
             bottom: 85px;
@@ -262,7 +271,6 @@
             color: #ffffff;
         }
 
-        /* Efeito de Microfone a Gravar com Ondas Sonoras Simuladas */
         .mic-btn.recording {
             color: #ef4444;
             background: rgba(239, 68, 68, 0.15);
@@ -273,6 +281,41 @@
             0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
             70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
             100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Ondas Sonoras Animadas Reais */
+        .sound-wave {
+            display: none;
+            flex: 1;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 24px;
+            padding: 0 10px;
+        }
+
+        .sound-wave.active {
+            display: flex;
+        }
+
+        .wave-bar {
+            width: 3px;
+            height: 100%;
+            background-color: #ef4444;
+            border-radius: 3px;
+            animation: waveAnim 1s infinite ease-in-out;
+        }
+
+        .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.4s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.15s; }
+        .wave-bar:nth-child(6) { animation-delay: 0.35s; }
+
+        @keyframes waveAnim {
+            0%, 100% { transform: scaleY(0.2); opacity: 0.4; }
+            50% { transform: scaleY(1); opacity: 1; }
         }
 
         .input-area input {
@@ -322,7 +365,6 @@
     </div>
 
     <div class="input-wrapper">
-        <!-- Pré-visualização do Anexo -->
         <div class="preview-container" id="previewContainer">
             <img id="previewThumb" class="preview-thumb" src="" alt="Preview">
             <div class="preview-info" id="previewName">ficheiro.png</div>
@@ -331,7 +373,6 @@
             </button>
         </div>
 
-        <!-- Menu Popup de Anexos -->
         <div class="attachment-menu" id="attachmentMenu">
             <button class="menu-item" id="btnPhoto">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -343,7 +384,6 @@
             </button>
         </div>
 
-        <!-- Inputs Ocultos para Ficheiros Reais -->
         <input type="file" id="imageInput" accept="image/*" style="display: none;">
         <input type="file" id="fileInput" style="display: none;">
 
@@ -354,8 +394,19 @@
                 </svg>
             </button>
 
+            <!-- Campo de Texto -->
             <input type="text" id="userInput" placeholder="Pergunte à Chronical..." autocomplete="off" autofocus>
             
+            <!-- Ondas Sonoras Animadas (aparecem durante a gravação de voz) -->
+            <div class="sound-wave" id="soundWave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+
             <button class="mic-btn" id="micButton" aria-label="Falar por voz">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
@@ -382,6 +433,7 @@
         const btnPhoto = document.getElementById('btnPhoto');
         const btnFile = document.getElementById('btnFile');
         const micButton = document.getElementById('micButton');
+        const soundWave = document.getElementById('soundWave');
         
         const imageInput = document.getElementById('imageInput');
         const fileInput = document.getElementById('fileInput');
@@ -392,7 +444,6 @@
 
         let selectedFile = null;
 
-        // Gestão do menu de anexos
         plusButton.addEventListener('click', (e) => {
             e.stopPropagation();
             attachmentMenu.classList.toggle('active');
@@ -406,7 +457,6 @@
             e.stopPropagation();
         });
 
-        // Acionar seleções de ficheiros reais
         btnPhoto.addEventListener('click', () => {
             attachmentMenu.classList.remove('active');
             imageInput.click();
@@ -448,7 +498,6 @@
             previewContainer.classList.remove('active');
         });
 
-        // Mecanismo de Voz Avançado com Envio Automático
         let recognition = null;
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -459,7 +508,8 @@
 
             recognition.onstart = () => {
                 micButton.classList.add('recording');
-                userInput.placeholder = "A ouvir a sua voz...";
+                userInput.style.display = 'none';
+                soundWave.classList.add('active');
             };
 
             recognition.onresult = (event) => {
@@ -469,14 +519,15 @@
 
             recognition.onerror = () => {
                 micButton.classList.remove('recording');
-                userInput.placeholder = "Pergunte à Chronical...";
+                soundWave.classList.remove('active');
+                userInput.style.display = 'block';
             };
 
             recognition.onend = () => {
                 micButton.classList.remove('recording');
-                userInput.placeholder = "Pergunte à Chronical...";
+                soundWave.classList.remove('active');
+                userInput.style.display = 'block';
                 
-                // Envio automático inteligente se houver texto transcrito
                 if (userInput.value.trim() !== '') {
                     sendMessage();
                 }
@@ -511,9 +562,6 @@
             chatMessages.appendChild(userMsg);
             
             userInput.value = '';
-            
-            // Limpar pré-visualização após o envio
-            const currentFile = selectedFile;
             selectedFile = null;
             imageInput.value = '';
             fileInput.value = '';
@@ -528,7 +576,6 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                // Se quiseres adaptar para FormData no futuro para enviar ficheiros binários ao backend Python:
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -540,7 +587,11 @@
 
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
-                aiMsg.textContent = data.response || data.reply || "Resposta recebida.";
+                
+                // Renderizar resposta com suporte a Markdown (negrito, listas, blocos)
+                const rawResponse = data.response || data.reply || "Resposta recebida.";
+                aiMsg.innerHTML = marked.parse(rawResponse);
+                
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
