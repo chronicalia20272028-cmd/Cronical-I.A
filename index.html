@@ -22,17 +22,18 @@
             overflow: hidden;
         }
 
+        /* Cabeçalho limpo sem borda em baixo */
         .header {
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: 15px 20px;
+            padding: 20px;
             font-size: 20px;
             font-weight: 500;
             letter-spacing: 1px;
             background: #000000;
-            border-bottom: 1px solid #1f2937;
+            border-bottom: none; 
             z-index: 10;
         }
 
@@ -49,7 +50,6 @@
             scroll-behavior: smooth;
         }
 
-        /* Animação suave de surgimento da mensagem */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -79,7 +79,6 @@
             border-bottom-right-radius: 4px;
         }
 
-        /* Estilo para o indicador de "a escrever..." */
         .typing-indicator {
             display: flex;
             gap: 5px;
@@ -162,8 +161,10 @@
             transform: scale(1.05);
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+        /* Scrollbar totalmente integrada e limpa */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -173,7 +174,8 @@
     </div>
     <div class="input-wrapper">
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="Escreva a sua mensagem..." autocomplete="off" autofocus>
+            <!-- Texto alterado para "Pergunte à Chronical..." -->
+            <input type="text" id="userInput" placeholder="Pergunte à Chronical..." autocomplete="off" autofocus>
             <button id="sendButton" aria-label="Enviar">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -191,7 +193,6 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Mensagem do utilizador
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
             userMsg.textContent = text;
@@ -200,7 +201,6 @@
             userInput.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            // Criar e mostrar indicador de "a escrever"
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'typing-indicator';
             typingIndicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
@@ -215,17 +215,14 @@
                 });
                 const data = await response.json();
 
-                // Remover o indicador de escrita
                 chatMessages.removeChild(typingIndicator);
 
-                // Mensagem da IA
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
                 aiMsg.textContent = data.response || data.reply || "Resposta recebida.";
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } catch (error) {
-                // Remover o indicador de escrita em caso de erro
                 if (chatMessages.contains(typingIndicator)) {
                     chatMessages.removeChild(typingIndicator);
                 }
@@ -237,7 +234,6 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // Devolve o foco automaticamente para o input
             userInput.focus();
         }
 
