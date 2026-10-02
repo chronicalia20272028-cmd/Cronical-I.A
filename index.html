@@ -6,17 +6,15 @@
     <title>Chronical I.A.</title>
     <style>
         :root {
-            /* O tamanho da fonte e espaçamento adaptam-se milimetricamente de smartwatches a TVs 4K */
-            --font-size: clamp(9px, 1.6vw, 18px);
-            --spacing: clamp(3px, 1vw, 14px);
-            --border-radius: clamp(4px, 1.5vw, 12px);
+            /* Tamanhos responsivos (do smartwatch à TV) */
+            --font-size: clamp(14px, 2vw, 22px);
+            --spacing: clamp(10px, 2vw, 30px);
             
-            --bg-color: #030712;
-            --panel-bg: #111827;
-            --text-main: #f9fafb;
-            --border-color: #1f2937;
-            --user-bubble: #2563eb;
-            --ai-bubble: #1f2937;
+            /* Paleta Minimalista */
+            --bg-color: #050505; /* Fundo preto profundo */
+            --text-user: #ffffff; /* Branco puro para as suas mensagens */
+            --text-ai: #a1a1aa; /* Cinza suave para a I.A. */
+            --accent: #3b82f6; /* Azul apenas para detalhes (botão/foco) */
         }
 
         * {
@@ -29,19 +27,16 @@
             width: 100vw;
             height: 100vh;
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow: hidden;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            overflow: hidden; /* Mantém a tela fixa */
         }
 
-        /* Contentor Mestre: Centraliza em ecrãs grandes (PCs/TVs) e preenche 100% em ecrãs minúsculos (Smartwatches/Telemóveis) */
+        /* Estrutura invisível para centralizar no PC e preencher no Smartwatch */
         .screen-wrapper {
             display: flex;
             justify-content: center;
-            align-items: center;
             width: 100%;
             height: 100%;
-            padding: var(--spacing);
         }
 
         .chat-container {
@@ -49,94 +44,101 @@
             flex-direction: column;
             width: 100%;
             height: 100%;
-            max-width: 1200px;
-            max-height: 98vh;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            overflow: hidden;
+            max-width: 900px; /* Limita a largura em ecrãs gigantes para leitura confortável */
+            background: transparent; /* Sem fundo */
+            border: none; /* Sem bordas */
         }
 
+        /* Título limpo no topo */
         .chat-header {
             padding: var(--spacing);
-            background-color: rgba(0, 0, 0, 0.3);
-            border-bottom: 1px solid var(--border-color);
-            font-size: var(--font-size);
-            font-weight: bold;
+            font-size: clamp(16px, 3vw, 28px);
+            font-weight: 300;
+            letter-spacing: 2px;
             text-align: center;
-            letter-spacing: 0.5px;
+            color: var(--text-user);
         }
 
+        /* Área onde o texto corre */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
             padding: var(--spacing);
             display: flex;
             flex-direction: column;
-            gap: var(--spacing);
+            gap: calc(var(--spacing) * 1.5); /* Espaço entre mensagens */
         }
 
+        /* As palavras diretamente no fundo, sem caixas */
         .message {
-            padding: calc(var(--spacing) * 0.8) calc(var(--spacing) * 1.2);
-            border-radius: var(--border-radius);
+            background: transparent;
+            border: none;
+            padding: 0;
             font-size: var(--font-size);
-            max-width: 88%;
+            max-width: 90%;
             word-break: break-word;
-            line-height: 1.4;
+            line-height: 1.6;
         }
 
         .user-message {
-            background-color: var(--user-bubble);
+            color: var(--text-user);
             align-self: flex-end;
-            border-bottom-right-radius: 2px;
+            text-align: right;
+            font-weight: 400;
         }
 
         .ai-message {
-            background-color: var(--ai-bubble);
+            color: var(--text-ai);
             align-self: flex-start;
-            border-bottom-left-radius: 2px;
-            border: 1px solid var(--border-color);
+            text-align: left;
+            font-weight: 300;
         }
 
+        /* Campo de texto minimalista */
         .chat-input-area {
             display: flex;
             gap: var(--spacing);
             padding: var(--spacing);
-            background-color: rgba(0, 0, 0, 0.3);
-            border-top: 1px solid var(--border-color);
+            margin-bottom: var(--spacing);
+            background: transparent;
         }
 
         .chat-input-area input {
             flex: 1;
-            padding: var(--spacing);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            padding: calc(var(--spacing) * 0.5) 0;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333; /* Apenas uma linha em baixo */
+            color: var(--text-user);
             font-size: var(--font-size);
             outline: none;
+            transition: border-color 0.3s;
         }
 
         .chat-input-area input:focus {
-            border-color: #3b82f6;
+            border-bottom-color: var(--accent); /* A linha brilha a azul quando escreve */
         }
 
         .chat-input-area button {
-            padding: var(--spacing) calc(var(--spacing) * 1.5);
-            border-radius: var(--border-radius);
+            padding: 0 var(--spacing);
+            background: transparent;
             border: none;
-            background-color: #2563eb;
-            color: white;
-            font-size: var(--font-size);
+            color: var(--accent);
+            font-size: calc(var(--font-size) * 0.9);
             cursor: pointer;
-            font-weight: bold;
-            white-space: nowrap;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .chat-input-area button:hover {
-            background-color: #1d4ed8;
+            color: #60a5fa;
         }
+        
+        /* Oculta a barra de rolagem para ficar mais limpo */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -162,7 +164,7 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Adicionar mensagem do utilizador ao chat
+            // Mensagem do Utilizador
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
             userMsg.textContent = text;
@@ -171,7 +173,7 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
-                // Requisição para o backend FastAPI (ajuste a rota '/chat' se necessário para a que configurou no Python)
+                // Pedido ao Backend
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -179,6 +181,7 @@
                 });
                 const data = await response.json();
 
+                // Mensagem da IA
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
                 aiMsg.textContent = data.response || data.reply || "Resposta recebida.";
