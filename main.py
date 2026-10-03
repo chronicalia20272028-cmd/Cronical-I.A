@@ -24,10 +24,10 @@ def chat():
             return jsonify({'response': 'Por favor, envia uma mensagem válida.'}), 400
 
         # Envia a mensagem para o modelo Gemini gerar a resposta real
-       response = client.models.generate_content(
-    model='gemini-2.0-flash',
-    contents=user_message,
-)
+        response = client.models.generate_content(
+            model='gemini-2.0-flash',
+            contents=user_message,
+        )
         
         ai_reply = response.text
         return jsonify({'response': ai_reply})
