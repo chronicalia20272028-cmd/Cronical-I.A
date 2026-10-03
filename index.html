@@ -57,6 +57,94 @@
             font-size: calc(14px * var(--font-scale));
         }
 
+        /* --- TELA DE ABERTURA (SPLASH SCREEN) --- */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            animation: splashEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes splashEntrance {
+            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .splash-logo-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
+            margin-bottom: 4px;
+        }
+
+        .splash-logo-icon svg {
+            width: 36px;
+            height: 36px;
+            stroke: #ffffff;
+        }
+
+        .splash-title {
+            font-size: clamp(24px, 5vw, 36px);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+        }
+
+        .splash-subtitle {
+            font-size: clamp(13px, 2.5vw, 16px);
+            color: #94a3b8;
+            max-width: 320px;
+            line-height: 1.5;
+        }
+
+        .splash-enter-btn {
+            margin-top: 16px;
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-size: calc(14px * var(--font-scale));
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .splash-enter-btn:hover {
+            background: #1d4ed8;
+            transform: scale(1.04);
+        }
+
         /* Foco visível para navegação por teclado (Tab) */
         button:focus-visible, input:focus-visible {
             outline: 3px solid #60a5fa !important;
@@ -591,6 +679,20 @@
     <!-- Anunciador dinâmico para Leitores de Ecrã -->
     <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
+    <!-- Tela de Abertura (Splash Screen) -->
+    <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical I.A.">
+        <div class="splash-content">
+            <div class="splash-logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            <h1 class="splash-title">Chronical I.A.</h1>
+            <p class="splash-subtitle">A sua assistente virtual inteligente e moderna.</p>
+            <button class="splash-enter-btn" id="enterBtn" autofocus>Entrar na Conversa</button>
+        </div>
+    </div>
+
     <header class="header">
         <span>Chronical I.A.</span>
         <div class="accessibility-controls" aria-label="Ferramentas de acessibilidade">
@@ -633,7 +735,7 @@
                 </svg>
             </button>
 
-            <input type="text" id="userInput" placeholder="Mensagem para a Chronical..." aria-label="Caixa de texto para mensagem" autocomplete="off" autofocus>
+            <input type="text" id="userInput" placeholder="Mensagem para a Chronical..." aria-label="Caixa de texto para mensagem" autocomplete="off">
             
             <div class="recording-box" id="recordingBox" aria-label="A gravar áudio">
                 <div class="recording-left">
@@ -669,6 +771,32 @@
     </div>
 
     <script>
+        const splashScreen = document.getElementById('splashScreen');
+        const enterBtn = document.getElementById('enterBtn');
+
+        function dismissSplash() {
+            if (!splashScreen.classList.contains('fade-out')) {
+                splashScreen.classList.add('fade-out');
+                srAnnouncer.textContent = "Bem-vindo à Chronical I.A. Chat iniciado.";
+                setTimeout(() => {
+                    userInput.focus();
+                }, 400);
+            }
+        }
+
+        enterBtn.addEventListener('click', dismissSplash);
+        splashScreen.addEventListener('click', (e) => {
+            // Se clicar na área geral do splash screen também entra
+            if (e.target === splashScreen) {
+                dismissSplash();
+            }
+        });
+
+        // Opcional: fechar automaticamente após 2.2 segundos se o utilizador não interagir
+        setTimeout(() => {
+            dismissSplash();
+        }, 2200);
+
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
