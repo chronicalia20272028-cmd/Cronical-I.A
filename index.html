@@ -15,7 +15,7 @@
 
         body, html {
             height: 100vh;
-            height: 100dvh; /* Suporte moderno para barra dinâmica em dispositivos móveis */
+            height: 100dvh;
             width: 100vw;
             background-color: #000000;
             color: #e2e8f0;
@@ -23,7 +23,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            font-size: clamp(12px, 1.2vw, 16px); /* Escala dinâmica global para Smartwatches até TVs */
+            font-size: clamp(12px, 1.2vw, 16px);
         }
 
         .header {
@@ -31,8 +31,8 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            padding: clamp(8px, 2vh, 20px);
-            font-size: clamp(14px, 2vw, 22px);
+            padding: clamp(8px, 2vh, 18px);
+            font-size: clamp(14px, 2vw, 20px);
             font-weight: 500;
             letter-spacing: 1px;
             background: #000000;
@@ -43,12 +43,12 @@
         .chat-container {
             flex: 1;
             width: 100%;
-            max-width: min(90vw, 1200px); /* Adapta-se perfeitamente desde relógios até ecrãs ultra-wide de TV */
+            max-width: min(92vw, 800px); /* Largura controlada e centralizada em ecrãs grandes */
             margin: 0 auto;
-            padding: clamp(10px, 2vw, 30px);
+            padding: clamp(10px, 2vw, 24px);
             display: flex;
             flex-direction: column;
-            gap: clamp(10px, 2vh, 20px);
+            gap: clamp(10px, 2vh, 18px);
             overflow-y: auto;
             scroll-behavior: smooth;
         }
@@ -60,11 +60,11 @@
 
         .message {
             max-width: 88%;
-            padding: clamp(10px, 1.5vw, 18px) clamp(12px, 1.8vw, 22px) clamp(28px, 4vh, 38px) clamp(12px, 1.8vw, 22px);
-            font-size: clamp(11px, 1.4vw, 16px);
+            padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) clamp(28px, 4vh, 36px) clamp(12px, 1.8vw, 20px);
+            font-size: clamp(11px, 1.4vw, 15px);
             line-height: 1.5;
             word-wrap: break-word;
-            border-radius: clamp(12px, 2vw, 20px);
+            border-radius: clamp(12px, 2vw, 18px);
             animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             position: relative;
         }
@@ -122,7 +122,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: clamp(10px, 1.1vw, 12.5px);
+            font-size: clamp(10px, 1.1vw, 12px);
             font-weight: 500;
             transition: color 0.2s;
             padding: 3px 6px;
@@ -196,7 +196,7 @@
 
         .input-wrapper {
             width: 100%;
-            padding: 10px clamp(10px, 3vw, 25px) 20px clamp(10px, 3vw, 25px);
+            padding: 10px clamp(10px, 3vw, 20px) 20px clamp(10px, 3vw, 20px);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -206,7 +206,7 @@
 
         .preview-container {
             width: 100%;
-            max-width: min(90vw, 1200px);
+            max-width: min(92vw, 800px);
             margin-bottom: 10px;
             display: none;
             gap: 8px;
@@ -327,7 +327,7 @@
         .input-area {
             display: flex;
             width: 100%;
-            max-width: min(90vw, 1200px);
+            max-width: min(92vw, 800px); /* Limita o tamanho da barra de digitação para não ocupar a tela toda */
             gap: 8px;
             background: #171b26;
             padding: 8px 12px;
@@ -346,8 +346,8 @@
             background: transparent;
             color: #94a3b8;
             border: none;
-            width: clamp(32px, 4vw, 42px);
-            height: clamp(32px, 4vw, 42px);
+            width: clamp(32px, 4vw, 40px);
+            height: clamp(32px, 4vw, 40px);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -358,8 +358,8 @@
         }
 
         .plus-btn svg, .mic-btn svg {
-            width: clamp(16px, 2vw, 21px);
-            height: clamp(16px, 2vw, 21px);
+            width: clamp(16px, 2vw, 20px);
+            height: clamp(16px, 2vw, 20px);
         }
 
         .plus-btn:hover, .mic-btn:hover {
@@ -393,7 +393,7 @@
         }
 
         .rec-timer {
-            font-size: clamp(11px, 1.2vw, 13.5px);
+            font-size: clamp(11px, 1.2vw, 13px);
             color: #ef4444;
             font-weight: 600;
             font-variant-numeric: tabular-nums;
@@ -449,7 +449,7 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: clamp(12px, 1.3vw, 15.5px);
+            font-size: clamp(12px, 1.3vw, 15px);
             outline: none;
             padding-left: 4px;
             width: 100%;
@@ -463,8 +463,8 @@
             background: #ffffff;
             color: #000000;
             border: none;
-            width: clamp(32px, 4vw, 42px);
-            height: clamp(32px, 4vw, 42px);
+            width: clamp(32px, 4vw, 40px);
+            height: clamp(32px, 4vw, 40px);
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -475,8 +475,8 @@
         }
 
         .input-area button.send-btn svg {
-            width: clamp(15px, 1.8vw, 20px);
-            height: clamp(15px, 1.8vw, 20px);
+            width: clamp(15px, 1.8vw, 19px);
+            height: clamp(15px, 1.8vw, 19px);
         }
 
         .input-area button.send-btn:hover {
@@ -500,7 +500,6 @@
             pointer-events: none;
         }
 
-        /* Ajustes específicos para ecrãs circulares ou extremamente compactos (Smartwatches) */
         @media (max-width: 300px), (max-height: 300px) {
             .header { padding: 4px; font-size: 11px; }
             .chat-container { padding: 6px; gap: 6px; }
@@ -894,8 +893,8 @@
             
             userInput.value = '';
             attachedFiles = [];
-            imageInput.value = [];
-            fileInput.value = [];
+            imageInput.value = '';
+            fileInput.value = '';
             previewContainer.classList.remove('active');
 
             chatMessages.scrollTop = chatMessages.scrollHeight;
