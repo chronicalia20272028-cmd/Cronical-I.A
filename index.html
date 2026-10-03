@@ -109,7 +109,6 @@
             color: #ffffff;
         }
 
-        /* Botão de Ouvir com ondas integradas quando ativo */
         .action-btn {
             position: absolute;
             bottom: 8px;
@@ -594,6 +593,9 @@
         let currentSpeakingBtn = null;
         let silenceTimer = null;
 
+        // Variáveis para acumular transcrição contínua
+        let finalTranscript = '';
+
         plusButton.addEventListener('click', (e) => {
             e.stopPropagation();
             attachmentMenu.classList.toggle('active');
@@ -683,7 +685,7 @@
             }
         });
 
-        // Reconhecimento de Voz Aprimorado com Auto-envio inteligente por pausa
+        // Reconhecimento de Voz Acumulativo e Contínuo
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -693,6 +695,9 @@
 
             recognition.onstart = () => {
                 isCancelled = false;
+                // Mantém o texto que já estava escrito caso o utilizador clique para continuar a falar
+                finalTranscript = userInput.value ? userInput.value + ' ' : '';
+                
                 micButton.classList.add('recording');
                 userInput.style.display = 'none';
                 recordingBox.classList.add('active');
@@ -709,13 +714,18 @@
 
             recognition.onresult = (event) => {
                 if (!isCancelled) {
-                    let transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        transcript += event.results[i][0].transcript;
+                    let interimTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript + ' ';
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
                     }
-                    userInput.value = transcript;
+                    // Mostra a junção da parte já consolidada com a parte a ser dita no momento
+                    userInput.value = finalTranscript + interimTranscript;
 
-                    // Reinicia o detetor de pausa ao falar (auto-envio após 2.5s de silêncio opcional)
+                    // Reinicia o detetor de pausa (auto-envio após 3 segundos de silêncio)
                     clearTimeout(silenceTimer);
                     silenceTimer = setTimeout(() => {
                         if (micButton.classList.contains('recording') && userInput.value.trim().length > 0) {
@@ -723,7 +733,7 @@
                             stopRecordingUI();
                             sendMessage();
                         }
-                    }, 2500);
+                    }, 3000);
                 }
             };
 
@@ -745,6 +755,7 @@
 
         cancelRecBtn.addEventListener('click', () => {
             isCancelled = true;
+            finalTranscript = '';
             userInput.value = '';
             clearTimeout(silenceTimer);
             if (recognition) {
@@ -765,7 +776,6 @@
             }
         });
 
-        // Síntese de Voz Nativa Ultra-Natural com Seleção de Melhor Voz e Ondas Animadas
         function toggleSpeech(btn, text) {
             if (!('speechSynthesis' in window)) {
                 alert('O seu navegador não suporta síntese de voz.');
@@ -781,7 +791,6 @@
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'pt-BR';
             
-            // Selecionar automaticamente a voz natural mais fluida em português disponível
             const voices = window.speechSynthesis.getVoices();
             const ptVoice = voices.find(v => v.lang === 'pt-BR' && (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Natural'))) || voices.find(v => v.lang.startsWith('pt'));
             if (ptVoice) {
@@ -813,7 +822,6 @@
             }
         }
 
-        // Pré-carregar as vozes para garantir disponibilidade imediata
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
         }
@@ -844,6 +852,7 @@
             const text = userInput.value.trim();
             if (!text && attachedFiles.length === 0) return;
 
+            finalTranscript = ''; // Limpa para a próxima mensagem
             const userMsg = document.createElement('div');
             userMsg.className = 'message user-message';
             
