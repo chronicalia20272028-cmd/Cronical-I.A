@@ -156,27 +156,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .splash-enter-btn {
-            margin-top: 10px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #ffffff;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 30px;
-            font-size: calc(14px * var(--font-scale));
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .splash-enter-btn:hover {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.65);
-        }
-
         /* Foco visível para navegação por teclado (Tab) */
         button:focus-visible, input:focus-visible {
             outline: 3px solid #60a5fa !important;
@@ -722,8 +701,6 @@
             <div class="splash-texts">
                 <h1 class="splash-title">Chronical I.A</h1>
             </div>
-
-            <button class="splash-enter-btn" id="enterBtn">Entrar na Conversa</button>
         </div>
     </div>
 
@@ -806,7 +783,6 @@
 
     <script>
         const splashScreen = document.getElementById('splashScreen');
-        const enterBtn = document.getElementById('enterBtn');
 
         function dismissSplash() {
             if (!splashScreen.classList.contains('fade-out')) {
@@ -818,12 +794,9 @@
             }
         }
 
-        enterBtn.addEventListener('click', dismissSplash);
-        splashScreen.exit = dismissSplash;
-        splashScreen.addEventListener('click', (e) => {
-            if (e.target === splashScreen) {
-                dismissSplash();
-            }
+        // Entra automaticamente após 1.8 segundos de carregamento visual
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(dismissSplash, 1800);
         });
 
         const chatMessages = document.getElementById('chatMessages');
