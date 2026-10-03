@@ -7,6 +7,37 @@
     <!-- Biblioteca Marked.js para renderizar Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #e2e8f0;
+            --panel-bg: #171b26;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-btn: #2563eb;
+            --font-scale: 1;
+        }
+
+        /* Modo de Alto Contraste para acessibilidade de visão */
+        body.high-contrast {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --panel-bg: #000000;
+            --border-color: #ffffff;
+            --primary-btn: #ffff00;
+        }
+        body.high-contrast .user-message {
+            background-color: #ffff00 !important;
+            color: #000000 !important;
+            font-weight: 700;
+        }
+        body.high-contrast .ai-message {
+            background-color: #000000 !important;
+            border: 2px solid #ffffff !important;
+            color: #ffffff !important;
+        }
+        body.high-contrast input, body.high-contrast button {
+            border-color: #ffffff !important;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -17,33 +48,60 @@
             height: 100vh;
             height: 100dvh;
             width: 100vw;
-            background-color: #000000;
-            color: #e2e8f0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            font-size: clamp(12px, 1.2vw, 16px);
+            font-size: calc(14px * var(--font-scale));
+        }
+
+        /* Foco visível para navegação por teclado (Tab) */
+        button:focus-visible, input:focus-visible {
+            outline: 3px solid #60a5fa !important;
+            outline-offset: 2px;
         }
 
         .header {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             width: 100%;
-            padding: clamp(8px, 2vh, 18px);
-            font-size: clamp(14px, 2vw, 20px);
-            font-weight: 500;
+            padding: clamp(8px, 2vh, 18px) 20px;
+            font-size: calc(16px * var(--font-scale));
+            font-weight: 600;
             letter-spacing: 1px;
-            background: #000000;
+            background: var(--bg-color);
             z-index: 10;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .accessibility-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .accessibility-btn {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: calc(12px * var(--font-scale));
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .accessibility-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .chat-container {
             flex: 1;
             width: 100%;
-            max-width: min(92vw, 800px); /* Largura controlada e centralizada em ecrãs grandes */
+            max-width: min(92vw, 800px);
             margin: 0 auto;
             padding: clamp(10px, 2vw, 24px);
             display: flex;
@@ -60,8 +118,8 @@
 
         .message {
             max-width: 88%;
-            padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) clamp(28px, 4vh, 36px) clamp(12px, 1.8vw, 20px);
-            font-size: clamp(11px, 1.4vw, 15px);
+            padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) clamp(32px, 4vh, 40px) clamp(12px, 1.8vw, 20px);
+            font-size: calc(14px * var(--font-scale));
             line-height: 1.5;
             word-wrap: break-word;
             border-radius: clamp(12px, 2vw, 18px);
@@ -70,16 +128,16 @@
         }
 
         .ai-message {
-            background-color: #171b26;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #f1f5f9;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
             align-self: flex-start;
             border-bottom-left-radius: 4px;
         }
 
         .ai-message p { margin-bottom: 8px; }
         .ai-message p:last-child { margin-bottom: 0; }
-        .ai-message strong { color: #ffffff; font-weight: 600; }
+        .ai-message strong { font-weight: 700; }
         .ai-message ul, .ai-message ol { margin-left: 18px; margin-bottom: 8px; }
         .ai-message code { background: #0d1117; color: #58a6ff; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.9em; border: 1px solid #30363d; }
         
@@ -100,7 +158,7 @@
             border: 1px solid #30363d;
             color: #c9d1d9;
             padding: 3px 6px;
-            font-size: clamp(9px, 1vw, 11px);
+            font-size: calc(11px * var(--font-scale));
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
@@ -113,7 +171,7 @@
 
         .action-btn {
             position: absolute;
-            bottom: 6px;
+            bottom: 8px;
             left: 12px;
             background: transparent;
             border: none;
@@ -122,15 +180,15 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: clamp(10px, 1.1vw, 12px);
-            font-weight: 500;
+            font-size: calc(12px * var(--font-scale));
+            font-weight: 600;
             transition: color 0.2s;
             padding: 3px 6px;
             border-radius: 4px;
         }
 
         .action-btn:hover {
-            color: #ffffff;
+            color: var(--text-color);
             background: rgba(255, 255, 255, 0.05);
         }
 
@@ -157,20 +215,20 @@
         .speak-bar:nth-child(3) { animation-delay: 0.4s; }
 
         .user-message {
-            background-color: #2563eb;
+            background-color: var(--primary-btn);
             color: white;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-            padding-bottom: 12px;
+            padding-bottom: 14px;
         }
 
         .typing-indicator {
             display: flex;
             gap: 5px;
             padding: 12px 16px;
-            background-color: #171b26;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
             align-self: flex-start;
             border-radius: 16px;
             border-bottom-left-radius: 4px;
@@ -200,7 +258,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(transparent, #000000 50%);
+            background: linear-gradient(transparent, var(--bg-color) 50%);
             position: relative;
         }
 
@@ -220,8 +278,8 @@
         }
 
         .preview-card {
-            background: #111827;
-            border: 1px solid #374151;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
             padding: 5px 8px;
             border-radius: 10px;
             display: flex;
@@ -247,8 +305,8 @@
         }
 
         .preview-info {
-            font-size: 11px;
-            color: #e2e8f0;
+            font-size: calc(11px * var(--font-scale));
+            color: var(--text-color);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -276,8 +334,8 @@
             bottom: calc(100% + 10px);
             left: 50%;
             transform: translateX(-50%) translateY(8px);
-            background: #171b26;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
             border-radius: 14px;
             width: min(200px, 85vw);
             padding: 6px;
@@ -302,11 +360,11 @@
             align-items: center;
             gap: 10px;
             padding: 8px 12px;
-            color: #e2e8f0;
+            color: var(--text-color);
             background: transparent;
             border: none;
             border-radius: 8px;
-            font-size: clamp(11px, 1.2vw, 14px);
+            font-size: calc(13px * var(--font-scale));
             cursor: pointer;
             text-align: left;
             width: 100%;
@@ -314,7 +372,7 @@
         }
 
         .menu-item:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .menu-item svg {
@@ -327,12 +385,12 @@
         .input-area {
             display: flex;
             width: 100%;
-            max-width: min(92vw, 800px); /* Limita o tamanho da barra de digitação para não ocupar a tela toda */
+            max-width: min(92vw, 800px);
             gap: 8px;
-            background: #171b26;
+            background: var(--panel-bg);
             padding: 8px 12px;
             border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
             align-items: center;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
             transition: border-color 0.2s;
@@ -363,13 +421,13 @@
         }
 
         .plus-btn:hover, .mic-btn:hover {
-            background: rgba(255, 255, 255, 0.06);
-            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-color);
         }
 
         .mic-btn.recording {
             color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.15);
         }
 
         .recording-box {
@@ -393,7 +451,7 @@
         }
 
         .rec-timer {
-            font-size: clamp(11px, 1.2vw, 13px);
+            font-size: calc(12px * var(--font-scale));
             color: #ef4444;
             font-weight: 600;
             font-variant-numeric: tabular-nums;
@@ -448,8 +506,8 @@
             flex: 1;
             background: transparent;
             border: none;
-            color: white;
-            font-size: clamp(12px, 1.3vw, 15px);
+            color: var(--text-color);
+            font-size: calc(14px * var(--font-scale));
             outline: none;
             padding-left: 4px;
             width: 100%;
@@ -500,6 +558,19 @@
             pointer-events: none;
         }
 
+        /* Região invisível para Screen Readers (leitores de ecrã) */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
         @media (max-width: 300px), (max-height: 300px) {
             .header { padding: 4px; font-size: 11px; }
             .chat-container { padding: 6px; gap: 6px; }
@@ -517,26 +588,36 @@
     </style>
 </head>
 <body>
-    <div class="header">Chronical I.A.</div>
-    <div class="chat-container" id="chatMessages">
+    <!-- Anunciador dinâmico para Leitores de Ecrã -->
+    <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <header class="header">
+        <span>Chronical I.A.</span>
+        <div class="accessibility-controls" aria-label="Ferramentas de acessibilidade">
+            <button class="accessibility-btn" id="fontIncBtn" title="Aumentar tamanho do texto" aria-label="Aumentar tamanho do texto">A+</button>
+            <button class="accessibility-btn" id="contrastBtn" title="Ativar alto contraste" aria-label="Ativar alto contraste">Contraste</button>
+        </div>
+    </header>
+
+    <main class="chat-container" id="chatMessages" role="log" aria-label="Histórico de conversação">
         <div class="message ai-message">
             Olá! Como posso ajudar você hoje?
-            <button class="action-btn" onclick="toggleSpeech(this, 'Olá! Como posso ajudar você hoje?')">
+            <button class="action-btn" onclick="toggleSpeech(this, 'Olá! Como posso ajudar você hoje?')" aria-label="Ouvir mensagem por voz">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                 Ouvir
             </button>
         </div>
-    </div>
+    </main>
 
     <div class="input-wrapper">
-        <div class="preview-container" id="previewContainer"></div>
+        <div class="preview-container" id="previewContainer" aria-label="Ficheiros anexados"></div>
 
-        <div class="attachment-menu" id="attachmentMenu">
-            <button class="menu-item" id="btnPhoto">
+        <div class="attachment-menu" id="attachmentMenu" role="menu">
+            <button class="menu-item" id="btnPhoto" role="menuitem">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 Enviar Foto
             </button>
-            <button class="menu-item" id="btnFile">
+            <button class="menu-item" id="btnFile" role="menuitem">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Enviar Ficheiro
             </button>
@@ -546,15 +627,15 @@
         <input type="file" id="fileInput" multiple style="display: none;">
 
         <div class="input-area">
-            <button class="plus-btn" id="plusButton" aria-label="Adicionar anexo">
+            <button class="plus-btn" id="plusButton" aria-label="Abrir menu de anexos" aria-haspopup="true">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </button>
 
-            <input type="text" id="userInput" placeholder="Mensagem para a Chronical..." autocomplete="off" autofocus>
+            <input type="text" id="userInput" placeholder="Mensagem para a Chronical..." aria-label="Caixa de texto para mensagem" autocomplete="off" autofocus>
             
-            <div class="recording-box" id="recordingBox">
+            <div class="recording-box" id="recordingBox" aria-label="A gravar áudio">
                 <div class="recording-left">
                     <div class="sound-wave">
                         <div class="wave-bar"></div>
@@ -565,12 +646,12 @@
                     </div>
                     <span class="rec-timer" id="recTimer">0:00</span>
                 </div>
-                <button class="cancel-rec-btn" id="cancelRecBtn" title="Cancelar gravação">
+                <button class="cancel-rec-btn" id="cancelRecBtn" title="Cancelar gravação" aria-label="Cancelar gravação de voz">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
 
-            <button class="mic-btn" id="micButton" aria-label="Falar por voz">
+            <button class="mic-btn" id="micButton" aria-label="Gravar mensagem por voz">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
                     <path d="M19 10v1a7 7 0 0 1-14 0v-1"></path>
@@ -579,7 +660,7 @@
                 </svg>
             </button>
 
-            <button class="send-btn" id="sendButton" aria-label="Enviar">
+            <button class="send-btn" id="sendButton" aria-label="Enviar mensagem">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -599,10 +680,28 @@
         const recordingBox = document.getElementById('recordingBox');
         const recTimer = document.getElementById('recTimer');
         const cancelRecBtn = document.getElementById('cancelRecBtn');
+        const srAnnouncer = document.getElementById('srAnnouncer');
         
         const imageInput = document.getElementById('imageInput');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
+
+        const fontIncBtn = document.getElementById('fontIncBtn');
+        const contrastBtn = document.getElementById('contrastBtn');
+
+        let currentScale = 1;
+        fontIncBtn.addEventListener('click', () => {
+            currentScale += 0.15;
+            if (currentScale > 1.45) currentScale = 1;
+            document.documentElement.style.setProperty('--font-scale', currentScale);
+            srAnnouncer.textContent = `Tamanho da letra ajustado para ${Math.round(currentScale * 100)} porcento.`;
+        });
+
+        contrastBtn.addEventListener('click', () => {
+            document.body.classList.toggle('high-contrast');
+            const isActive = document.body.classList.contains('high-contrast');
+            srAnnouncer.textContent = isActive ? "Modo de alto contraste ativado." : "Modo de alto contraste desativado.";
+        });
 
         let attachedFiles = [];
         let recognition = null;
@@ -717,6 +816,7 @@
                 micButton.classList.add('recording');
                 userInput.style.display = 'none';
                 recordingBox.classList.add('active');
+                srAnnouncer.textContent = "A gravar voz. Fale agora.";
                 
                 secondsElapsed = 0;
                 recTimer.textContent = "0:00";
@@ -898,6 +998,7 @@
             previewContainer.classList.remove('active');
 
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            srAnnouncer.textContent = "A enviar mensagem para a inteligência artificial.";
 
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'typing-indicator';
@@ -930,6 +1031,8 @@
                 aiMsg.appendChild(ttsBtn);
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                srAnnouncer.textContent = "Nova resposta recebida da assistente.";
             } catch (error) {
                 if (chatMessages.contains(typingIndicator)) {
                     chatMessages.removeChild(typingIndicator);
