@@ -57,14 +57,14 @@
             font-size: calc(14px * var(--font-scale));
         }
 
-        /* --- NOVA TELA DE ABERTURA (SPLASH SCREEN MELHORADA) --- */
+        /* --- NOVA TELA DE ABERTURA (REBRANDED & PREMIUM) --- */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle at center, #0f172a 0%, #000000 70%);
+            background: #030712;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -73,6 +73,7 @@
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
             padding: 20px;
             text-align: center;
+            overflow: hidden;
         }
 
         .splash-screen.fade-out {
@@ -81,74 +82,124 @@
             pointer-events: none;
         }
 
+        /* Fundo Dinâmico com Orbes de IA */
+        .splash-bg-orbs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: floatOrb 10s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(37, 99, 235, 0.4);
+            top: -10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: rgba(147, 51, 234, 0.3);
+            bottom: -15%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 50px) scale(1.15); }
+        }
+
+        /* Cartão Central com Glassmorphism */
         .splash-content {
+            position: relative;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            max-width: 380px;
+            gap: 22px;
+            max-width: 400px;
             width: 100%;
+            background: rgba(15, 23, 42,  0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 36px 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.15);
             animation: splashEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes splashEntrance {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            from { opacity: 0; transform: scale(0.92) translateY(24px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Efeito de brilho de fundo no logótipo */
+        /* Logótipo Holográfico */
         .splash-logo-container {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
         }
 
         .splash-glow {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background: rgba(37, 99, 235, 0.35);
-            filter: blur(24px);
+            width: 90px;
+            height: 90px;
+            background: rgba(59, 130, 246, 0.5);
+            filter: blur(20px);
             border-radius: 50%;
             animation: pulseGlow 3s infinite ease-in-out;
         }
 
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(0.9); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 0.9; }
+            0%, 100% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.4); opacity: 1; }
         }
 
         .splash-logo-icon {
             position: relative;
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-radius: 24px;
+            width: 76px;
+            height: 76px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border-radius: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 16px 40px rgba(37, 99, 235, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 10px 25px rgba(37, 99, 235, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .splash-logo-icon svg {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             stroke: #ffffff;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
         .splash-texts {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .splash-title {
-            font-size: clamp(26px, 6vw, 38px);
+            font-size: clamp(24px, 5vw, 32px);
             font-weight: 800;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: #ffffff;
             background: linear-gradient(to right, #ffffff, #93c5fd);
             -webkit-background-clip: text;
@@ -156,27 +207,28 @@
         }
 
         .splash-subtitle {
-            font-size: clamp(13px, 2.5vw, 15px);
+            font-size: clamp(12px, 2.5vw, 14px);
             color: #94a3b8;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
-        /* Barra de carregamento e Status */
+        /* Barra de carregamento e Status Estilizada */
         .splash-loader-wrapper {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 4px;
         }
 
         .splash-progress-bar {
             width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
             overflow: hidden;
             position: relative;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
 
         .splash-progress-fill {
@@ -185,34 +237,37 @@
             left: 0;
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #2563eb, #60a5fa);
-            border-radius: 4px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
+            border-radius: 6px;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
             transition: width 0.1s linear;
         }
 
         .splash-status {
             font-size: calc(11px * var(--font-scale));
-            color: #64748b;
+            color: #60a5fa;
             font-family: ui-monospace, monospace;
             letter-spacing: 0.5px;
             min-height: 16px;
+            font-weight: 500;
         }
 
         .splash-enter-btn {
-            margin-top: 8px;
-            background: #2563eb;
+            margin-top: 4px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #ffffff;
             border: none;
-            padding: 12px 32px;
+            padding: 12px 28px;
             border-radius: 30px;
-            font-size: calc(14px * var(--font-scale));
+            font-size: calc(13px * var(--font-scale));
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 0;
             transform: translateY(10px);
             pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .splash-enter-btn.visible {
@@ -222,8 +277,9 @@
         }
 
         .splash-enter-btn:hover {
-            background: #1d4ed8;
-            transform: scale(1.04);
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.6);
         }
 
         /* Foco visível para navegação por teclado (Tab) */
@@ -760,8 +816,13 @@
     <!-- Anunciador dinâmico para Leitores de Ecrã -->
     <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Tela de Abertura (Splash Screen) -->
+    <!-- Tela de Abertura (Splash Screen Redesenhada) -->
     <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical I.A.">
+        <div class="splash-bg-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+        </div>
+
         <div class="splash-content">
             <div class="splash-logo-container">
                 <div class="splash-glow"></div>
@@ -898,12 +959,11 @@
         ];
 
         const loadingInterval = setInterval(() => {
-            progress += Math.floor(Math.random() * 12) + 8; // incrementos aleatórios
+            progress += Math.floor(Math.random() * 12) + 8;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(loadingInterval);
                 splashStatus.textContent = statuses[3];
-                // Aguarda um instante e fecha automaticamente ou mostra o botão interativo
                 setTimeout(() => {
                     dismissSplash();
                 }, 600);
@@ -920,7 +980,6 @@
             }
         }, 150);
 
-        // Caso o carregamento demore ou o utilizador queira interagir de imediato, mostra o botão após 1.2s
         setTimeout(() => {
             if (!splashScreen.classList.contains('fade-out')) {
                 enterBtn.classList.add('visible');
