@@ -6,7 +6,8 @@ from google import genai
 app = Flask(__name__)
 CORS(app)
 
-# Inicializa o cliente da Google GenAI (lê a chave GEMINI_API_KEY do ambiente)
+# Inicializa o cliente da Google GenAI
+# Garante que a chave GEMINI_API_KEY está configurada nas Environment Variables do Render
 client = genai.Client()
 
 @app.route('/')
