@@ -1,18 +1,18 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from google import genai
 
-app = Flask(__name__)
+# Configura o Flask para procurar o index.html na mesma pasta
+app = Flask(__name__, template_folder='.', static_folder='.')
 CORS(app)
 
-# Inicializa o cliente da Google GenAI
-# Garante que a chave GEMINI_API_KEY está configurada nas Environment Variables do Render
+# Inicializa o cliente da Google GenAI (lê a chave GEMINI_API_KEY do ambiente)
 client = genai.Client()
 
 @app.route('/')
 def index():
-    return "Chronical I.A Backend a funcionar!"
+    return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
