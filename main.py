@@ -23,9 +23,9 @@ def chat():
         if not user_message:
             return jsonify({'response': 'Por favor, envia uma mensagem válida.'}), 400
 
-        # Envia a mensagem para o modelo Gemini gerar a resposta real
+        # Envia a mensagem para o modelo Gemini correto e atualizado
         response = client.models.generate_content(
-            model='gemini-3.1-flash',
+            model='gemini-3.8-flash',
             contents=user_message,
         )
         
