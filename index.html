@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chronical I.A.</title>
+    <title>Chronical.Ia</title>
     <!-- Biblioteca Marked.js para renderizar Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -57,20 +57,20 @@
             font-size: calc(14px * var(--font-scale));
         }
 
-        /* --- NOVA TELA DE ABERTURA (REBRANDED & PREMIUM) --- */
+        /* --- TELA DE ABERTURA ULTRA-FUTURISTA (CHRONICAL.IA) --- */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: #030712;
+            background: #02040a;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.9s;
             padding: 20px;
             text-align: center;
             overflow: hidden;
@@ -82,7 +82,7 @@
             pointer-events: none;
         }
 
-        /* Fundo Dinâmico com Orbes de IA */
+        /* Fundo Dinâmico com Orbes Imersivos */
         .splash-bg-orbs {
             position: absolute;
             width: 100%;
@@ -95,97 +95,112 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: floatOrb 10s infinite alternate ease-in-out;
+            filter: blur(90px);
+            opacity: 0.45;
+            animation: floatOrb 12s infinite alternate ease-in-out;
         }
 
         .orb-1 {
-            width: 300px;
-            height: 300px;
-            background: rgba(37, 99, 235, 0.4);
-            top: -10%;
-            left: -10%;
+            width: 380px;
+            height: 380px;
+            background: rgba(37, 99, 235, 0.35);
+            top: -15%;
+            left: -15%;
         }
 
         .orb-2 {
-            width: 350px;
-            height: 350px;
-            background: rgba(147, 51, 234, 0.3);
-            bottom: -15%;
-            right: -10%;
-            animation-delay: -5s;
+            width: 420px;
+            height: 420px;
+            background: rgba(124, 58, 237, 0.3);
+            bottom: -20%;
+            right: -15%;
+            animation-delay: -6s;
         }
 
         @keyframes floatOrb {
             0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 50px) scale(1.15); }
+            100% { transform: translate(50px, 60px) scale(1.2); }
         }
 
-        /* Cartão Central com Glassmorphism */
+        /* Cartão Central Glassmorphism Avançado */
         .splash-content {
             position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 22px;
-            max-width: 400px;
+            gap: 24px;
+            max-width: 380px;
             width: 100%;
-            background: rgba(15, 23, 42,  0.65);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 28px;
-            padding: 36px 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 40px rgba(37, 99, 235, 0.15);
-            animation: splashEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            background: rgba(13, 18, 30, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 32px;
+            padding: 40px 24px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 50px rgba(37, 99, 235, 0.2);
+            animation: splashEntrance 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes splashEntrance {
-            from { opacity: 0; transform: scale(0.92) translateY(24px); }
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Logótipo Holográfico */
+        /* Logótipo Holográfico com Anel Orbital */
         .splash-logo-container {
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 88px;
+            height: 88px;
         }
 
         .splash-glow {
             position: absolute;
-            width: 90px;
-            height: 90px;
+            width: 100px;
+            height: 100px;
             background: rgba(59, 130, 246, 0.5);
-            filter: blur(20px);
+            filter: blur(25px);
             border-radius: 50%;
-            animation: pulseGlow 3s infinite ease-in-out;
+            animation: pulseGlow 3.5s infinite ease-in-out;
+        }
+
+        .splash-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px dashed rgba(96, 165, 250, 0.4);
+            border-radius: 50%;
+            animation: spinRing 10s linear infinite;
+        }
+
+        @keyframes spinRing {
+            100% { transform: rotate(360deg); }
         }
 
         @keyframes pulseGlow {
-            0%, 100% { transform: scale(0.9); opacity: 0.6; }
-            50% { transform: scale(1.4); opacity: 1; }
+            0%, 100% { transform: scale(0.85); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 0.9; }
         }
 
         .splash-logo-icon {
             position: relative;
-            width: 76px;
-            height: 76px;
+            width: 68px;
+            height: 68px;
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            border-radius: 22px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 10px 25px rgba(37, 99, 235, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.35), 0 10px 25px rgba(37, 99, 235, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
         .splash-logo-icon svg {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             stroke: #ffffff;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
@@ -197,9 +212,9 @@
         }
 
         .splash-title {
-            font-size: clamp(24px, 5vw, 32px);
+            font-size: clamp(26px, 6vw, 32px);
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: #ffffff;
             background: linear-gradient(to right, #ffffff, #93c5fd);
             -webkit-background-clip: text;
@@ -207,28 +222,29 @@
         }
 
         .splash-subtitle {
-            font-size: clamp(12px, 2.5vw, 14px);
+            font-size: clamp(12px, 2.5vw, 13px);
             color: #94a3b8;
-            line-height: 1.4;
+            letter-spacing: 0.3px;
         }
 
-        /* Barra de carregamento e Status Estilizada */
+        /* Indicador de Carregamento Circular / Progresso */
         .splash-loader-wrapper {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             margin-top: 4px;
         }
 
-        .splash-progress-bar {
+        .splash-progress-track {
             width: 100%;
-            height: 6px;
+            height: 5px;
             background: rgba(255, 255, 255, 0.06);
-            border-radius: 6px;
+            border-radius: 10px;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
         }
 
         .splash-progress-fill {
@@ -238,18 +254,24 @@
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
-            border-radius: 6px;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
-            transition: width 0.1s linear;
+            border-radius: 10px;
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.9);
+            transition: width 0.12s linear;
         }
 
-        .splash-status {
+        .splash-status-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
             font-size: calc(11px * var(--font-scale));
-            color: #60a5fa;
             font-family: ui-monospace, monospace;
+            color: #60a5fa;
             letter-spacing: 0.5px;
-            min-height: 16px;
-            font-weight: 500;
+        }
+
+        .splash-percent {
+            font-weight: 700;
+            color: #93c5fd;
         }
 
         .splash-enter-btn {
@@ -257,12 +279,12 @@
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #ffffff;
             border: none;
-            padding: 12px 28px;
+            padding: 12px 30px;
             border-radius: 30px;
             font-size: calc(13px * var(--font-scale));
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 0;
             transform: translateY(10px);
@@ -279,7 +301,7 @@
         .splash-enter-btn:hover {
             background: linear-gradient(135deg, #1d4ed8, #1e40af);
             transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.6);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.65);
         }
 
         /* Foco visível para navegação por teclado (Tab) */
@@ -816,8 +838,8 @@
     <!-- Anunciador dinâmico para Leitores de Ecrã -->
     <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Tela de Abertura (Splash Screen Redesenhada) -->
-    <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical I.A.">
+    <!-- Tela de Abertura (Chronical.Ia Redesenhada) -->
+    <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical.Ia">
         <div class="splash-bg-orbs">
             <div class="orb orb-1"></div>
             <div class="orb orb-2"></div>
@@ -826,6 +848,7 @@
         <div class="splash-content">
             <div class="splash-logo-container">
                 <div class="splash-glow"></div>
+                <div class="splash-ring"></div>
                 <div class="splash-logo-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -834,15 +857,18 @@
             </div>
             
             <div class="splash-texts">
-                <h1 class="splash-title">Chronical I.A.</h1>
-                <p class="splash-subtitle">A sua assistente virtual inteligente e moderna.</p>
+                <h1 class="splash-title">Chronical.Ia</h1>
+                <p class="splash-subtitle">Inteligência Artificial de Próxima Geração</p>
             </div>
 
             <div class="splash-loader-wrapper">
-                <div class="splash-progress-bar">
+                <div class="splash-status-row">
+                    <span id="splashStatus">A iniciar sistemas neurais...</span>
+                    <span class="splash-percent" id="splashPercent">0%</span>
+                </div>
+                <div class="splash-progress-track">
                     <div class="splash-progress-fill" id="progressFill"></div>
                 </div>
-                <div class="splash-status" id="splashStatus">A iniciar sistemas neurais...</div>
             </div>
 
             <button class="splash-enter-btn" id="enterBtn">Entrar na Conversa</button>
@@ -850,7 +876,7 @@
     </div>
 
     <header class="header">
-        <span>Chronical I.A.</span>
+        <span>Chronical.Ia</span>
         <div class="accessibility-controls" aria-label="Ferramentas de acessibilidade">
             <button class="accessibility-btn" id="fontIncBtn" title="Aumentar tamanho do texto" aria-label="Aumentar tamanho do texto">A+</button>
             <button class="accessibility-btn" id="contrastBtn" title="Ativar alto contraste" aria-label="Ativar alto contraste">Contraste</button>
@@ -891,7 +917,7 @@
                 </svg>
             </button>
 
-            <input type="text" id="userInput" placeholder="Mensagem para a Chronical..." aria-label="Caixa de texto para mensagem" autocomplete="off">
+            <input type="text" id="userInput" placeholder="Mensagem para a Chronical.Ia..." aria-label="Caixa de texto para mensagem" autocomplete="off">
             
             <div class="recording-box" id="recordingBox" aria-label="A gravar áudio">
                 <div class="recording-left">
@@ -931,11 +957,12 @@
         const enterBtn = document.getElementById('enterBtn');
         const progressFill = document.getElementById('progressFill');
         const splashStatus = document.getElementById('splashStatus');
+        const splashPercent = document.getElementById('splashPercent');
 
         function dismissSplash() {
             if (!splashScreen.classList.contains('fade-out')) {
                 splashScreen.classList.add('fade-out');
-                srAnnouncer.textContent = "Bem-vindo à Chronical I.A. Chat iniciado.";
+                srAnnouncer.textContent = "Bem-vindo à Chronical.Ia. Chat iniciado.";
                 setTimeout(() => {
                     userInput.focus();
                 }, 400);
@@ -953,38 +980,40 @@
         let progress = 0;
         const statuses = [
             "A iniciar sistemas neurais...",
-            "A carregar módulos de linguagem...",
-            "A preparar a interface...",
+            "A calibrar matriz sináptica...",
+            "A carregar interface quântica...",
             "Pronto para começar!"
         ];
 
         const loadingInterval = setInterval(() => {
-            progress += Math.floor(Math.random() * 12) + 8;
+            progress += Math.floor(Math.random() * 10) + 7;
             if (progress >= 100) {
                 progress = 100;
                 clearInterval(loadingInterval);
                 splashStatus.textContent = statuses[3];
+                splashPercent.textContent = "100%";
                 setTimeout(() => {
                     dismissSplash();
-                }, 600);
+                }, 500);
             }
 
             progressFill.style.width = progress + '%';
+            splashPercent.textContent = progress + '%';
 
-            if (progress < 40) {
+            if (progress < 35) {
                 splashStatus.textContent = statuses[0];
-            } else if (progress < 75) {
+            } else if (progress < 70) {
                 splashStatus.textContent = statuses[1];
             } else {
                 splashStatus.textContent = statuses[2];
             }
-        }, 150);
+        }, 130);
 
         setTimeout(() => {
             if (!splashScreen.classList.contains('fade-out')) {
                 enterBtn.classList.add('visible');
             }
-        }, 1200);
+        }, 1100);
 
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
