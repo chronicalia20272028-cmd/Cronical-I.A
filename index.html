@@ -774,16 +774,17 @@
             }
         });
 
-        // Seleção inteligente de voz feminina elegante e natural em Português do Brasil
+        // Seleção inteligente de voz neural avançada (focada em suavidade e tom humano)
         function loadBestVoice() {
             if (!('speechSynthesis' in window)) return;
             const voices = window.speechSynthesis.getVoices();
             const ptBrVoices = voices.filter(v => v.lang.replace('_', '-').toLowerCase().includes('pt-br') || v.lang.toLowerCase().includes('pt'));
             
+            // Prioriza palavras-chave de vozes neurais / naturais e de alta qualidade do mercado
             bestFemaleVoice = ptBrVoices.find(v => 
-                (v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('lucia') || v.name.toLowerCase().includes('vitoria') || v.name.toLowerCase().includes('camila')) &&
-                (v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher') || !v.name.toLowerCase().includes('antonio') || !v.name.toLowerCase().includes('daniel') || !v.name.toLowerCase().includes('ricardo'))
-            ) || ptBrVoices[0];
+                (v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('neural') || v.name.toLowerCase().includes('online') || v.name.toLowerCase().includes('francisca') || v.name.toLowerCase().includes('thalita') || v.name.toLowerCase().includes('yara') || v.name.toLowerCase().includes('lucia')) &&
+                !v.name.toLowerCase().includes('antonio') && !v.name.toLowerCase().includes('daniel') && !v.name.toLowerCase().includes('ricardo')
+            ) || ptBrVoices.find(v => v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('mulher')) || ptBrVoices[0];
         }
 
         if ('speechSynthesis' in window) {
@@ -811,9 +812,9 @@
             }
             utterance.lang = 'pt-BR';
             
-            // Ajustes para fluidez e tom refinado (sem parecer robótico)
-            utterance.rate = 1.02;
-            utterance.pitch = 1.05;
+            // Ajustes refinados para eliminar o tom metálico e robótico
+            utterance.rate = 0.98;  // Ritmo levemente mais calmo e cadenciado
+            utterance.pitch = 0.98; // Tom um pouco mais grave para soar natural e elegante
 
             currentSpeakingBtn = btn;
             btn.classList.add('speaking');
