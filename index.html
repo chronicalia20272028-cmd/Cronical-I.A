@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chronical.Ia</title>
+    <title>Chronical I.A</title>
     <!-- Biblioteca Marked.js para renderizar Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
@@ -57,7 +57,7 @@
             font-size: calc(14px * var(--font-scale));
         }
 
-        /* --- TELA DE ABERTURA ULTRA-FUTURISTA (CHRONICAL.IA) --- */
+        /* --- TELA DE ABERTURA ULTRA-FUTURISTA (CHRONICAL I.A) --- */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -219,12 +219,6 @@
             background: linear-gradient(to right, #ffffff, #93c5fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-        }
-
-        .splash-subtitle {
-            font-size: clamp(12px, 2.5vw, 13px);
-            color: #94a3b8;
-            letter-spacing: 0.3px;
         }
 
         /* Indicador de Carregamento Circular / Progresso */
@@ -838,8 +832,8 @@
     <!-- Anunciador dinâmico para Leitores de Ecrã -->
     <div id="srAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Tela de Abertura (Chronical.Ia Redesenhada) -->
-    <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical.Ia">
+    <!-- Tela de Abertura (Chronical I.A) -->
+    <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical I.A">
         <div class="splash-bg-orbs">
             <div class="orb orb-1"></div>
             <div class="orb orb-2"></div>
@@ -857,8 +851,7 @@
             </div>
             
             <div class="splash-texts">
-                <h1 class="splash-title">Chronical.Ia</h1>
-                <p class="splash-subtitle">Inteligência Artificial de Próxima Geração</p>
+                <h1 class="splash-title">Chronical I.A</h1>
             </div>
 
             <div class="splash-loader-wrapper">
@@ -876,7 +869,7 @@
     </div>
 
     <header class="header">
-        <span>Chronical.Ia</span>
+        <span>Chronical I.A</span>
         <div class="accessibility-controls" aria-label="Ferramentas de acessibilidade">
             <button class="accessibility-btn" id="fontIncBtn" title="Aumentar tamanho do texto" aria-label="Aumentar tamanho do texto">A+</button>
             <button class="accessibility-btn" id="contrastBtn" title="Ativar alto contraste" aria-label="Ativar alto contraste">Contraste</button>
@@ -917,7 +910,7 @@
                 </svg>
             </button>
 
-            <input type="text" id="userInput" placeholder="Mensagem para a Chronical.Ia..." aria-label="Caixa de texto para mensagem" autocomplete="off">
+            <input type="text" id="userInput" placeholder="Mensagem para a Chronical I.A..." aria-label="Caixa de texto para mensagem" autocomplete="off">
             
             <div class="recording-box" id="recordingBox" aria-label="A gravar áudio">
                 <div class="recording-left">
@@ -962,7 +955,7 @@
         function dismissSplash() {
             if (!splashScreen.classList.contains('fade-out')) {
                 splashScreen.classList.add('fade-out');
-                srAnnouncer.textContent = "Bem-vindo à Chronical.Ia. Chat iniciado.";
+                srAnnouncer.textContent = "Bem-vindo à Chronical I.A. Chat iniciado.";
                 setTimeout(() => {
                     userInput.focus();
                 }, 400);
