@@ -57,20 +57,20 @@
             font-size: calc(14px * var(--font-scale));
         }
 
-        /* --- TELA DE ABERTURA (SPLASH SCREEN) --- */
+        /* --- NOVA TELA DE ABERTURA (SPLASH SCREEN MELHORADA) --- */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #0f172a 0%, #000000 70%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
             padding: 20px;
             text-align: center;
         }
@@ -85,49 +85,121 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
-            animation: splashEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            gap: 20px;
+            max-width: 380px;
+            width: 100%;
+            animation: splashEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes splashEntrance {
-            from { opacity: 0; transform: scale(0.92) translateY(10px); }
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .splash-logo-icon {
-            width: 72px;
-            height: 72px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-radius: 20px;
+        /* Efeito de brilho de fundo no logótipo */
+        .splash-logo-container {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.3);
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        .splash-glow {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(37, 99, 235, 0.35);
+            filter: blur(24px);
+            border-radius: 50%;
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(0.9); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 0.9; }
+        }
+
+        .splash-logo-icon {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 40px rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .splash-logo-icon svg {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             stroke: #ffffff;
         }
 
+        .splash-texts {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
         .splash-title {
-            font-size: clamp(24px, 5vw, 36px);
-            font-weight: 700;
+            font-size: clamp(26px, 6vw, 38px);
+            font-weight: 800;
             letter-spacing: 1.5px;
             color: #ffffff;
+            background: linear-gradient(to right, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .splash-subtitle {
-            font-size: clamp(13px, 2.5vw, 16px);
+            font-size: clamp(13px, 2.5vw, 15px);
             color: #94a3b8;
-            max-width: 320px;
             line-height: 1.5;
         }
 
+        /* Barra de carregamento e Status */
+        .splash-loader-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .splash-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .splash-progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        .splash-status {
+            font-size: calc(11px * var(--font-scale));
+            color: #64748b;
+            font-family: ui-monospace, monospace;
+            letter-spacing: 0.5px;
+            min-height: 16px;
+        }
+
         .splash-enter-btn {
-            margin-top: 16px;
+            margin-top: 8px;
             background: #2563eb;
             color: #ffffff;
             border: none;
@@ -138,6 +210,15 @@
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
             transition: all 0.2s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+        }
+
+        .splash-enter-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
         }
 
         .splash-enter-btn:hover {
@@ -682,14 +763,28 @@
     <!-- Tela de Abertura (Splash Screen) -->
     <div class="splash-screen" id="splashScreen" role="dialog" aria-label="Ecrã de boas-vindas da Chronical I.A.">
         <div class="splash-content">
-            <div class="splash-logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
+            <div class="splash-logo-container">
+                <div class="splash-glow"></div>
+                <div class="splash-logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </div>
             </div>
-            <h1 class="splash-title">Chronical I.A.</h1>
-            <p class="splash-subtitle">A sua assistente virtual inteligente e moderna.</p>
-            <button class="splash-enter-btn" id="enterBtn" autofocus>Entrar na Conversa</button>
+            
+            <div class="splash-texts">
+                <h1 class="splash-title">Chronical I.A.</h1>
+                <p class="splash-subtitle">A sua assistente virtual inteligente e moderna.</p>
+            </div>
+
+            <div class="splash-loader-wrapper">
+                <div class="splash-progress-bar">
+                    <div class="splash-progress-fill" id="progressFill"></div>
+                </div>
+                <div class="splash-status" id="splashStatus">A iniciar sistemas neurais...</div>
+            </div>
+
+            <button class="splash-enter-btn" id="enterBtn">Entrar na Conversa</button>
         </div>
     </div>
 
@@ -773,6 +868,8 @@
     <script>
         const splashScreen = document.getElementById('splashScreen');
         const enterBtn = document.getElementById('enterBtn');
+        const progressFill = document.getElementById('progressFill');
+        const splashStatus = document.getElementById('splashStatus');
 
         function dismissSplash() {
             if (!splashScreen.classList.contains('fade-out')) {
@@ -786,16 +883,49 @@
 
         enterBtn.addEventListener('click', dismissSplash);
         splashScreen.addEventListener('click', (e) => {
-            // Se clicar na área geral do splash screen também entra
             if (e.target === splashScreen) {
                 dismissSplash();
             }
         });
 
-        // Opcional: fechar automaticamente após 2.2 segundos se o utilizador não interagir
+        // Simulação de carregamento inteligente na Splash Screen
+        let progress = 0;
+        const statuses = [
+            "A iniciar sistemas neurais...",
+            "A carregar módulos de linguagem...",
+            "A preparar a interface...",
+            "Pronto para começar!"
+        ];
+
+        const loadingInterval = setInterval(() => {
+            progress += Math.floor(Math.random() * 12) + 8; // incrementos aleatórios
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loadingInterval);
+                splashStatus.textContent = statuses[3];
+                // Aguarda um instante e fecha automaticamente ou mostra o botão interativo
+                setTimeout(() => {
+                    dismissSplash();
+                }, 600);
+            }
+
+            progressFill.style.width = progress + '%';
+
+            if (progress < 40) {
+                splashStatus.textContent = statuses[0];
+            } else if (progress < 75) {
+                splashStatus.textContent = statuses[1];
+            } else {
+                splashStatus.textContent = statuses[2];
+            }
+        }, 150);
+
+        // Caso o carregamento demore ou o utilizador queira interagir de imediato, mostra o botão após 1.2s
         setTimeout(() => {
-            dismissSplash();
-        }, 2200);
+            if (!splashScreen.classList.contains('fade-out')) {
+                enterBtn.classList.add('visible');
+            }
+        }, 1200);
 
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
