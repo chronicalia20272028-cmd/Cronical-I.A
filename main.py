@@ -1,74 +1,40 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from typing import List, Optional
 import os
-import datetime
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from google import genai
-from google.genai import types
-from PIL import Image
-import io
-from dotenv import load_dotenv
 
-load_dotenv()
+app = Flask(__name__)
+CORS(app)
 
-app = FastAPI(title="Chronical I.A. Core", version="2.1.0")
+# Inicializa o cliente da Google GenAI (lê a chave GEMINI_API_KEY do ambiente)
+client = genai.Client()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.route('/')
+def index():
+    return "Chronical I.A Backend a funcionar!"
 
-api_key = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key) if api_key else None
-
-def obter_data_hora() -> str:
-    """Devolve a data e hora atuais do sistema."""
-    agora = datetime.datetime.now()
-    return f"A data e hora atuais são: {agora.strftime('%d/%m/%Y %H:%M:%S')}"
-
-@app.get("/", response_class=HTMLResponse)
-def servir_frontend():
-    """Serve a interface gráfica diretamente na raiz do site."""
-    if os.path.exists("index.html"):
-        with open("index.html", "r", encoding="utf-8") as f:
-            return f.read()
-    return "<h1>Erro: index.html não encontrado no servidor.</h1>"
-
-@app.post("/api/chat")
-async def processar_chat(
-    mensagem: str = Form(...),
-    ficheiros: Optional[List[UploadFile]] = File(None)
-):
-    if not client:
-        raise HTTPException(status_code=500, detail="Chave GEMINI_API_KEY não configurada no servidor.")
-    
+@app.route('/chat', methods=['POST'])
+def chat():
     try:
-        conteudo_envio = [mensagem]
+        data = request.get_json()
+        user_message = data.get('message', '')
         
-        if ficheiros:
-            for f in ficheiros:
-                dados = await f.read()
-                if f.content_type and f.content_type.startswith('image'):
-                    img = Image.open(io.BytesIO(dados))
-                    conteudo_envio.append(img)
-                else:
-                    texto = dados.decode('utf-8', errors='ignore')
-                    conteudo_envio.append(f"\n--- Ficheiro: {f.filename} ---\n{texto}")
+        if not user_message:
+            return jsonify({'response': 'Por favor, envia uma mensagem válida.'}), 400
 
-        config_chat = types.GenerateContentConfig(
-            tools=[obter_data_hora],
-            temperature=0.7,
-            system_instruction="Você é a Chronical I.A., um assistente de elite, altamente inteligente, direto e sofisticado."
+        # Envia a mensagem para o modelo Gemini gerar a resposta real
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=user_message,
         )
-
-        chat_session = client.chats.create(model='gemini-2.0-flash', config=config_chat)
-        resposta = chat_session.send_message(conteudo_envio)
-
-        return {"status": "sucesso", "resposta": resposta.text}
-
+        
+        ai_reply = response.text
+        return jsonify({'response': ai_reply})
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Erro ao comunicar com a API do Gemini: {e}")
+        return jsonify({'response': 'Ocorreu um erro ao processar a tua mensagem.'}), 500
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
