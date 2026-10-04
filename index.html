@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
-    <!-- Bibliotecas Marked.js para Markdown e html2pdf para exportação -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -33,9 +32,6 @@
             background-color: #000000 !important;
             border: 2px solid #ffffff !important;
             color: #ffffff !important;
-        }
-        body.high-contrast input, body.high-contrast button {
-            border-color: #ffffff !important;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -106,29 +102,15 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* --- NOTIFICAÇÃO TOAST --- */
+        /* --- TOAST --- */
         .toast-container {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: #1e293b;
-            color: #ffffff;
-            border: 1px solid rgba(255,255,255,0.15);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: calc(12px * var(--font-scale));
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 10000;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: #1e293b; color: #ffffff; border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 16px; border-radius: 20px; font-size: calc(12px * var(--font-scale));
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10000;
         }
-        .toast-container.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
+        .toast-container.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
         /* --- HEADER --- */
         .header {
@@ -139,19 +121,13 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .header-left {
-            display: flex; align-items: center; gap: 12px;
-        }
-
-        .header-controls {
-            display: flex; gap: 8px; align-items: center;
-        }
+        .header-controls { display: flex; gap: 8px; align-items: center; }
 
         .accessibility-btn, .export-btn {
             background: var(--panel-bg); border: 1px solid var(--border-color);
             color: var(--text-color); padding: 6px 10px; border-radius: 6px;
             font-size: calc(12px * var(--font-scale)); cursor: pointer; font-weight: 600;
-            transition: background 0.2s; display: flex; align-items: center; gap: 4px;
+            transition: background 0.2s;
         }
         .accessibility-btn:hover, .export-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
@@ -172,7 +148,7 @@
             max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) clamp(32px, 4vh, 40px) clamp(12px, 1.8vw, 20px);
             font-size: calc(14px * var(--font-scale)); line-height: 1.5; word-wrap: break-word;
             border-radius: clamp(12px, 2vw, 18px); animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
         }
 
         .ai-message {
@@ -181,7 +157,7 @@
         }
         .ai-message p { margin-bottom: 8px; }
         .ai-message p:last-child { margin-bottom: 0; }
-        .ai-message code { background: #0d1117; color: #58a6ff; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.9em; border: 1px solid #30363d; }
+        .ai-message code { background: #0d1117; color: #58a6ff; padding: 2px 5px; border-radius: 4px; font-family: monospace; font-size: 0.9em; border: 1px solid #30363d; }
         .ai-message pre { background: #0d1117; padding: 12px; border-radius: 8px; overflow-x: auto; border: 1px solid #30363d; }
         .ai-message pre code { background: transparent; padding: 0; border: none; color: #e6edf3; }
 
@@ -209,25 +185,6 @@
             background-color: var(--primary-btn); color: white; align-self: flex-end;
             border-bottom-right-radius: 4px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); padding-bottom: 14px;
         }
-
-        /* Sugestões de Prompts Iniciais */
-        .suggestions-container {
-            display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 10px 0; align-self: flex-start; max-width: 100%;
-        }
-        .suggestion-chip {
-            background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-color);
-            padding: 6px 12px; border-radius: 16px; font-size: calc(12px * var(--font-scale)); cursor: pointer;
-            white-space: nowrap; transition: all 0.2s;
-        }
-        .suggestion-chip:hover { background: rgba(37, 99, 235, 0.2); border-color: #2563eb; }
-
-        /* Cold Start / Alerta de Servidor */
-        .server-status-banner {
-            background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.4); color: #facc15;
-            padding: 8px 12px; border-radius: 8px; font-size: calc(12px * var(--font-scale)); text-align: center;
-            display: none; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;
-        }
-        .server-status-banner.active { display: flex; }
 
         .typing-indicator {
             display: flex; gap: 5px; padding: 12px 16px; background-color: var(--panel-bg);
@@ -264,12 +221,12 @@
         .remove-preview:hover { color: #ef4444; }
 
         .attachment-menu {
-            position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%) translateY(8px);
-            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 14px; width: min(200px, 85vw);
+            position: absolute; bottom: calc(100% + 10px); left: 20px;
+            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 14px; width: 180px;
             padding: 6px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             opacity: 0; visibility: hidden; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
         }
-        .attachment-menu.active { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .attachment-menu.active { opacity: 1; visibility: visible; }
 
         .menu-item {
             display: flex; align-items: center; gap: 10px; padding: 8px 12px; color: var(--text-color);
@@ -281,20 +238,17 @@
         .input-area {
             display: flex; width: 100%; max-width: min(92vw, 800px); gap: 8px; background: var(--panel-bg);
             padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: border-color 0.2s;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-        .input-area:focus-within { border-color: rgba(37, 99, 235, 0.6); }
 
         .plus-btn, .mic-btn {
-            background: transparent; color: #94a3b8; border: none; width: clamp(32px, 4vw, 40px); height: clamp(32px, 4vw, 40px);
+            background: transparent; color: #94a3b8; border: none; width: 36px; height: 36px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
         }
         .plus-btn:hover, .mic-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-color); }
         .mic-btn.recording { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
 
-        .recording-box {
-            display: none; flex: 1; align-items: center; justify-content: space-between; padding: 0 8px; height: 38px;
-        }
+        .recording-box { display: none; flex: 1; align-items: center; justify-content: space-between; padding: 0 8px; height: 38px; }
         .recording-box.active { display: flex; }
         .recording-left { display: flex; align-items: center; gap: 10px; }
         .rec-timer { font-size: calc(12px * var(--font-scale)); color: #ef4444; font-weight: 600; }
@@ -321,12 +275,12 @@
         .input-area input::placeholder { color: #64748b; }
 
         .input-area button.send-btn {
-            background: #ffffff; color: #000000; border: none; width: clamp(32px, 4vw, 40px); height: clamp(32px, 4vw, 40px);
+            background: #ffffff; color: #000000; border: none; width: 36px; height: 36px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s;
         }
         .input-area button.send-btn:hover { background: #e2e8f0; transform: scale(1.06); }
 
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0,); border: 0; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -334,7 +288,7 @@
 </head>
 <body>
     <div id="srAnnouncer" class="sr-only" aria-live="polite"></div>
-    <div class="toast-container" id="toastContainer">Mensagem copiada!</div>
+    <div class="toast-container" id="toastContainer">Copiado!</div>
 
     <!-- Tela de Abertura -->
     <div class="splash-screen" id="splashScreen">
@@ -348,35 +302,21 @@
     </div>
 
     <header class="header">
-        <div class="header-left">
-            <span>Chronical I.A</span>
-        </div>
+        <span>Chronical I.A</span>
         <div class="header-controls">
-            <button class="export-btn" id="exportPdfBtn" title="Exportar Chat para PDF">PDF</button>
-            <button class="export-btn" id="exportTxtBtn" title="Exportar Chat para TXT">TXT</button>
+            <button class="export-btn" id="exportTxtBtn" title="Exportar TXT">TXT</button>
             <button class="accessibility-btn" id="fontIncBtn" title="Aumentar texto">A+</button>
             <button class="accessibility-btn" id="contrastBtn" title="Alto contraste">Contraste</button>
         </div>
     </header>
 
     <main class="chat-container" id="chatMessages" role="log">
-        <div class="server-status-banner" id="serverStatusBanner">
-            <span>⚠️ O servidor na nuvem está a acordar (Cold Start). A primeira resposta pode demorar alguns segundos...</span>
-        </div>
-
         <div class="message ai-message">
-            Olá! Como posso ajudar você hoje? Digite <strong>/ajuda</strong> para ver os comandos rápidos.
+            Olá! Como posso ajudar você hoje?
             <button class="action-btn" onclick="toggleSpeech(this, 'Olá! Como posso ajudar você hoje?')">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
                 Ouvir
             </button>
-        </div>
-
-        <div class="suggestions-container" id="suggestionsContainer">
-            <button class="suggestion-chip" onclick="sendSuggestion('Explique um conceito de programação')">💻 Explicar código</button>
-            <button class="suggestion-chip" onclick="sendSuggestion('Crie um layout em XML para Android')">📱 Layout Android</button>
-            <button class="suggestion-chip" onclick="sendSuggestion('Otimize este código Python')">🐍 Otimizar Python</button>
-            <button class="suggestion-chip" onclick="sendSuggestion('/limpar')">🧹 Limpar Conversa</button>
         </div>
     </main>
 
@@ -399,10 +339,10 @@
 
         <div class="input-area">
             <button class="plus-btn" id="plusButton">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
             </button>
 
-            <input type="text" id="userInput" placeholder="Mensagem, ou digite /ajuda..." autocomplete="off">
+            <input type="text" id="userInput" placeholder="Mensagem para a Chronical I.A..." autocomplete="off">
             
             <div class="recording-box" id="recordingBox">
                 <div class="recording-left">
@@ -415,11 +355,11 @@
             </div>
 
             <button class="mic-btn" id="micButton">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
 
             <button class="send-btn" id="sendButton">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
             </button>
         </div>
     </div>
@@ -437,16 +377,13 @@
         const recordingBox = document.getElementById('recordingBox');
         const recTimer = document.getElementById('recTimer');
         const cancelRecBtn = document.getElementById('cancelRecBtn');
-        const srAnnouncer = document.getElementById('srAnnouncer');
         const toastContainer = document.getElementById('toastContainer');
-        const serverStatusBanner = document.getElementById('serverStatusBanner');
         
         const imageInput = document.getElementById('imageInput');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
         const fontIncBtn = document.getElementById('fontIncBtn');
         const contrastBtn = document.getElementById('contrastBtn');
-        const exportPdfBtn = document.getElementById('exportPdfBtn');
         const exportTxtBtn = document.getElementById('exportTxtBtn');
 
         let currentScale = 1;
@@ -466,7 +403,6 @@
             setTimeout(() => toastContainer.classList.remove('show'), 2500);
         }
 
-        // Gestão de Tela Inicial
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 splashScreen.classList.add('fade-out');
@@ -474,16 +410,10 @@
             }, 1800);
         });
 
-        // LocalStorage - Carregar e Guardar Histórico
         function saveChatHistory() {
             const messages = [];
             chatMessages.querySelectorAll('.message').forEach(el => {
-                if(!el.classList.contains('server-status-banner')) {
-                    messages.push({
-                        html: el.innerHTML,
-                        className: el.className
-                    });
-                }
+                messages.push({ html: el.innerHTML, className: el.className });
             });
             localStorage.setItem('chronical_chat_history', JSON.stringify(messages));
         }
@@ -494,38 +424,24 @@
                 try {
                     const messages = JSON.parse(saved);
                     if (messages.length > 0) {
-                        // Remove mensagem padrão se houver histórico salvo
                         chatMessages.innerHTML = '';
-                        chatMessages.appendChild(serverStatusBanner);
-                        
                         messages.forEach(msg => {
                             const div = document.createElement('div');
                             div.className = msg.className;
                             div.innerHTML = msg.html;
-                            // Reaplica event listeners de voz se necessário
                             chatMessages.appendChild(div);
                         });
                         chatMessages.scrollTop = chatMessages.scrollHeight;
                     }
-                } catch(e) { console.error(e); }
+                } catch(e) {}
             }
         }
 
-        // Scroll Inteligente (só desce se o utilizador já estiver perto do fim)
-        function smartScroll() {
-            const threshold = 100;
-            const isNearBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < threshold;
-            if (isNearBottom) {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        }
-
-        // Acessibilidade visual
         fontIncBtn.addEventListener('click', () => {
             currentScale += 0.15;
             if (currentScale > 1.45) currentScale = 1;
             document.documentElement.style.setProperty('--font-scale', currentScale);
-            showToast(`Escala de texto: ${Math.round(currentScale * 100)}%`);
+            showToast(`Texto: ${Math.round(currentScale * 100)}%`);
         });
 
         contrastBtn.addEventListener('click', () => {
@@ -533,9 +449,15 @@
             showToast(document.body.classList.contains('high-contrast') ? "Alto contraste ativado" : "Alto contraste desativado");
         });
 
-        // Anexos e Base64 Conversion
-        plusButton.addEventListener('click', (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); });
-        document.addEventListener('click', () => attachmentMenu.classList.remove('active'));
+        plusButton.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            attachmentMenu.classList.toggle('active'); 
+        });
+
+        document.addEventListener('click', () => {
+            attachmentMenu.classList.remove('active');
+        });
+
         attachmentMenu.addEventListener('click', (e) => e.stopPropagation());
 
         btnPhoto.addEventListener('click', () => { attachmentMenu.classList.remove('active'); imageInput.click(); });
@@ -545,11 +467,7 @@
             for (let file of files) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    attachedFiles.push({
-                        name: file.name,
-                        type: file.type,
-                        base64: e.target.result
-                    });
+                    attachedFiles.push({ name: file.name, type: file.type, base64: e.target.result });
                     renderPreviews();
                 };
                 reader.readAsDataURL(file);
@@ -591,7 +509,6 @@
             });
         }
 
-        // Exportação de Conversas
         exportTxtBtn.addEventListener('click', () => {
             let textOutput = "--- HISTÓRICO DE CONVERSA - CHRONICAL I.A ---\n\n";
             chatMessages.querySelectorAll('.message').forEach(msg => {
@@ -606,53 +523,9 @@
             showToast('Conversa exportada para TXT!');
         });
 
-        exportPdfBtn.addEventListener('click', () => {
-            const element = chatMessages;
-            const opt = {
-                margin: 10,
-                filename: 'Chronical_IA_Conversa.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
-            showToast('A gerar PDF...');
-        });
-
-        // Comandos Rápidos e Sugestões
-        function sendSuggestion(text) {
-            userInput.value = text;
-            sendMessage();
-        }
-
-        function handleSlashCommands(text) {
-            if (text === '/limpar') {
-                localStorage.removeItem('chronical_chat_history');
-                chatMessages.innerHTML = '';
-                chatMessages.appendChild(serverStatusBanner);
-                showToast('Conversa limpa com sucesso!');
-                return true;
-            }
-            if (text === '/ajuda') {
-                const helpMsg = document.createElement('div');
-                helpMsg.className = 'message ai-message';
-                helpMsg.innerHTML = `<strong>Comandos Rápidos Disponíveis:</strong><br>• <code>/limpar</code> - Apaga o histórico atual.<br>• <code>/ajuda</code> - Mostra esta lista de comandos.`;
-                chatMessages.appendChild(helpMsg);
-                smartScroll();
-                return true;
-            }
-            return false;
-        }
-
-        // Envio de Mensagem com Indicador de Cold Start
         async function sendMessage() {
             const text = userInput.value.trim();
             if (!text && attachedFiles.length === 0) return;
-
-            if (text.startsWith('/') && handleSlashCommands(text)) {
-                userInput.value = '';
-                return;
-            }
 
             finalTranscript = '';
             const userMsg = document.createElement('div');
@@ -667,19 +540,14 @@
             fileInput.value = '';
             previewContainer.classList.remove('active');
 
-            smartScroll();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
             saveChatHistory();
 
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'typing-indicator';
             typingIndicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
             chatMessages.appendChild(typingIndicator);
-            smartScroll();
-
-            // Ativa banner de Cold Start se demorar mais de 1.5 segundos
-            const coldStartTimeout = setTimeout(() => {
-                serverStatusBanner.classList.add('active');
-            }, 1500);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
             try {
                 const response = await fetch('/chat', {
@@ -687,10 +555,6 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: text, files: currentFilesPayload })
                 });
-                
-                clearTimeout(coldStartTimeout);
-                serverStatusBanner.classList.remove('active');
-
                 const data = await response.json();
                 chatMessages.removeChild(typingIndicator);
 
@@ -699,7 +563,6 @@
                 const rawResponse = data.response || data.reply || "Resposta recebida.";
                 aiMsg.innerHTML = marked.parse(rawResponse);
                 
-                // Botão de Copiar blocos de código
                 aiMsg.querySelectorAll('pre').forEach(pre => {
                     const wrapper = document.createElement('div');
                     wrapper.className = 'code-block-wrapper';
@@ -722,18 +585,15 @@
                 
                 aiMsg.appendChild(ttsBtn);
                 chatMessages.appendChild(aiMsg);
-                smartScroll();
+                chatMessages.scrollTop = chatMessages.scrollHeight;
                 saveChatHistory();
             } catch (error) {
-                clearTimeout(coldStartTimeout);
-                serverStatusBanner.classList.remove('active');
                 if (chatMessages.contains(typingIndicator)) chatMessages.removeChild(typingIndicator);
-
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'message ai-message';
                 errorMsg.textContent = "Erro ao comunicar com o servidor.";
                 chatMessages.appendChild(errorMsg);
-                smartScroll();
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
             userInput.focus();
         }
@@ -741,7 +601,6 @@
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-        // Reconhecimento de Voz (Speech Recognition)
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -809,7 +668,6 @@
             else recognition.start();
         });
 
-        // Síntese de Voz (TTS)
         function loadBestVoice() {
             if (!('speechSynthesis' in window)) return;
             const voices = window.speechSynthesis.getVoices();
