@@ -10,8 +10,8 @@
         :root {
             --bg-color: #000000;
             --text-color: #e2e8f0;
-            --panel-bg: #171b26;
-            --sidebar-bg: #11141d;
+            --panel-bg: #121620;
+            --sidebar-bg: #0b0e14;
             --border-color: rgba(255, 255, 255, 0.08);
             --primary-btn: #2563eb;
             --font-scale: 1;
@@ -161,13 +161,13 @@
         }
         .history-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border-color); }
 
-        /* --- HEADER --- */
+        /* --- BARRA SUPERIOR FLUTUANTE (MINIMALISTA) --- */
         .header {
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; padding: clamp(10px, 2vh, 16px) 20px;
-            font-size: calc(15px * var(--font-scale)); font-weight: 600;
-            background: var(--bg-color); z-index: 10;
-            border-bottom: 1px solid var(--border-color);
+            position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+            width: min(92vw, 800px); display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 20px; background: rgba(18, 22, 32, 0.75); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px;
+            z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .menu-toggle-btn {
@@ -176,12 +176,21 @@
             padding: 6px; border-radius: 8px; transition: background 0.2s;
         }
         .menu-toggle-btn:hover { background: rgba(255,255,255,0.08); }
-        .header-controls { display: flex; gap: 8px; align-items: center; }
+        
+        .header-title {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: calc(15px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            pointer-events: none;
+        }
+
+        .header-controls { display: flex; gap: 6px; align-items: center; }
 
         .accessibility-btn, .export-btn {
-            background: var(--panel-bg); border: 1px solid var(--border-color);
-            color: var(--text-color); padding: 6px 12px; border-radius: 8px;
-            font-size: calc(12px * var(--font-scale)); cursor: pointer; font-weight: 600;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color);
+            color: var(--text-color); padding: 5px 10px; border-radius: 8px;
+            font-size: calc(11px * var(--font-scale)); cursor: pointer; font-weight: 600;
             transition: all 0.2s;
         }
         .accessibility-btn:hover, .export-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255,255,255,0.2); }
@@ -189,7 +198,7 @@
         /* --- CHAT CONTAINER --- */
         .chat-container {
             flex: 1; width: 100%; max-width: min(92vw, 800px);
-            margin: 0 auto; padding: clamp(12px, 2vw, 24px);
+            margin: 0 auto; padding: 80px clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px);
             display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
             overflow-y: auto; scroll-behavior: smooth; position: relative;
         }
@@ -251,7 +260,7 @@
 
         @keyframes blink { 0% { opacity: .2; } 20% { opacity: 1; } 100% { opacity: .2; } }
 
-        /* --- INPUT E ANEXOS MELHORADOS --- */
+        /* --- INPUT E ANEXOS FLUTUANTES --- */
         .input-wrapper {
             width: 100%; padding: 10px clamp(12px, 3vw, 20px) 20px clamp(12px, 3vw, 20px);
             display: flex; flex-direction: column; align-items: center;
@@ -275,7 +284,6 @@
         .remove-preview { background: transparent; border: none; color: #9ca3af; cursor: pointer; padding: 2px 4px; border-radius: 4px; }
         .remove-preview:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
-        /* Menu de Anexos Estilizado */
         .attachment-menu {
             position: absolute; bottom: calc(100% + 12px); left: 20px;
             background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 220px;
@@ -380,13 +388,14 @@
         <div class="sidebar-history-list" id="sidebarHistoryList"></div>
     </aside>
 
+    <!-- Barra Superior Flutuante Minimalista -->
     <header class="header">
         <div class="header-left">
             <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir menu">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <span>Chronical I.A</span>
         </div>
+        <div class="header-title">Chronical I.A</div>
         <div class="header-controls">
             <button class="export-btn" id="exportPdfBtn" title="Exportar PDF">PDF</button>
             <button class="export-btn" id="exportTxtBtn" title="Exportar TXT">TXT</button>
