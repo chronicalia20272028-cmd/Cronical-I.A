@@ -161,15 +161,16 @@
         }
         .history-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border-color); }
 
-        /* --- BARRA SUPERIOR FLUTUANTE (TOTALMENTE LIMPA) --- */
+        /* --- CABEÇALHO DIRETO NA TELA (SEM CAIXA) --- */
         .header {
-            position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
-            width: min(92vw, 800px); display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background: rgba(18, 22, 32, 0.85); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
-            z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: absolute; top: 0; left: 0; width: 100%; 
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px 20px; background: transparent; z-index: 10;
         }
-        .header-left { display: flex; align-items: center; z-index: 2; }
+        .header-left {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            display: flex; align-items: center; z-index: 2;
+        }
         .menu-toggle-btn {
             background: transparent; border: none; color: var(--text-color);
             cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -178,20 +179,16 @@
         .menu-toggle-btn:hover { background: rgba(255,255,255,0.08); }
         
         .header-title {
-            position: absolute; left: 50%; transform: translateX(-50%);
             font-size: calc(16px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
             background: linear-gradient(to right, #ffffff, #94a3b8);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            pointer-events: none; width: max-content; text-align: center;
+            text-align: center; width: 100%; pointer-events: none;
         }
-
-        /* Espaçador à direita para equilibrar o layout perfeitamente com o botão da esquerda */
-        .header-right-spacer { width: 32px; }
 
         /* --- CHAT CONTAINER --- */
         .chat-container {
             flex: 1; width: 100%; max-width: min(92vw, 800px);
-            margin: 0 auto; padding: 90px clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px);
+            margin: 0 auto; padding: 75px clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px);
             display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
             overflow-y: auto; scroll-behavior: smooth; position: relative;
         }
@@ -381,7 +378,7 @@
         <div class="sidebar-history-list" id="sidebarHistoryList"></div>
     </aside>
 
-    <!-- Barra Superior Flutuante Totalmente Limpa -->
+    <!-- Cabeçalho Direto na Tela (Sem Barra/Pílula) -->
     <header class="header">
         <div class="header-left">
             <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir menu">
@@ -389,7 +386,6 @@
             </button>
         </div>
         <div class="header-title">Chronical I.A</div>
-        <div class="header-right-spacer"></div>
     </header>
 
     <main class="chat-container" id="chatMessages" role="log">
@@ -483,10 +479,7 @@
         const sidebarHistoryList = document.getElementById('sidebarHistoryList');
 
         const previewContainer = document.getElementById('previewContainer');
-        const fontIncBtn = document.getElementById('fontIncBtn');
-        const contrastBtn = document.getElementById('contrastBtn');
 
-        let currentScale = 1;
         let attachedFiles = [];
         let recognition = null;
         let timerInterval = null;
