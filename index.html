@@ -161,15 +161,15 @@
         }
         .history-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border-color); }
 
-        /* --- BARRA SUPERIOR FLUTUANTE (MINIMALISTA) --- */
+        /* --- BARRA SUPERIOR FLUTUANTE (TOTALMENTE LIMPA) --- */
         .header {
             position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
             width: min(92vw, 800px); display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 20px; background: rgba(18, 22, 32, 0.75); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px;
+            padding: 12px 20px; background: rgba(18, 22, 32, 0.85); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
             z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-left { display: flex; align-items: center; z-index: 2; }
         .menu-toggle-btn {
             background: transparent; border: none; color: var(--text-color);
             cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -179,26 +179,19 @@
         
         .header-title {
             position: absolute; left: 50%; transform: translateX(-50%);
-            font-size: calc(15px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
+            font-size: calc(16px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
             background: linear-gradient(to right, #ffffff, #94a3b8);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            pointer-events: none;
+            pointer-events: none; width: max-content; text-align: center;
         }
 
-        .header-controls { display: flex; gap: 6px; align-items: center; }
-
-        .accessibility-btn, .export-btn {
-            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color);
-            color: var(--text-color); padding: 5px 10px; border-radius: 8px;
-            font-size: calc(11px * var(--font-scale)); cursor: pointer; font-weight: 600;
-            transition: all 0.2s;
-        }
-        .accessibility-btn:hover, .export-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255,255,255,0.2); }
+        /* Espaçador à direita para equilibrar o layout perfeitamente com o botão da esquerda */
+        .header-right-spacer { width: 32px; }
 
         /* --- CHAT CONTAINER --- */
         .chat-container {
             flex: 1; width: 100%; max-width: min(92vw, 800px);
-            margin: 0 auto; padding: 80px clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px);
+            margin: 0 auto; padding: 90px clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px);
             display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
             overflow-y: auto; scroll-behavior: smooth; position: relative;
         }
@@ -388,20 +381,15 @@
         <div class="sidebar-history-list" id="sidebarHistoryList"></div>
     </aside>
 
-    <!-- Barra Superior Flutuante Minimalista -->
+    <!-- Barra Superior Flutuante Totalmente Limpa -->
     <header class="header">
         <div class="header-left">
             <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir menu">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
         </div>
         <div class="header-title">Chronical I.A</div>
-        <div class="header-controls">
-            <button class="export-btn" id="exportPdfBtn" title="Exportar PDF">PDF</button>
-            <button class="export-btn" id="exportTxtBtn" title="Exportar TXT">TXT</button>
-            <button class="accessibility-btn" id="fontIncBtn" title="Aumentar texto">A+</button>
-            <button class="accessibility-btn" id="contrastBtn" title="Alto contraste">Contraste</button>
-        </div>
+        <div class="header-right-spacer"></div>
     </header>
 
     <main class="chat-container" id="chatMessages" role="log">
@@ -497,8 +485,6 @@
         const previewContainer = document.getElementById('previewContainer');
         const fontIncBtn = document.getElementById('fontIncBtn');
         const contrastBtn = document.getElementById('contrastBtn');
-        const exportTxtBtn = document.getElementById('exportTxtBtn');
-        const exportPdfBtn = document.getElementById('exportPdfBtn');
 
         let currentScale = 1;
         let attachedFiles = [];
@@ -597,18 +583,6 @@
             } catch(e) {}
         }
 
-        fontIncBtn.addEventListener('click', () => {
-            currentScale += 0.15;
-            if (currentScale > 1.45) currentScale = 1;
-            document.documentElement.style.setProperty('--font-scale', currentScale);
-            showToast(`Tamanho de texto: ${Math.round(currentScale * 100)}%`);
-        });
-
-        contrastBtn.addEventListener('click', () => {
-            document.body.classList.toggle('high-contrast');
-            showToast(document.body.classList.contains('high-contrast') ? "Alto contraste ativado" : "Alto contraste desativado");
-        });
-
         plusButton.addEventListener('click', (e) => { 
             e.stopPropagation(); 
             attachmentMenu.classList.toggle('active'); 
@@ -670,35 +644,6 @@
                 previewContainer.appendChild(card);
             });
         }
-
-        exportTxtBtn.addEventListener('click', () => {
-            let textOutput = "--- HISTÓRICO DE CONVERSA - CHRONICAL I.A ---\n\n";
-            chatMessages.querySelectorAll('.message').forEach(msg => {
-                textOutput += msg.innerText.replace("Ouvir", "").trim() + "\n\n-----------------------------------\n\n";
-            });
-            const blob = new Blob([textOutput], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Chronical_IA_Conversa.txt';
-            a.click();
-            showToast('Conversa exportada para TXT!');
-        });
-
-        exportPdfBtn.addEventListener('click', () => {
-            const element = document.getElementById('chatMessages');
-            const opt = {
-                margin:       10,
-                filename:     'Chronical_IA_Conversa.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            showToast('A gerar PDF...');
-            html2pdf().from(element).set(opt).save().then(() => {
-                showToast('PDF gerado com sucesso!');
-            });
-        });
 
         async function sendMessage() {
             const text = userInput.value.trim();
