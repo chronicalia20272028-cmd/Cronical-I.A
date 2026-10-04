@@ -296,20 +296,26 @@
         .menu-item svg { width: 18px; height: 18px; stroke: #94a3b8; transition: stroke 0.2s; }
         .menu-item:hover svg { stroke: #93c5fd; }
 
+        /* Barra de input otimizada com textarea flexível e efeito de foco */
         .input-area {
             display: flex; width: 100%; max-width: min(92vw, 800px); gap: 8px; background: var(--panel-bg);
-            padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: center;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: flex-end;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-area:focus-within {
+            border-color: rgba(37, 99, 235, 0.5);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15), 0 8px 24px rgba(0,0,0,0.4);
         }
 
         .plus-btn, .mic-btn {
             background: transparent; color: #94a3b8; border: none; width: 36px; height: 36px;
             border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
+            flex-shrink: 0;
         }
         .plus-btn:hover, .mic-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-color); }
         .mic-btn.recording { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
 
-        .recording-box { display: none; flex: 1; align-items: center; justify-content: space-between; padding: 0 8px; height: 38px; }
+        .recording-box { display: none; flex: 1; align-items: center; justify-content: space-between; padding: 0 8px; height: 36px; }
         .recording-box.active { display: flex; }
         .recording-left { display: flex; align-items: center; gap: 10px; }
         .rec-timer { font-size: calc(12px * var(--font-scale)); color: #ef4444; font-weight: 600; }
@@ -330,15 +336,18 @@
         }
         .cancel-rec-btn:hover { background: rgba(239, 68, 68, 0.3); }
 
-        .input-area input {
+        .input-area textarea {
             flex: 1; background: transparent; border: none; color: var(--text-color);
-            font-size: calc(14px * var(--font-scale)); outline: none; padding-left: 4px; width: 100%;
+            font-size: calc(14px * var(--font-scale)); outline: none; padding: 8px 4px;
+            resize: none; max-height: 120px; min-height: 20px; line-height: 1.4;
+            font-family: inherit;
         }
-        .input-area input::placeholder { color: #64748b; }
+        .input-area textarea::placeholder { color: #64748b; }
 
         .input-area button.send-btn {
             background: #ffffff; color: #000000; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s, background 0.2s;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.2s, background 0.2s; flex-shrink: 0;
         }
         .input-area button.send-btn:hover { background: #e2e8f0; transform: scale(1.06); }
 
@@ -427,7 +436,8 @@
                 <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
             </button>
 
-            <input type="text" id="userInput" placeholder="Mensagem para a Chronical I.A..." autocomplete="off">
+            <!-- Textarea auto-ajustável -->
+            <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
             
             <div class="recording-box" id="recordingBox">
                 <div class="recording-left">
@@ -489,6 +499,12 @@
         let silenceTimer = null;
         let bestFemaleVoice = null;
         let finalTranscript = '';
+
+        // Auto-redimensionamento do Textarea
+        userInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
 
         function showToast(text) {
             toastContainer.textContent = text;
@@ -650,6 +666,7 @@
             
             const currentFilesPayload = [...attachedFiles];
             userInput.value = '';
+            userInput.style.height = 'auto';
             attachedFiles = [];
             imageInput.value = '';
             docInput.value = '';
@@ -715,7 +732,12 @@
         }
 
         sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        userInput.addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter' && !e.shiftKey) { 
+                e.preventDefault(); 
+                sendMessage(); 
+            } 
+        });
 
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -748,6 +770,9 @@
                         else interim += event.results[i][0].transcript;
                     }
                     userInput.value = finalTranscript + interim;
+                    userInput.style.height = 'auto';
+                    userInput.style.height = (userInput.scrollHeight) + 'px';
+
                     clearTimeout(silenceTimer);
                     silenceTimer = setTimeout(() => {
                         if (micButton.classList.contains('recording') && userInput.value.trim().length > 0) {
@@ -774,6 +799,7 @@
             isCancelled = true;
             finalTranscript = '';
             userInput.value = '';
+            userInput.style.height = 'auto';
             if (recognition) { try { recognition.stop(); } catch(e){} }
             stopRecordingUI();
         });
