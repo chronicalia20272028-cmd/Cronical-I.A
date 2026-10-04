@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --bg-color: #000000;
@@ -25,31 +24,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex; flex-direction: column; overflow: hidden;
             font-size: calc(14px * var(--font-scale));
-        }
-
-        /* --- ZONA DRAG & DROP GLOBAL --- */
-        body.drag-over::after {
-            content: 'Solte os ficheiros aqui para anexar';
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(37, 99, 235, 0.85); z-index: 20000;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 24px; font-weight: 700; color: #ffffff; pointer-events: none;
-            backdrop-filter: blur(4px);
-        }
-
-        /* --- TELA DE ABERTURA --- */
-        .splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
-            padding: 20px; text-align: center;
-        }
-        .splash-screen.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
-        .splash-title {
-            font-size: clamp(28px, 6vw, 38px); font-weight: 800; letter-spacing: 0.5px;
-            background: linear-gradient(to right, #ffffff, #93c5fd);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
         /* --- TOAST --- */
@@ -83,21 +57,12 @@
             border-bottom: 1px solid var(--border-color); padding-bottom: 12px;
         }
         .close-sidebar-btn { background: transparent; border: none; color: var(--text-color); font-size: 18px; cursor: pointer; padding: 4px; border-radius: 6px; }
-        .close-sidebar-btn:hover { background: rgba(255,255,255,0.1); }
         .new-chat-btn {
             background: var(--primary-btn); color: #ffffff; border: none;
             padding: 10px 14px; border-radius: 10px; font-weight: 600;
             font-size: calc(13px * var(--font-scale)); cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .sidebar-history-title { font-size: calc(12px * var(--font-scale)); color: #94a3b8; font-weight: 600; margin-top: 8px; }
-        .sidebar-history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .history-item {
-            padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.03);
-            border: 1px solid transparent; color: var(--text-color); font-size: calc(13px * var(--font-scale));
-            cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .history-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border-color); }
 
         /* --- CABEÇALHO --- */
         .header {
@@ -134,363 +99,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .message {
-            max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) clamp(34px, 4vh, 42px) clamp(12px, 1.8vw, 20px);
-            font-size: calc(14px * var(--font-scale)); line-height: 1.55; word-wrap: break-word;
-            border-radius: clamp(12px, 2vw, 18px); animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            position: relative;
-        }
-        .ai-message {
-            background-color: var(--panel-bg); border: 1px solid var(--border-color);
-            color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px;
-        }
-        .ai-message p { margin-bottom: 8px; }
-        .ai-message p:last-child { margin-bottom: 0; }
-        .user-message {
-            background-color: var(--primary-btn); color: white; align-self: flex-end;
-            border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25); padding-bottom: 14px;
-        }
-        .action-btn {
-            position: absolute; bottom: 8px; left: 12px; background: transparent; border: none;
-            color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 6px;
-            font-size: calc(12px * var(--font-scale)); font-weight: 600; padding: 4px 8px; border-radius: 6px; transition: all 0.2s;
-        }
-        .action-btn:hover { color: var(--text-color); background: rgba(255, 255, 255, 0.06); }
-
-        /* --- BARRA DE INPUT E ANEXOS MELHORADOS --- */
-        .input-wrapper {
-            width: 100%; padding: 10px clamp(12px, 3vw, 20px) 16px clamp(12px, 3vw, 20px);
-            display: flex; flex-direction: column; align-items: center;
-            background: linear-gradient(transparent, var(--bg-color) 40%); position: relative;
-        }
-        .preview-container {
-            width: 100%; max-width: min(92vw, 800px); margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-        }
-        .preview-container.active { display: flex; }
-        .preview-card {
-            background: var(--panel-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 12px;
-            display: flex; align-items: center; gap: 8px; flex-shrink: 0; max-width: 210px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3); animation: fadeIn 0.2s ease;
-        }
-        .preview-thumb {
-            width: 34px; height: 34px; border-radius: 8px; object-fit: cover; background: #1f2937;
-            display: flex; align-items: center; justify-content: center; font-size: 11px; color: #9ca3af; font-weight: 700;
-        }
-        .preview-meta { display: flex; flex-direction: column; overflow: hidden; max-width: 120px; }
-        .preview-info { font-size: calc(11px * var(--font-scale)); color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .preview-size { font-size: calc(9px * var(--font-scale)); color: #64748b; }
-        .remove-preview { background: transparent; border: none; color: #9ca3af; cursor: pointer; padding: 2px 6px; border-radius: 6px; }
-        .remove-preview:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
-
-        /* Menu de Anexos Ampliado e Elegante */
-        .attachment-menu {
-            position: absolute; bottom: calc(100% + 12px); left: 20px;
-            background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 230px;
-            padding: 8px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 16px 40px rgba(0,0,0,0.8);
-            opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
-        }
-        .attachment-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        .menu-category-title { font-size: calc(10px * var(--font-scale)); font-weight: 700; color: #64748b; padding: 6px 8px 2px 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .menu-item {
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--text-color);
-            background: transparent; border: none; border-radius: 10px; font-size: calc(13px * var(--font-scale));
-            cursor: pointer; text-align: left; width: 100%; transition: all 0.2s ease;
-        }
-        .menu-item:hover { background: rgba(37, 99, 235, 0.15); color: #93c5fd; transform: translateX(2px); }
-        .menu-item svg { width: 18px; height: 18px; stroke: #94a3b8; }
-        .menu-item:hover svg { stroke: #93c5fd; }
-
-        /* Caixa de Entrada Principal */
-        .input-area {
-            display: flex; width: 100%; max-width: min(92vw, 800px); gap: 8px; background: var(--panel-bg);
-            padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: flex-end;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .input-area:focus-within {
-            border-color: rgba(37, 99, 235, 0.5);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15), 0 8px 24px rgba(0,0,0,0.4);
-        }
-
-        .plus-btn, .mic-btn {
-            background: transparent; color: #94a3b8; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .plus-btn:hover, .mic-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-color); }
-
-        .input-area textarea {
-            flex: 1; background: transparent; border: none; color: var(--text-color);
-            font-size: calc(14px * var(--font-scale)); outline: none; padding: 8px 4px;
-            resize: none; max-height: 120px; min-height: 20px; line-height: 1.4;
-            font-family: inherit;
-        }
-        .input-area textarea::placeholder { color: #64748b; }
-
-        .input-area button.send-btn {
-            background: #ffffff; color: #000000; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer;
-            transition: transform 0.2s, background 0.2s; flex-shrink: 0;
-        }
-        .input-area button.send-btn:hover { background: #e2e8f0; transform: scale(1.06); }
-
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    </style>
-</head>
-<body>
-    <div class="toast-container" id="toastContainer">Notificação</div>
-
-    <!-- Menu Lateral -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <span>Menu</span>
-            <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
-        </div>
-        <button class="new-chat-btn" id="newChatBtn">Nova Conversa</button>
-        <span class="sidebar-history-title">Conversas Recentes</span>
-        <div class="sidebar-history-list" id="sidebarHistoryList"></div>
-    </aside>
-
-    <!-- Cabeçalho -->
-    <header class="header">
-        <div class="header-left">
-            <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir menu">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-        </div>
-        <div class="header-title">Chronical I.A</div>
-    </header>
-
-    <main class="chat-container" id="chatMessages" role="log">
-        <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
-    </main>
-
-    <div class="input-wrapper">
-        <div class="preview-container" id="previewContainer"></div>
-
-        <!-- Menu de Anexos Expandido -->
-        <div class="attachment-menu" id="attachmentMenu">
-            <div class="menu-category-title">Adicionar Anexo</div>
-            <button class="menu-item" id="btnPhoto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Fotografia / Imagem</button>
-            <button class="menu-item" id="btnDoc"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Documento (PDF/Word)</button>
-            <button class="menu-item" id="btnCode"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Código / Script</button>
-            <button class="menu-item" id="btnAny"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> Outro Ficheiro...</button>
-        </div>
-
-        <input type="file" id="universalInput" multiple style="display: none;">
-
-        <div class="input-area">
-            <button class="plus-btn" id="plusButton" title="Adicionar anexo">
-                <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </button>
-
-            <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
-            
-            <button class="mic-btn" id="micButton" title="Gravar voz">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-            </button>
-
-            <button class="send-btn" id="sendButton" title="Enviar">
-                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-            </button>
-        </div>
-    </div>
-
-    <script>
-        const chatMessages = document.getElementById('chatMessages');
-        const userInput = document.getElementById('userInput');
-        const sendButton = document.getElementById('sendButton');
-        const plusButton = document.getElementById('plusButton');
-        const attachmentMenu = document.getElementById('attachmentMenu');
-        const toastContainer = document.getElementById('toastContainer');
-        const previewContainer = document.getElementById('previewContainer');
-        const universalInput = document.getElementById('universalInput');
-        
-        const menuToggleBtn = document.getElementById('menuToggleBtn');
-        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-
-        let attachedFiles = [];
-
-        function showToast(text) {
-            toastContainer.textContent = text;
-            toastContainer.classList.add('show');
-            setTimeout(() => toastContainer.classList.remove('show'), 2500);
-        }
-
-        menuToggleBtn.addEventListener('click', () => { sidebar.classList.toggle('open'); sidebarOverlay.classList.toggle('active'); });
-        closeSidebarBtn.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
-        sidebarOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); });
-
-        plusButton.addEventListener('click', (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); });
-        document.addEventListener('click', () => attachmentMenu.classList.remove('active'));
-        attachmentMenu.addEventListener('click', (e) => e.stopPropagation());
-
-        // Filtros de input por categoria
-        document.getElementById('btnPhoto').onclick = () => { attachmentMenu.classList.remove('active'); openPicker('image/*'); };
-        document.getElementById('btnDoc').onclick = () => { attachmentMenu.classList.remove('active'); openPicker('.pdf,.doc,.docx,.txt'); };
-        document.getElementById('btnCode').onclick = () => { attachmentMenu.classList.remove('active'); openPicker('.py,.js,.html,.css,.json,.java,.cpp'); };
-        document.getElementById('btnAny').onclick = () => { attachmentMenu.classList.remove('active'); openPicker('*'); };
-
-        function openPicker(acceptType) {
-            universalInput.accept = acceptType;
-            universalInput.click();
-        }
-
-        universalInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
-        // Drag and Drop Global
-        window.addEventListener('dragover', (e) => { e.preventDefault(); document.body.classList.add('drag-over'); });
-        window.addEventListener('dragleave', (e) => { if (e.clientX === 0 && e.clientY === Para elevar o sistema de anexos da tua **Chronical I.A** ao nível das melhores ferramentas de inteligência artificial, podemos implementar várias melhorias funcionais e visuais bem úteis. 
-
-Como podemos ver na imagem que enviaste, o menu flutuante do botão `+` abre por cima, mas podemos torná-lo muito mais robusto, inteligente e agradável de usar.
-
----
-
-### Novas Funcionalidades e Melhorias para o Anexar:
-
-1. **Arrastar e Soltar (Drag & Drop) Global:** Permitir que o utilizador arraste qualquer ficheiro diretamente do computador e o solte na janela de chat para anexar automaticamente.
-2. **Validação de Tamanho e Tipo:** Impedir ficheiros excessivamente pesados ou formatos não suportados, exibindo um aviso amigável na tela se houver erro.
-3. **Pré-visualização Avançada com Miniaturas:** Mostrar miniaturas nítidas das imagens carregadas ou ícones específicos para cada extensão (PDF, Python, Word, etc.) logo acima da barra de input, com a opção de remover ficheiros individualmente.
-4. **Extração de Texto Automática (Client-side):** Para ficheiros de texto ou código (`.txt`, `.py`, `.js`, etc.), ler o conteúdo diretamente no navegador e injetar no payload para que a IA processe o código de imediato.
-5. **Anexo por Câmera Direta (Mobile/Web):** Adicionar uma opção rápida para tirar uma foto na hora usando a câmara do telemóvel ou webcam.
-
----
-
-### Código Atualizado com as Melhorias no Sistema de Anexos:
-
-O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Drop**, validação de tamanho (máximo de 10MB por ficheiro), pré-visualização refinada e ícones dinâmicos no menu de anexos:
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chronical I.A</title>
-    <script src="[https://cdn.jsdelivr.net/npm/marked/marked.min.js](https://cdn.jsdelivr.net/npm/marked/marked.min.js)"></script>
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js](https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js)"></script>
-    <style>
-        :root {
-            --bg-color: #000000;
-            --text-color: #e2e8f0;
-            --panel-bg: #121620;
-            --sidebar-bg: #0b0e14;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --primary-btn: #2563eb;
-            --font-scale: 1;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body, html {
-            height: 100vh; height: 100dvh; width: 100vw;
-            background-color: var(--bg-color); color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex; flex-direction: column; overflow: hidden;
-            font-size: calc(14px * var(--font-scale));
-        }
-
-        /* --- TELA DE ABERTURA --- */
-        .splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
-            padding: 20px; text-align: center;
-        }
-        .splash-screen.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
-        .splash-title {
-            font-size: clamp(28px, 6vw, 38px); font-weight: 800; letter-spacing: 0.5px;
-            background: linear-gradient(to right, #ffffff, #93c5fd);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-
-        /* --- TOAST --- */
-        .toast-container {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
-            background: #1e293b; color: #ffffff; border: 1px solid rgba(255,255,255,0.15);
-            padding: 8px 18px; border-radius: 20px; font-size: calc(12px * var(--font-scale));
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10000;
-        }
-        .toast-container.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-
-        /* --- MENU LATERAL --- */
-        .sidebar {
-            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
-            background: var(--sidebar-bg); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; z-index: 1000;
-            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            padding: 20px; gap: 16px;
-        }
-        .sidebar.open { transform: translateX(0); }
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
-            z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
-        }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
-        .sidebar-header {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: calc(16px * var(--font-scale)); font-weight: 700;
-            border-bottom: 1px solid var(--border-color); padding-bottom: 12px;
-        }
-        .close-sidebar-btn { background: transparent; border: none; color: var(--text-color); font-size: 18px; cursor: pointer; padding: 4px; border-radius: 6px; }
-        .close-sidebar-btn:hover { background: rgba(255,255,255,0.1); }
-        .new-chat-btn {
-            background: var(--primary-btn); color: #ffffff; border: none;
-            padding: 10px 14px; border-radius: 10px; font-weight: 600;
-            font-size: calc(13px * var(--font-scale)); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .sidebar-history-title { font-size: calc(12px * var(--font-scale)); color: #94a3b8; font-weight: 600; margin-top: 8px; }
-        .sidebar-history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-        .history-item {
-            padding: 10px 12px; border-radius: 8px; background: rgba(255,255,255,0.03);
-            border: 1px solid transparent; color: var(--text-color); font-size: calc(13px * var(--font-scale));
-            cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .history-item:hover { background: rgba(255,255,255,0.08); border-color: var(--border-color); }
-
-        /* --- CABEÇALHO --- */
-        .header {
-            position: absolute; top: 0; left: 0; width: 100%; 
-            display: flex; align-items: center; justify-content: center;
-            padding: 16px 20px; background: transparent; z-index: 10;
-        }
-        .header-left {
-            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-            display: flex; align-items: center; z-index: 2;
-        }
-        .menu-toggle-btn {
-            background: transparent; border: none; color: var(--text-color);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            padding: 6px; border-radius: 8px; transition: background 0.2s;
-        }
-        .menu-toggle-btn:hover { background: rgba(255,255,255,0.08); }
-        .header-title {
-            font-size: calc(16px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center; width: 100%; pointer-events: none;
-        }
-
-        /* --- CHAT CONTAINER --- */
-        .chat-container {
-            flex: 1; width: 100%; max-width: min(92vw, 800px);
-            margin: 0 auto; padding: 75px clamp(12px, 2vw, 24px) 20px clamp(12px, 2vw, 24px);
-            display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
-            overflow-y: auto; scroll-behavior: smooth; position: relative;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .message {
-            max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) clamp(34px, 4vh, 42px) clamp(12px, 1.8vw, 20px);
+            max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px);
             font-size: calc(14px * var(--font-scale)); line-height: 1.55; word-wrap: break-word;
             border-radius: clamp(12px, 2vw, 18px); animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             position: relative;
@@ -501,14 +110,8 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
         }
         .user-message {
             background-color: var(--primary-btn); color: white; align-self: flex-end;
-            border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25); padding-bottom: 14px;
+            border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
         }
-        .action-btn {
-            position: absolute; bottom: 8px; left: 12px; background: transparent; border: none;
-            color: #94a3b8; cursor: pointer; display: flex; align-items: center; gap: 6px;
-            font-size: calc(12px * var(--font-scale)); font-weight: 600; padding: 4px 8px; border-radius: 6px; transition: all 0.2s;
-        }
-        .action-btn:hover { color: var(--text-color); background: rgba(255, 255, 255, 0.06); }
 
         /* --- ZONA DE INPUT E ANEXOS --- */
         .input-wrapper {
@@ -517,7 +120,6 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
             background: linear-gradient(transparent, var(--bg-color) 40%); position: relative;
         }
 
-        /* Drag & Drop Visual Overlay */
         .drag-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px);
@@ -527,7 +129,6 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
         }
         .drag-overlay.active { opacity: 1; visibility: visible; }
 
-        /* Preview Cards Melhorados */
         .preview-container {
             width: 100%; max-width: min(92vw, 800px); margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
         }
@@ -580,22 +181,6 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
             border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
         }
         .plus-btn:hover, .mic-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-color); }
-        .mic-btn.recording { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
-
-        .recording-box { display: none; flex: 1; align-items: center; justify-content: space-between; padding: 0 8px; height: 36px; }
-        .recording-box.active { display: flex; }
-        .recording-left { display: flex; align-items: center; gap: 10px; }
-        .rec-timer { font-size: calc(12px * var(--font-scale)); color: #ef4444; font-weight: 600; }
-        .sound-wave { display: flex; align-items: center; gap: 2.5px; height: 16px; }
-        .wave-bar { width: 3px; height: 100%; background-color: #ef4444; border-radius: 3px; animation: waveAnim 1s infinite ease-in-out; }
-        .wave-bar:nth-child(1) { animation-delay: 0.1s; }
-        .wave-bar:nth-child(2) { animation-delay: 0.3s; }
-        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-        @keyframes waveAnim {
-            0%, 100% { transform: scaleY(0.25); opacity: 0.4; }
-            50% { transform: scaleY(1); opacity: 1; }
-        }
-        .cancel-rec-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         .input-area textarea {
             flex: 1; background: transparent; border: none; color: var(--text-color);
@@ -617,6 +202,295 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
 </head>
 <body>
     <div class="toast-container" id="toastContainer">Notificação</div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span>Menu</span>
+            <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
+        </div>
+        <button class="new-chat-btn" id="newChatBtn">Nova Conversa</button>
+    </aside>
+
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="header-title">Chronical I.A</div>
+    </header>
+
+    <main class="chat-container" id="chatMessages" role="log">
+        <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
+    </main>
+
+    <div class="input-wrapper" id="dropZone">
+        <div class="drag-overlay" id="dragOverlay">Solte os ficheiros aqui para anexar</div>
+        <div class="preview-container" id="previewContainer"></div>
+
+        <div class="attachment-menu" id="attachmentMenu">
+            <div class="menu-category-title">Adicionar Anexo</div>
+            <button class="menu-item" id="btnPhoto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Imagem / Foto</button>
+            <button class="menu-item" id="btnDoc"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Documento (PDF/TXT)</button>
+            <button class="menu-item" id="btnCode"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Ficheiro de Código</button>
+        </div>
+
+        <input type="file" id="fileInput" multiple style="display: none;">
+
+        <div class="input-area">
+            <button class="plus-btn" id="plusButton" title="Adicionar anexo">
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+
+            <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
+            
+            <button class="mic-btn" id="micButton" title="Gravar voz">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+
+            <button class="send-btn" id="sendButton" title="Enviar">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const plusButton = document.getElementById('plusButton');
+        const attachmentMenu = document.getElementById('attachmentMenu');
+        const toastContainer = document.getElementById('toastContainer');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const dropZone = document.getElementById('dropZone');
+        const dragOverlay = document.getElementById('dragOverlay');
+        
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        let attachedFiles = [];
+
+        menuToggleBtn.addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
+        closeSidebarBtn.addEventListener('click', () => { sidebar.classList.Pela imagem que enviaste, o chat acabou por duplicar a estrutura de entrada (aparece uma barra de mensagens a meio do ecrã e outra em baixo), e o layout geral desalinha-se um pouco. 
+
+Para consertar isso de vez, ajustei o posicionamento fixo da barra inferior e organizei os seletores do menu de anexos. Aqui tens o código completo e corrigido para colares no teu projeto da **Chronical I.A**:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chronical I.A</title>
+    <script src="[https://cdn.jsdelivr.net/npm/marked/marked.min.js](https://cdn.jsdelivr.net/npm/marked/marked.min.js)"></script>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #e2e8f0;
+            --panel-bg: #121620;
+            --sidebar-bg: #0b0e14;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary-btn: #2563eb;
+            --font-scale: 1;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body, html {
+            height: 100vh; height: 100dvh; width: 100vw;
+            background-color: var(--bg-color); color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; overflow: hidden;
+            font-size: calc(14px * var(--font-scale));
+        }
+
+        /* --- TOAST --- */
+        .toast-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: #1e293b; color: #ffffff; border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 18px; border-radius: 20px; font-size: calc(12px * var(--font-scale));
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10000;
+        }
+        .toast-container.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+        /* --- MENU LATERAL --- */
+        .sidebar {
+            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
+            background: var(--sidebar-bg); border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; z-index: 1000;
+            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 20px; gap: 16px;
+        }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
+            z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: calc(16px * var(--font-scale)); font-weight: 700;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 12px;
+        }
+        .close-sidebar-btn { background: transparent; border: none; color: var(--text-color); font-size: 18px; cursor: pointer; padding: 4px; border-radius: 6px; }
+        .close-sidebar-btn:hover { background: rgba(255,255,255,0.1); }
+        .new-chat-btn {
+            background: var(--primary-btn); color: #ffffff; border: none;
+            padding: 10px 14px; border-radius: 10px; font-weight: 600;
+            font-size: calc(13px * var(--font-scale)); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .sidebar-history-title { font-size: calc(12px * var(--font-scale)); color: #94a3b8; font-weight: 600; margin-top: 8px; }
+        .sidebar-history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+
+        /* --- CABEÇALHO --- */
+        .header {
+            position: absolute; top: 0; left: 0; width: 100%; 
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px 20px; background: transparent; z-index: 10;
+        }
+        .header-left {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            display: flex; align-items: center; z-index: 2;
+        }
+        .menu-toggle-btn {
+            background: transparent; border: none; color: var(--text-color);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            padding: 6px; border-radius: 8px; transition: background 0.2s;
+        }
+        .menu-toggle-btn:hover { background: rgba(255,255,255,0.08); }
+        .header-title {
+            font-size: calc(16px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center; width: 100%; pointer-events: none;
+        }
+
+        /* --- CHAT CONTAINER --- */
+        .chat-container {
+            flex: 1; width: 100%; max-width: min(92vw, 800px);
+            margin: 0 auto; padding: 75px clamp(12px, 2vw, 24px) 100px clamp(12px, 2vw, 24px);
+            display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
+            overflow-y: auto; scroll-behavior: smooth; position: relative;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .message {
+            max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px) 20px clamp(12px, 1.8vw, 20px);
+            font-size: calc(14px * var(--font-scale)); line-height: 1.55; word-wrap: break-word;
+            border-radius: clamp(12px, 2vw, 18px); animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            position: relative;
+        }
+        .ai-message {
+            background-color: var(--panel-bg); border: 1px solid var(--border-color);
+            color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 4px;
+        }
+        .user-message {
+            background-color: var(--primary-btn); color: white; align-self: flex-end;
+            border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+        }
+
+        /* --- ZONA DE INPUT FIXA EM BAIXO --- */
+        .input-wrapper {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 10px clamp(12px, 3vw, 20px) 16px clamp(12px, 3vw, 20px);
+            display: flex; flex-direction: column; align-items: center;
+            background: linear-gradient(transparent, var(--bg-color) 30%); z-index: 50;
+        }
+
+        /* Drag & Drop Visual Overlay */
+        .drag-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700; font-size: 22px;
+            opacity: 0; visibility: hidden; transition: all 0.2s ease; pointer-events: none;
+        }
+        .drag-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+
+        /* Preview Cards */
+        .preview-container {
+            width: 100%; max-width: min(92vw, 800px); margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+        }
+        .preview-container.active { display: flex; }
+        .preview-card {
+            background: var(--panel-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 12px;
+            display: flex; align-items: center; gap: 10px; flex-shrink: 0; max-width: 220px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .preview-thumb {
+            width: 36px; height: 36px; border-radius: 8px; object-fit: cover; background: #1f2937;
+            display: flex; align-items: center; justify-content: center; font-size: 11px; color: #93c5fd; font-weight: 700; flex-shrink: 0;
+        }
+        .preview-meta { display: flex; flex-direction: column; overflow: hidden; }
+        .preview-info { font-size: calc(11px * var(--font-scale)); color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; font-weight: 500; }
+        .preview-size { font-size: calc(9px * var(--font-scale)); color: #64748b; }
+        .remove-preview { background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 4px; border-radius: 4px; margin-left: auto; }
+        .remove-preview:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+        /* Menu de Anexos Flutuante */
+        .attachment-menu {
+            position: absolute; bottom: calc(100% + 8px); left: 20px;
+            background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 230px;
+            padding: 8px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.8);
+            opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
+        }
+        .attachment-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .menu-category-title { font-size: calc(10px * var(--font-scale)); font-weight: 700; color: #64748b; padding: 4px 8px 2px 8px; text-transform: uppercase; }
+        .menu-item {
+            display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--text-color);
+            background: transparent; border: none; border-radius: 10px; font-size: calc(13px * var(--font-scale));
+            cursor: pointer; text-align: left; width: 100%; transition: all 0.2s ease;
+        }
+        .menu-item:hover { background: rgba(37, 99, 235, 0.15); color: #93c5fd; transform: translateX(2px); }
+        .menu-item svg { width: 18px; height: 18px; stroke: #94a3b8; }
+
+        /* Caixa de Entrada */
+        .input-area {
+            display: flex; width: 100%; max-width: min(92vw, 800px); gap: 8px; background: var(--panel-bg);
+            padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: flex-end;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: border-color 0.2s, box-shadow 0.2s; position: relative;
+        }
+        .input-area:focus-within {
+            border-color: rgba(37, 99, 235, 0.5);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15), 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .plus-btn, .mic-btn {
+            background: transparent; color: #94a3b8; border: none; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+        }
+        .plus-btn:hover, .mic-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-color); }
+
+        .input-area textarea {
+            flex: 1; background: transparent; border: none; color: var(--text-color);
+            font-size: calc(14px * var(--font-scale)); outline: none; padding: 8px 4px;
+            resize: none; max-height: 120px; min-height: 20px; line-height: 1.4; font-family: inherit;
+        }
+        .input-area textarea::placeholder { color: #64748b; }
+
+        .input-area button.send-btn {
+            background: #ffffff; color: #000000; border: none; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.2s, background 0.2s; flex-shrink: 0;
+        }
+        .input-area button.send-btn:hover { background: #e2e8f0; transform: scale(1.06); }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer">Notificação</div>
+    <div class="drag-overlay" id="dragOverlay">Solte os ficheiros aqui para anexar</div>
 
     <!-- Menu Lateral -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -643,11 +517,10 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
         <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
     </main>
 
-    <div class="input-wrapper" id="dropZone">
-        <div class="drag-overlay" id="dragOverlay">Solte os ficheiros aqui para anexar</div>
+    <div class="input-wrapper">
         <div class="preview-container" id="previewContainer"></div>
 
-        <!-- Menu de Anexos Melhorado -->
+        <!-- Menu de Anexos -->
         <div class="attachment-menu" id="attachmentMenu">
             <div class="menu-category-title">Adicionar Anexo</div>
             <button class="menu-item" id="btnPhoto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Imagem / Foto</button>
@@ -664,16 +537,6 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
 
             <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
             
-            <div class="recording-box" id="recordingBox">
-                <div class="recording-left">
-                    <div class="sound-wave">
-                        <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-                    </div>
-                    <span class="rec-timer" id="recTimer">0:00</span>
-                </div>
-                <button class="cancel-rec-btn" id="cancelRecBtn">✕</button>
-            </div>
-
             <button class="mic-btn" id="micButton" title="Gravar voz">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
             </button>
@@ -693,7 +556,6 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
         const toastContainer = document.getElementById('toastContainer');
         const fileInput = document.getElementById('fileInput');
         const previewContainer = document.getElementById('previewContainer');
-        const dropZone = document.getElementById('dropZone');
         const dragOverlay = document.getElementById('dragOverlay');
 
         let attachedFiles = [];
@@ -723,14 +585,13 @@ O código abaixo integra todas as melhorias anteriores e adiciona o **Drag & Dro
 
         fileInput.onchange = (e) => processFiles(e.target.files);
 
-        // Drag & Drop
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dragOverlay.classList.add('active'); }, false);
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => { e.preventDefault(); dragOverlay.classList.remove('active'); }, false);
-        });
-        dropZone.addEventListener('drop', (e) => {
+        // Drag & Drop Global Real
+        window.addEventListener('dragenter', (e) => { e.preventDefault(); dragOverlay.classList.add('active'); });
+        dragOverlay.addEventListener('dragover', (e) => { e.preventDefault(); });
+        dragOverlay.addEventListener('dragleave', (e) => { e.preventDefault(); dragOverlay.classList.remove('active'); });
+        dragOverlay.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragOverlay.classList.remove('active');
             if (e.dataTransfer.files) processFiles(e.dataTransfer.files);
         });
 
