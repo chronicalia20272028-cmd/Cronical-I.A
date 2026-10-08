@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
-    <!-- Marked.js para renderizar Markdown -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -19,17 +17,6 @@
             overflow: hidden;
         }
 
-        /* Sistema de Notificações (Toast) */
-        .toast {
-            position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(15px);
-            background: #1e293b; color: #ffffff; border: 1px solid rgba(255,255,255,0.15);
-            padding: 8px 16px; border-radius: 20px; font-size: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
-            transition: all 0.3s ease; z-index: 10000;
-        }
-        .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-
-        /* Layout Principal */
         .app-container {
             display: flex;
             flex-direction: column;
@@ -38,7 +25,6 @@
             position: relative;
         }
 
-        /* Cabeçalho */
         header {
             height: 56px;
             min-height: 56px;
@@ -48,21 +34,6 @@
             padding: 0 16px;
             background: #000000;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            z-index: 10;
-        }
-
-        .menu-btn {
-            position: absolute;
-            left: 16px;
-            background: transparent;
-            border: none;
-            color: #f1f5f9;
-            cursor: pointer;
-            padding: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .app-title {
@@ -71,47 +42,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Menu Lateral (Sidebar) */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
-            z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
-        }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-        .sidebar {
-            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
-            background: #0a0d14; border-right: 1px solid rgba(255, 255, 255, 0.08);
-            z-index: 999; display: flex; flex-direction: column; padding: 20px; gap: 16px;
-            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sidebar.open { transform: translateX(0); }
-
-        .sidebar-header {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 15px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
-        }
-        .close-sidebar { background: transparent; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
-
-        .new-chat-btn {
-            background: #2563eb; color: #ffffff; border: none; padding: 10px;
-            border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .new-chat-btn:hover { background: #1d4ed8; }
-
-        .history-list {
-            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
-        }
-        .history-item {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #cbd5e1;
-            cursor: pointer; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .history-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
-        .history-item.active { background: rgba(37, 99, 235, 0.2); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd; }
-
-        /* Área de Chat (Mensagens) */
         .chat-main {
             flex: 1;
             width: 100%;
@@ -151,39 +81,6 @@
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
         }
 
-        /* Estilização de código Markdown */
-        .message.ai pre {
-            background: #06090f; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px; padding: 10px; margin: 8px 0; overflow-x: auto; position: relative;
-        }
-        .message.ai code { font-family: monospace; font-size: 12px; color: #93c5fd; }
-        .copy-btn {
-            position: absolute; top: 6px; right: 6px; background: rgba(255,255,255,0.1);
-            border: none; color: #cbd5e1; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;
-        }
-        .copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
-
-        /* Indicador de Digitação */
-        .typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 6px; }
-        .typing-dots span {
-            width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out both;
-        }
-        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-
-        /* Sugestões Rápidas (Chips) */
-        .suggestions {
-            display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; margin-top: 6px;
-        }
-        .chip {
-            background: #161e2e; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;
-            padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
-        }
-        .chip:hover { background: rgba(37,99,235,0.2); color: #93c5fd; border-color: rgba(37,99,235,0.4); }
-
-        /* Zona de Entrada Inferior */
         .input-section {
             width: 100%;
             max-width: 800px;
@@ -191,7 +88,6 @@
             padding: 10px 16px 16px 16px;
             background: #000000;
             flex-shrink: 0;
-            position: relative;
         }
 
         .input-box {
@@ -204,23 +100,6 @@
             border-radius: 28px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-
-        .icon-btn {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .icon-btn:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
-        .icon-btn.recording { color: #ef4444; background: rgba(239, 68, 68, 0.15); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
 
         textarea {
             flex: 1;
@@ -257,50 +136,18 @@
 </head>
 <body>
 
-    <div class="toast" id="toast">Aviso</div>
-
     <div class="app-container">
-        <!-- Sidebar Menu -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <span>Histórico</span>
-                <button class="close-sidebar" id="closeSidebar">✕</button>
-            </div>
-            <button class="new-chat-btn" id="newChatBtn"><span>+</span> Nova Conversa</button>
-            <div class="history-list" id="historyList"></div>
-        </aside>
-
-        <!-- Header -->
         <header>
-            <button class="menu-btn" id="menuBtn">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
             <div class="app-title">Chronical I.A</div>
         </header>
 
-        <!-- Chat Messages -->
         <main class="chat-main" id="chatMain">
-            <div class="message ai">
-                Olá! Como posso ajudar você hoje?
-                <div class="suggestions">
-                    <button class="chip" onclick="quickSend('Explicar um código')">💻 Explicar código</button>
-                    <button class="chip" onclick="quickSend('Dica de layout XML Android')">📱 Layout XML</button>
-                    <button class="chip" onclick="quickSend('Organizar tarefas do dia')">📝 Organizar tarefas</button>
-                </div>
-            </div>
+            <div class="message ai">Olá! Como posso ajudar você hoje?</div>
         </main>
 
-        <!-- Input Area -->
         <div class="input-section">
             <div class="input-box">
-                <button class="icon-btn" id="micBtn" title="Gravar Áudio">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/></svg>
-                </button>
                 <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
-                <button class="icon-btn" id="attachBtn" title="Anexar Ficheiro">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18"><path d="M12 5V19M5 12H19"/></svg>
-                </button>
                 <button class="send-submit" id="sendBtn" title="Enviar">
                     <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
                 </button>
@@ -312,152 +159,17 @@
         const chatMain = document.getElementById('chatMain');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
-        const micBtn = document.getElementById('micBtn');
-        const attachBtn = document.getElementById('attachBtn');
-        const toast = document.getElementById('toast');
-        
-        const menuBtn = document.getElementById('menuBtn');
-        const closeSidebar = document.getElementById('closeSidebar');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const newChatBtn = document.getElementById('newChatBtn');
-        const historyList = document.getElementById('historyList');
 
-        let isRecording = false;
-        let chats = JSON.parse(localStorage.getItem('chronical_clean_chats')) || [];
-        let currentChatId = localStorage.getItem('chronical_active_clean_id') || null;
-
-        function showToast(text) {
-            toast.textContent = text;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // Sidebar Control
-        menuBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); renderHistory(); };
-        closeSidebar.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
-        sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
-
-        newChatBtn.onclick = () => {
-            startNewChat();
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-        };
-
-        function startNewChat() {
-            currentChatId = 'chat_' + Date.now();
-            localStorage.setItem('chronical_active_clean_id', currentChatId);
-            chatMain.innerHTML = `
-                <div class="message ai">
-                    Olá! Como posso ajudar você hoje?
-                    <div class="suggestions">
-                        <button class="chip" onclick="quickSend('Explicar um código')">💻 Explicar código</button>
-                        <button class="chip" onclick="quickSend('Dica de layout XML Android')">📱 Layout XML</button>
-                        <button class="chip" onclick="quickSend('Organizar tarefas do dia')">📝 Organizar tarefas</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderHistory() {
-            historyList.innerHTML = '';
-            if (chats.length === 0) {
-                historyList.innerHTML = '<div style="font-size: 12px; color: #64748b; padding: 6px;">Sem conversas guardadas.</div>';
-                return;
-            }
-            chats.forEach(c => {
-                const item = document.createElement('button');
-                item.className = `history-item ${c.id === currentChatId ? 'active' : ''}`;
-                item.textContent = c.title;
-                item.onclick = () => loadChat(c.id);
-                historyList.appendChild(item);
-            });
-        }
-
-        function saveChat(userTxt, aiTxt) {
-            if (!currentChatId) startNewChat();
-            let chat = chats.find(c => c.id === currentChatId);
-            if (!chat) {
-                chat = { id: currentChatId, title: userTxt.substring(0, 26) + '...', messages: [] };
-                chats.unshift(chat);
-            }
-            chat.messages.push({ sender: 'user', text: userTxt });
-            chat.messages.push({ sender: 'ai', text: aiTxt });
-            localStorage.setItem('chronical_clean_chats', JSON.stringify(chats));
-        }
-
-        function loadChat(id) {
-            const chat = chats.find(c => c.id === id);
-            if (!chat) return;
-            currentChatId = chat.id;
-            localStorage.setItem('chronical_active_clean_id', currentChatId);
-
-            chatMain.innerHTML = '';
-            chat.messages.forEach(m => {
-                const div = document.createElement('div');
-                div.className = `message ${m.sender}`;
-                div.innerHTML = m.sender === 'ai' ? parseMarkdown(m.text) : escapeHtml(m.text);
-                chatMain.appendChild(div);
-            });
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            chatMain.scrollTop = chatMain.scrollHeight;
-        }
-
-        function parseMarkdown(text) {
-            let html = marked.parse(text);
-            return html.replace(/<pre><code([^>]*)>([\s\S]*?)<\/code><\/pre>/g, (match, p1, code) => {
-                const clean = code.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
-                const encoded = encodeURIComponent(clean);
-                return `<pre><code${p1}>${code}</code><button class="copy-btn" onclick="copyCode(decodeURIComponent('${encoded}'), this)">Copiar</button></pre>`;
-            });
-        }
-
-        window.copyCode = function(code, btn) {
-            navigator.clipboard.writeText(code).then(() => {
-                btn.textContent = "Copiado!";
-                setTimeout(() => btn.textContent = "Copiar", 2000);
-            });
-        };
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-
-        window.quickSend = function(txt) {
-            userInput.value = txt;
-            sendBtn.click();
-        };
-
-        // Auto-expand textarea
         userInput.oninput = function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         };
 
-        // Audio Button
-        micBtn.onclick = () => {
-            isRecording = !isRecording;
-            if (isRecording) {
-                micBtn.classList.add('recording');
-                showToast("A gravar áudio... Clica novamente para enviar.");
-            } else {
-                micBtn.classList.remove('recording');
-                showToast("Áudio enviado!");
-                appendAndRespond("🎤 [Áudio gravado]", "Recebi o teu áudio com sucesso! Como posso ajudar na programação?");
-            }
-        };
-
-        // Attach Button
-        attachBtn.onclick = () => {
-            showToast("Função de anexos pronta a usar!");
-        };
-
-        // Send Message
         sendBtn.onclick = () => {
             const text = userInput.value.trim();
             if (!text) return;
 
+            // Mensagem do utilizador
             const userDiv = document.createElement('div');
             userDiv.className = 'message user';
             userDiv.textContent = text;
@@ -467,32 +179,15 @@
             userInput.style.height = 'auto';
             chatMain.scrollTop = chatMain.scrollHeight;
 
-            let simulatedAi = "Recebido com sucesso! Estou a analisar o teu pedido.";
-            if (text.toLowerCase().includes('código') || text.toLowerCase().includes('xml')) {
-                simulatedAi = "Aqui tens um exemplo prático:\n```xml\n<LinearLayout\n android:layout_height=""match_parent"\n" android:layout_width=""match_parent"\n" android:orientation=""vertical"">\n</LinearLayout>\n```";
-            }
-
-            appendAndRespond(text, simulatedAi);
-        };
-
-        function appendAndRespond(userText, aiText) {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message ai';
-            typingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-            chatMain.appendChild(typingDiv);
-            chatMain.scrollTop = chatMain.scrollHeight;
-
+            // Resposta simples da IA após meio segundo
             setTimeout(() => {
-                chatMain.removeChild(typingDiv);
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'message ai';
-                aiDiv.innerHTML = parseMarkdown(aiText);
+                aiDiv.textContent = "Mensagem recebida: " + text;
                 chatMain.appendChild(aiDiv);
                 chatMain.scrollTop = chatMain.scrollHeight;
-
-                saveChat(userText, aiText);
-            }, 700);
-        }
+            }, 500);
+        };
 
         userInput.onkeydown = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -503,3 +198,4 @@
     </script>
 </body>
 </html>
+
