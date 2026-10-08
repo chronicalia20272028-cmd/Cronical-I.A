@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
+    <!-- Biblioteca para renderizar Markdown nas mensagens -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -260,6 +261,7 @@
         const closeSidebarBtn = document.getElementById('closeSidebarBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const newChatBtn = document.getElementById('newChatBtn');
 
         let attachedFiles = [];
         let isRecording = false;
@@ -274,6 +276,11 @@
         menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); };
         closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
         sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
+        newChatBtn.onclick = () => {
+            chatMessages.innerHTML = '<div class="message ai-message">Nova conversa iniciada! Como posso ajudar?</div>';
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        };
 
         // Menu de Anexos
         plusButton.onclick = (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); };
@@ -352,7 +359,7 @@
                 setTimeout(() => {
                     const aiMsg = document.createElement('div');
                     aiMsg.className = 'message ai-message';
-                    aiMsg.textContent = "Ouvi o teu áudio! Como posso ajudar com base nele?";
+                    aiMsg.innerHTML = marked.parse("Ouvi o teu áudio! Como posso ajudar com base nele?");
                     chatMessages.appendChild(aiMsg);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }, 600);
@@ -388,7 +395,7 @@
             setTimeout(() => {
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai-message';
-                aiMsg.textContent = "Recebido! Estou a analisar a tua mensagem e os anexos.";
+                aiMsg.innerHTML = marked.parse("Recebido! Estou a analisar a tua mensagem e os anexos.");
                 chatMessages.appendChild(aiMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }, 600);
