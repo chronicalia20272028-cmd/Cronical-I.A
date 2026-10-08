@@ -4,74 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
-    <!-- Biblioteca para renderizar Markdown -->
+    <!-- Marked.js para renderizar Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
             width: 100%;
-            height: 100%;
+            height: 100vh;
+            height: 100dvh;
             background-color: #000000;
-            color: #e2e8f0;
+            color: #f1f5f9;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow: hidden;
         }
 
-        /* Toast de Notificações */
-        .toast-container {
-            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+        /* Sistema de Notificações (Toast) */
+        .toast {
+            position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(15px);
             background: #1e293b; color: #ffffff; border: 1px solid rgba(255,255,255,0.15);
-            padding: 8px 18px; border-radius: 20px; font-size: 12px;
+            padding: 8px 16px; border-radius: 20px; font-size: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
             transition: all 0.3s ease; z-index: 10000;
         }
-        .toast-container.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-
-        /* Drag & Drop Overlay */
-        .drag-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700; font-size: 20px;
-            opacity: 0; visibility: hidden; transition: all 0.2s ease; pointer-events: none;
-        }
-        .drag-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+        .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
         /* Layout Principal */
-        .app-layout {
+        .app-container {
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            background-color: #000000;
+            height: 100%;
             position: relative;
         }
 
-        /* Menu Lateral */
-        .sidebar {
-            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
-            background: #0b0e14; border-right: 1px solid rgba(255,255,255,0.08);
-            display: flex; flex-direction: column; z-index: 1000;
-            transform: translateX(-100%); transition: transform 0.3s ease;
-            padding: 20px; gap: 16px;
+        /* Cabeçalho */
+        header {
+            height: 56px;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+            background: #000000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 10;
         }
-        .sidebar.open { transform: translateX(0); }
+
+        .menu-btn {
+            position: absolute;
+            left: 16px;
+            background: transparent;
+            border: none;
+            color: #f1f5f9;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* Menu Lateral (Sidebar) */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
-            z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s;
+            z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
         }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed; top: 0; left: 0; width: 280px; height: 100%;
+            background: #0a0d14; border-right: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 999; display: flex; flex-direction: column; padding: 20px; gap: 16px;
+            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar.open { transform: translateX(0); }
+
         .sidebar-header {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 16px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
+            font-size: 15px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
         }
-        .close-sidebar-btn { background: transparent; border: none; color: #e2e8f0; font-size: 18px; cursor: pointer; }
+        .close-sidebar { background: transparent; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; }
+
         .new-chat-btn {
-            background: #2563eb; color: #ffffff; border: none;
-            padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;
+            background: #2563eb; color: #ffffff; border: none; padding: 10px;
+            border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .new-chat-btn:hover { background: #1d4ed8; }
@@ -81,26 +105,14 @@
         }
         .history-item {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #cbd5e1; cursor: pointer;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left;
+            padding: 10px 12px; border-radius: 8px; font-size: 13px; color: #cbd5e1;
+            cursor: pointer; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .history-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
         .history-item.active { background: rgba(37, 99, 235, 0.2); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd; }
 
-        /* Cabeçalho */
-        .header {
-            height: 56px; min-height: 56px; width: 100%; display: flex; align-items: center; justify-content: center;
-            padding: 0 16px; background: #000000; border-bottom: 1px solid rgba(255,255,255,0.08);
-            position: relative; z-index: 10; flex-shrink: 0;
-        }
-        .menu-toggle-btn {
-            position: absolute; left: 16px; background: transparent; border: none; color: #e2e8f0;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 8px;
-        }
-        .header-title { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
-
-        /* Área de Mensagens */
-        .chat-container {
+        /* Área de Chat (Mensagens) */
+        .chat-main {
             flex: 1;
             width: 100%;
             max-width: 800px;
@@ -108,132 +120,136 @@
             padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             overflow-y: auto;
             scroll-behavior: smooth;
         }
 
         .message {
-            max-width: 85%; padding: 12px 16px; font-size: 14px; line-height: 1.5;
-            word-wrap: break-word; border-radius: 14px; flex-shrink: 0;
-        }
-        .ai-message {
-            background-color: #121620; border: 1px solid rgba(255,255,255,0.08);
-            color: #e2e8f0; align-self: flex-start; border-bottom-left-radius: 4px;
-        }
-        .user-message {
-            background-color: #2563eb; color: white; align-self: flex-end;
-            border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+            max-width: 85%;
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            border-radius: 14px;
+            word-wrap: break-word;
+            flex-shrink: 0;
         }
 
-        /* Estilização de Código Markdown com Botão Copiar */
-        .ai-message pre {
-            background: #090d16; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px; padding: 12px; margin-top: 8px; margin-bottom: 8px;
-            overflow-x: auto; position: relative; font-family: monospace;
+        .message.ai {
+            background-color: #111622;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #f1f5f9;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
         }
-        .ai-message code { font-family: monospace; font-size: 13px; color: #93c5fd; }
-        .copy-code-btn {
+
+        .message.user {
+            background-color: #2563eb;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Estilização de código Markdown */
+        .message.ai pre {
+            background: #06090f; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; padding: 10px; margin: 8px 0; overflow-x: auto; position: relative;
+        }
+        .message.ai code { font-family: monospace; font-size: 12px; color: #93c5fd; }
+        .copy-btn {
             position: absolute; top: 6px; right: 6px; background: rgba(255,255,255,0.1);
-            border: none; color: #cbd5e1; font-size: 11px; padding: 4px 8px; border-radius: 4px; cursor: pointer;
+            border: none; color: #cbd5e1; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;
         }
-        .copy-code-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+        .copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
-        /* Chips / Atalhos Rápidos */
-        .suggestions-container {
-            display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; margin-top: 4px;
-        }
-        .suggestion-chip {
-            background: #121620; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;
-            padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
-        }
-        .suggestion-chip:hover { background: rgba(37,99,235,0.2); color: #93c5fd; border-color: rgba(37,99,235,0.4); }
-
-        /* Animação a Digitar (Typing indicator) */
-        .typing-indicator {
-            display: flex; gap: 4px; align-items: center; padding: 4px 8px;
-        }
-        .typing-dot {
-            width: 7px; height: 7px; background: #94a3b8; border-radius: 50%;
+        /* Indicador de Digitação */
+        .typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 6px; }
+        .typing-dots span {
+            width: 6px; height: 6px; background: #94a3b8; border-radius: 50%;
             animation: bounce 1.4s infinite ease-in-out both;
         }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1.0); }
-        }
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* Zona de Input Inferior */
-        .input-wrapper {
+        /* Sugestões Rápidas (Chips) */
+        .suggestions {
+            display: flex; gap: 8px; overflow-x: auto; padding: 4px 0; margin-top: 6px;
+        }
+        .chip {
+            background: #161e2e; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8;
+            padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+        }
+        .chip:hover { background: rgba(37,99,235,0.2); color: #93c5fd; border-color: rgba(37,99,235,0.4); }
+
+        /* Zona de Entrada Inferior */
+        .input-section {
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
             padding: 10px 16px 16px 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             background: #000000;
             flex-shrink: 0;
             position: relative;
         }
 
-        /* Pré-visualização de Ficheiros */
-        .preview-container {
-            width: 100%; margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-        }
-        .preview-container.active { display: flex; }
-        .preview-card {
-            background: #121620; border: 1px solid rgba(255,255,255,0.08); padding: 6px 10px; border-radius: 12px;
-            display: flex; align-items: center; gap: 10px; flex-shrink: 0; max-width: 220px;
-        }
-        .preview-thumb {
-            width: 36px; height: 36px; border-radius: 8px; object-fit: cover; background: #1f2937;
-            display: flex; align-items: center; justify-content: center; font-size: 11px; color: #93c5fd; font-weight: 700; flex-shrink: 0;
-        }
-        .preview-meta { display: flex; flex-direction: column; overflow: hidden; }
-        .preview-info { font-size: 11px; color: #e2e8f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
-        .remove-preview { background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 4px; margin-left: auto; }
-        .remove-preview:hover { color: #ef4444; }
-
-        /* Menu Flutuante de Anexos */
-        .attachment-menu {
-            position: absolute; bottom: calc(100% + 8px); left: 16px;
-            background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 220px;
-            padding: 8px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.8);
-            opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95); transition: all 0.2s ease; z-index: 101;
-        }
-        .attachment-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        .menu-item {
-            display: flex; align-items: center; gap: 10px; padding: 10px; color: #e2e8f0;
-            background: transparent; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; text-align: left; width: 100%;
-        }
-        .menu-item:hover { background: rgba(37, 99, 235, 0.15); color: #93c5fd; }
-        .menu-item svg { width: 16px; height: 16px; stroke: #94a3b8; }
-
-        /* Barra de Entrada */
-        .input-area {
-            display: flex; width: 100%; gap: 8px; background: #121620;
-            padding: 8px 12px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.08); align-items: flex-end;
+        .input-box {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            background: #111622;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 8px 12px;
+            border-radius: 28px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-        .plus-btn, .mic-btn {
-            background: transparent; color: #94a3b8; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0;
-        }
-        .plus-btn:hover, .mic-btn:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
-        .mic-btn.recording { color: #ef4444; background: rgba(239, 68, 68, 0.15); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .input-area textarea {
-            flex: 1; background: transparent; border: none; color: #e2e8f0;
-            font-size: 14px; outline: none; padding: 8px 4px; resize: none; max-height: 100px; min-height: 20px; line-height: 1.4;
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
         }
-        .input-area button.send-btn {
-            background: #ffffff; color: #000000; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0;
+        .icon-btn:hover { background: rgba(255,255,255,0.08); color: #f1f5f9; }
+        .icon-btn.recording { color: #ef4444; background: rgba(239, 68, 68, 0.15); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #f1f5f9;
+            font-size: 14px;
+            outline: none;
+            padding: 8px 4px;
+            resize: none;
+            max-height: 120px;
+            min-height: 22px;
+            line-height: 1.4;
         }
-        .input-area button.send-btn:hover { background: #e2e8f0; }
+
+        .send-submit {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .send-submit:hover { background: #cbd5e1; }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -241,67 +257,51 @@
 </head>
 <body>
 
-    <div class="toast-container" id="toastContainer">Notificação</div>
-    <div class="drag-overlay" id="dragOverlay">Solte os ficheiros aqui para anexar</div>
+    <div class="toast" id="toast">Aviso</div>
 
-    <div class="app-layout">
-        <!-- Menu Lateral -->
+    <div class="app-container">
+        <!-- Sidebar Menu -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <span>Histórico</span>
-                <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
+                <button class="close-sidebar" id="closeSidebar">✕</button>
             </div>
-            <button class="new-chat-btn" id="newChatBtn">
-                <span>+</span> Nova Conversa
-            </button>
-            <div class="history-list" id="historyList">
-                <!-- Histórico gerado dinamicamente -->
-            </div>
+            <button class="new-chat-btn" id="newChatBtn"><span>+</span> Nova Conversa</button>
+            <div class="history-list" id="historyList"></div>
         </aside>
 
-        <!-- Cabeçalho -->
-        <header class="header">
-            <button class="menu-toggle-btn" id="menuToggleBtn">
+        <!-- Header -->
+        <header>
+            <button class="menu-btn" id="menuBtn">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
-            <div class="header-title">Chronical I.A</div>
+            <div class="app-title">Chronical I.A</div>
         </header>
 
-        <!-- Contentor de Mensagens -->
-        <main class="chat-container" id="chatMessages">
-            <div class="message ai-message">
+        <!-- Chat Messages -->
+        <main class="chat-main" id="chatMain">
+            <div class="message ai">
                 Olá! Como posso ajudar você hoje?
-                <div class="suggestions-container">
-                    <button class="suggestion-chip" onclick="sendSuggestion('Explicar um código')">💻 Explicar código</button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Dica de layout XML Android')">📱 Layout XML</button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Organizar minhas tarefas')">📝 Organizar tarefas</button>
+                <div class="suggestions">
+                    <button class="chip" onclick="quickSend('Explicar um código')">💻 Explicar código</button>
+                    <button class="chip" onclick="quickSend('Dica de layout XML Android')">📱 Layout XML</button>
+                    <button class="chip" onclick="quickSend('Organizar tarefas do dia')">📝 Organizar tarefas</button>
                 </div>
             </div>
         </main>
 
-        <!-- Zona de Input -->
-        <div class="input-wrapper">
-            <div class="preview-container" id="previewContainer"></div>
-
-            <!-- Menu Flutuante de Anexos -->
-            <div class="attachment-menu" id="attachmentMenu">
-                <button class="menu-item" id="btnPhoto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Imagem / Foto</button>
-                <button class="menu-item" id="btnDoc"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Documento</button>
-                <button class="menu-item" id="btnCode"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Código</button>
-            </div>
-
-            <input type="file" id="fileInput" multiple style="display: none;">
-
-            <div class="input-area">
-                <button class="plus-btn" id="plusButton" title="Adicionar anexo">
-                    <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-                </button>
-                <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
-                <button class="mic-btn" id="micButton" title="Gravar áudio">
+        <!-- Input Area -->
+        <div class="input-section">
+            <div class="input-box">
+                <button class="icon-btn" id="micBtn" title="Gravar Áudio">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/></svg>
                 </button>
-                <button class="send-btn" id="sendButton" title="Enviar">
+                <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
+                <button class="icon-btn" id="attachBtn" title="Anexar Ficheiro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18"><path d="M12 5V19M5 12H19"/></svg>
+                </button>
+                <button class="send-submit" id="sendBtn" title="Enviar">
                     <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
                 </button>
             </div>
@@ -309,56 +309,51 @@
     </div>
 
     <script>
-        const chatMessages = document.getElementById('chatMessages');
+        const chatMain = document.getElementById('chatMain');
         const userInput = document.getElementById('userInput');
-        const sendButton = document.getElementById('sendButton');
-        const plusButton = document.getElementById('plusButton');
-        const micButton = document.getElementById('micButton');
-        const attachmentMenu = document.getElementById('attachmentMenu');
-        const fileInput = document.getElementById('fileInput');
-        const previewContainer = document.getElementById('previewContainer');
-        const dragOverlay = document.getElementById('dragOverlay');
-        const toastContainer = document.getElementById('toastContainer');
-        const historyList = document.getElementById('historyList');
+        const sendBtn = document.getElementById('sendBtn');
+        const micBtn = document.getElementById('micBtn');
+        const attachBtn = document.getElementById('attachBtn');
+        const toast = document.getElementById('toast');
         
-        const menuToggleBtn = document.getElementById('menuToggleBtn');
-        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const menuBtn = document.getElementById('menuBtn');
+        const closeSidebar = document.getElementById('closeSidebar');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const newChatBtn = document.getElementById('newChatBtn');
+        const historyList = document.getElementById('historyList');
 
-        let attachedFiles = [];
         let isRecording = false;
-        let chats = JSON.parse(localStorage.getItem('chronical_chats')) || [];
-        let currentChatId = localStorage.getItem('chronical_active_id') || null;
+        let chats = JSON.parse(localStorage.getItem('chronical_clean_chats')) || [];
+        let currentChatId = localStorage.getItem('chronical_active_clean_id') || null;
 
-        function showToast(message) {
-            toastContainer.textContent = message;
-            toastContainer.classList.add('show');
-            setTimeout(() => toastContainer.classList.remove('show'), 3000);
+        function showToast(text) {
+            toast.textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
-        // Menu Lateral & Gestão de Conversas
-        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); renderHistory(); };
-        closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
+        // Sidebar Control
+        menuBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); renderHistory(); };
+        closeSidebar.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
         sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
 
         newChatBtn.onclick = () => {
-            createNewChat();
+            startNewChat();
             sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('active');
         };
 
-        function createNewChat() {
+        function startNewChat() {
             currentChatId = 'chat_' + Date.now();
-            localStorage.setItem('chronical_active_id', currentChatId);
-            chatMessages.innerHTML = `
-                <div class="message ai-message">
+            localStorage.setItem('chronical_active_clean_id', currentChatId);
+            chatMain.innerHTML = `
+                <div class="message ai">
                     Olá! Como posso ajudar você hoje?
-                    <div class="suggestions-container">
-                        <button class="suggestion-chip" onclick="sendSuggestion('Explicar um código')">💻 Explicar código</button>
-                        <button class="suggestion-chip" onclick="sendSuggestion('Dica de layout XML Android')">📱 Layout XML</button>
-                        <button class="suggestion-chip" onclick="sendSuggestion('Organizar minhas tarefas')">📝 Organizar tarefas</button>
+                    <div class="suggestions">
+                        <button class="chip" onclick="quickSend('Explicar um código')">💻 Explicar código</button>
+                        <button class="chip" onclick="quickSend('Dica de layout XML Android')">📱 Layout XML</button>
+                        <button class="chip" onclick="quickSend('Organizar tarefas do dia')">📝 Organizar tarefas</button>
                     </div>
                 </div>
             `;
@@ -367,61 +362,54 @@
         function renderHistory() {
             historyList.innerHTML = '';
             if (chats.length === 0) {
-                historyList.innerHTML = '<div style="font-size: 12px; color: #64748b; padding: 8px;">Nenhuma conversa guardada.</div>';
+                historyList.innerHTML = '<div style="font-size: 12px; color: #64748b; padding: 6px;">Sem conversas guardadas.</div>';
                 return;
             }
-            chats.forEach(chat => {
+            chats.forEach(c => {
                 const item = document.createElement('button');
-                item.className = `history-item ${chat.id === currentChatId ? 'active' : ''}`;
-                item.textContent = chat.title;
-                item.onclick = () => loadChat(chat.id);
+                item.className = `history-item ${c.id === currentChatId ? 'active' : ''}`;
+                item.textContent = c.title;
+                item.onclick = () => loadChat(c.id);
                 historyList.appendChild(item);
             });
         }
 
-        function saveCurrentChatToStorage(userText, aiText) {
-            if (!currentChatId) createNewChat();
-            
+        function saveChat(userTxt, aiTxt) {
+            if (!currentChatId) startNewChat();
             let chat = chats.find(c => c.id === currentChatId);
             if (!chat) {
-                chat = { id: currentChatId, title: userText.substring(0, 25) + '...', messages: [] };
+                chat = { id: currentChatId, title: userTxt.substring(0, 26) + '...', messages: [] };
                 chats.unshift(chat);
             }
-            chat.messages.push({ sender: 'user', text: userText });
-            chat.messages.push({ sender: 'ai', text: aiText });
-            localStorage.setItem('chronical_chats', JSON.stringify(chats));
+            chat.messages.push({ sender: 'user', text: userTxt });
+            chat.messages.push({ sender: 'ai', text: aiTxt });
+            localStorage.setItem('chronical_clean_chats', JSON.stringify(chats));
         }
 
         function loadChat(id) {
             const chat = chats.find(c => c.id === id);
             if (!chat) return;
             currentChatId = chat.id;
-            localStorage.setItem('chronical_active_id', currentChatId);
-            
-            chatMessages.innerHTML = '';
-            chat.messages.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `message ${msg.sender === 'user' ? 'user-message' : 'ai-message'}`;
-                if (msg.sender === 'ai') {
-                    msgDiv.innerHTML = processMarkdownWithCopy(msg.text);
-                } else {
-                    msgDiv.textContent = msg.text;
-                }
-                chatMessages.appendChild(msgDiv);
+            localStorage.setItem('chronical_active_clean_id', currentChatId);
+
+            chatMain.innerHTML = '';
+            chat.messages.forEach(m => {
+                const div = document.createElement('div');
+                div.className = `message ${m.sender}`;
+                div.innerHTML = m.sender === 'ai' ? parseMarkdown(m.text) : escapeHtml(m.text);
+                chatMain.appendChild(div);
             });
             sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('active');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMain.scrollTop = chatMain.scrollHeight;
         }
 
-        // Processamento de Markdown com Botão Copiar Código
-        function processMarkdownWithCopy(text) {
+        function parseMarkdown(text) {
             let html = marked.parse(text);
-            // Injetar botão copiar nos blocos de código
-            return html.replace(/<pre><code([^>]*)>([\s\S]*?)<\/code><\/pre>/g, (match, p1, codeContent) => {
-                const cleanCode = codeContent.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
-                const encodedCode = encodeURIComponent(cleanCode);
-                return `<pre><code${p1}>${codeContent}</code><button class="copy-code-btn" onclick="copyCode(decodeURIComponent('${encodedCode}'), this)">Copiar</button></pre>`;
+            return html.replace(/<pre><code([^>]*)>([\s\S]*?)<\/code><\/pre>/g, (match, p1, code) => {
+                const clean = code.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
+                const encoded = encodeURIComponent(clean);
+                return `<pre><code${p1}>${code}</code><button class="copy-btn" onclick="copyCode(decodeURIComponent('${encoded}'), this)">Copiar</button></pre>`;
             });
         }
 
@@ -432,142 +420,84 @@
             });
         };
 
-        window.sendSuggestion = function(text) {
-            userInput.value = text;
-            sendButton.click();
-        };
-
-        // Menu de Anexos
-        plusButton.onclick = (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); };
-        document.onclick = () => attachmentMenu.classList.remove('active');
-        attachmentMenu.onclick = (e) => e.stopPropagation();
-
-        document.getElementById('btnPhoto').onclick = () => { fileInput.accept = "image/*"; fileInput.click(); attachmentMenu.classList.remove('active'); };
-        document.getElementById('btnDoc').onclick = () => { fileInput.accept = ".pdf,.txt,.doc,.docx"; fileInput.click(); attachmentMenu.classList.remove('active'); };
-        document.getElementById('btnCode').onclick = () => { fileInput.accept = ".py,.js,.html,.css,.json,.cpp,.java"; fileInput.click(); attachmentMenu.classList.remove('active'); };
-
-        fileInput.onchange = (e) => { handleFiles(e.target.files); };
-
-        function handleFiles(files) {
-            for (let file of files) {
-                attachedFiles.push(file);
-            }
-            renderPreviews();
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
-        function renderPreviews() {
-            previewContainer.innerHTML = '';
-            if (attachedFiles.length === 0) {
-                previewContainer.classList.remove('active');
-                return;
-            }
-            previewContainer.classList.add('active');
-            attachedFiles.forEach((file, index) => {
-                const card = document.createElement('div');
-                card.className = 'preview-card';
-                let thumbText = file.name.split('.').pop().toUpperCase();
-                card.innerHTML = `
-                    <div class="preview-thumb">${thumbText}</div>
-                    <div class="preview-meta"><span class="preview-info">${file.name}</span></div>
-                    <button class="remove-preview" onclick="removeFile(${index})">✕</button>
-                `;
-                previewContainer.appendChild(card);
-            });
-        }
-
-        window.removeFile = function(index) {
-            attachedFiles.splice(index, 1);
-            renderPreviews();
+        window.quickSend = function(txt) {
+            userInput.value = txt;
+            sendBtn.click();
         };
 
-        // Drag and Drop
-        window.addEventListener('dragover', (e) => { e.preventDefault(); dragOverlay.classList.add('active'); });
-        window.addEventListener('dragleave', (e) => { if (e.clientX === 0 && e.clientY === 0) dragOverlay.classList.remove('active'); });
-        window.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dragOverlay.classList.remove('active');
-            if (e.dataTransfer.files.length > 0) {
-                handleFiles(e.dataTransfer.files);
-                showToast("Ficheiro(s) anexado(s) com sucesso!");
-            }
-        });
-
-        // Botão de Áudio
-        micButton.onclick = () => {
-            isRecording = !isRecording;
-            if (isRecording) {
-                micButton.classList.add('recording');
-                showToast("A gravar áudio... Clica novamente para enviar.");
-            } else {
-                micButton.classList.remove('recording');
-                showToast("Áudio processado com sucesso!");
-                const userMsg = document.createElement('div');
-                userMsg.className = 'message user-message';
-                userMsg.textContent = "🎤 [Mensagem de Áudio]";
-                chatMessages.appendChild(userMsg);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                showTypingAndRespond("Ouvi o teu áudio! Como posso ajudar com base nele?");
-            }
-        };
-
+        // Auto-expand textarea
         userInput.oninput = function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         };
 
-        // Enviar Mensagem
-        sendButton.onclick = () => {
-            const text = userInput.value.trim();
-            if (!text && attachedFiles.length === 0) return;
-
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user-message';
-            let displayText = text;
-            if (attachedFiles.length > 0) {
-                displayText += ` [📎 ${attachedFiles.length} anexo(s)]`;
+        // Audio Button
+        micBtn.onclick = () => {
+            isRecording = !isRecording;
+            if (isRecording) {
+                micBtn.classList.add('recording');
+                showToast("A gravar áudio... Clica novamente para enviar.");
+            } else {
+                micBtn.classList.remove('recording');
+                showToast("Áudio enviado!");
+                appendAndRespond("🎤 [Áudio gravado]", "Recebi o teu áudio com sucesso! Como posso ajudar na programação?");
             }
-            userMsg.textContent = displayText;
-            chatMessages.appendChild(userMsg);
+        };
+
+        // Attach Button
+        attachBtn.onclick = () => {
+            showToast("Função de anexos pronta a usar!");
+        };
+
+        // Send Message
+        sendBtn.onclick = () => {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user';
+            userDiv.textContent = text;
+            chatMain.appendChild(userDiv);
 
             userInput.value = '';
             userInput.style.height = 'auto';
-            attachedFiles = [];
-            renderPreviews();
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMain.scrollTop = chatMain.scrollHeight;
 
-            // Resposta simulada com IA
-            let aiReply = "Recebido! Estou a analisar a tua mensagem e os anexos.";
+            let simulatedAi = "Recebido com sucesso! Estou a analisar o teu pedido.";
             if (text.toLowerCase().includes('código') || text.toLowerCase().includes('xml')) {
-                aiReply = "Aqui tens um exemplo de estrutura em código:\n```xml\n<LinearLayout\n android:layout_height=""match_parent"\n" android:layout_width=""match_parent"\n" android:orientation=""vertical"">\n</LinearLayout>\n```";
+                simulatedAi = "Aqui tens um exemplo prático:\n```xml\n<LinearLayout\n android:layout_height=""match_parent"\n" android:layout_width=""match_parent"\n" android:orientation=""vertical"">\n</LinearLayout>\n```";
             }
-            
-            showTypingAndRespond(aiReply, text);
+
+            appendAndRespond(text, simulatedAi);
         };
 
-        function showTypingAndRespond(aiText, userText = "Áudio/Anexo") {
-            const typingMsg = document.createElement('div');
-            typingMsg.className = 'message ai-message';
-            typingMsg.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
-            chatMessages.appendChild(typingMsg);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function appendAndRespond(userText, aiText) {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai';
+            typingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+            chatMain.appendChild(typingDiv);
+            chatMain.scrollTop = chatMain.scrollHeight;
 
             setTimeout(() => {
-                chatMessages.removeChild(typingMsg);
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'message ai-message';
-                aiMsg.innerHTML = processMarkdownWithCopy(aiText);
-                chatMessages.appendChild(aiMsg);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatMain.removeChild(typingDiv);
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'message ai';
+                aiDiv.innerHTML = parseMarkdown(aiText);
+                chatMain.appendChild(aiDiv);
+                chatMain.scrollTop = chatMain.scrollHeight;
 
-                saveCurrentChatToStorage(userText, aiText);
-            }, 800);
+                saveChat(userText, aiText);
+            }, 700);
         }
 
         userInput.onkeydown = (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                sendButton.click();
+                sendBtn.click();
             }
         };
     </script>
