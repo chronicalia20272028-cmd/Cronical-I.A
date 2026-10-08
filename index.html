@@ -69,7 +69,8 @@
         .header {
             position: absolute; top: 0; left: 0; width: 100%; 
             display: flex; align-items: center; justify-content: center;
-            padding: 16px 20px; background: transparent; z-index: 10;
+            padding: 16px 20px; background: var(--bg-color); z-index: 10;
+            border-bottom: 1px solid var(--border-color);
         }
         .header-left {
             position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
@@ -90,20 +91,19 @@
 
         /* --- CHAT CONTAINER --- */
         .chat-container {
-            flex: 1; width: 100%; max-width: min(92vw, 800px);
-            margin: 0 auto; padding: 75px clamp(12px, 2vw, 24px) 110px clamp(12px, 2vw, 24px);
-            display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
-            overflow-y: auto; scroll-behavior: smooth; position: relative;
+            flex: 1; width: 100%; max-width: 800px;
+            margin: 0 auto; padding: 80px 20px 110px 20px;
+            display: flex; flex-direction: column; gap: 16px;
+            overflow-y: auto; scroll-behavior: smooth;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .message {
-            max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px);
+            max-width: 85%; padding: 12px 16px;
             font-size: calc(14px * var(--font-scale)); line-height: 1.55; word-wrap: break-word;
-            border-radius: clamp(12px, 2vw, 18px); animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            position: relative;
+            border-radius: 16px; animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .ai-message {
             background-color: var(--panel-bg); border: 1px solid var(--border-color);
@@ -114,25 +114,25 @@
             border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
         }
 
-        /* --- ZONA DE INPUT FIXA EM BAIXO (ÚNICA) --- */
+        /* --- ZONA DE INPUT FIXA EM BAIXO --- */
         .input-wrapper {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 10px clamp(12px, 3vw, 20px) 16px clamp(12px, 3vw, 20px);
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            padding: 12px 20px 20px 20px;
             display: flex; flex-direction: column; align-items: center;
-            background: linear-gradient(transparent, var(--bg-color) 40%); z-index: 50;
+            background: linear-gradient(transparent, var(--bg-color) 30%); z-index: 100;
         }
 
         .drag-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px);
             z-index: 9999; display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700; font-size: 18px;
+            color: white; font-weight: 700; font-size: 22px;
             opacity: 0; visibility: hidden; transition: all 0.2s ease; pointer-events: none;
         }
         .drag-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
         .preview-container {
-            width: 100%; max-width: min(92vw, 800px); margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+            width: 100%; max-width: 800px; margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
         }
         .preview-container.active { display: flex; }
         .preview-card {
@@ -144,32 +144,32 @@
             display: flex; align-items: center; justify-content: center; font-size: 11px; color: #93c5fd; font-weight: 700; flex-shrink: 0;
         }
         .preview-meta { display: flex; flex-direction: column; overflow: hidden; }
-        .preview-info { font-size: calc(11px * var(--font-scale)); color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; font-weight: 500; }
-        .preview-size { font-size: calc(9px * var(--font-scale)); color: #64748b; }
+        .preview-info { font-size: 11px; color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; font-weight: 500; }
+        .preview-size { font-size: 9px; color: #64748b; }
         .remove-preview { background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 4px; border-radius: 4px; margin-left: auto; }
         .remove-preview:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
-        /* Menu de Anexos */
+        /* Menu de Anexos Flutuante */
         .attachment-menu {
-            position: absolute; bottom: calc(100% + 12px); left: 20px;
+            position: absolute; bottom: calc(100% + 8px); left: 20px;
             background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 230px;
             padding: 8px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.8);
             opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 101;
         }
         .attachment-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        .menu-category-title { font-size: calc(10px * var(--font-scale)); font-weight: 700; color: #64748b; padding: 4px 8px 2px 8px; text-transform: uppercase; }
+        .menu-category-title { font-size: 10px; font-weight: 700; color: #64748b; padding: 4px 8px 2px 8px; text-transform: uppercase; }
         .menu-item {
             display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--text-color);
-            background: transparent; border: none; border-radius: 10px; font-size: calc(13px * var(--font-scale));
+            background: transparent; border: none; border-radius: 10px; font-size: 13px;
             cursor: pointer; text-align: left; width: 100%; transition: all 0.2s ease;
         }
         .menu-item:hover { background: rgba(37, 99, 235, 0.15); color: #93c5fd; transform: translateX(2px); }
         .menu-item svg { width: 18px; height: 18px; stroke: #94a3b8; }
 
-        /* Barra de Entrada */
+        /* Caixa de Entrada */
         .input-area {
-            display: flex; width: 100%; max-width: min(92vw, 800px); gap: 8px; background: var(--panel-bg);
+            display: flex; width: 100%; max-width: 800px; gap: 8px; background: var(--panel-bg);
             padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: flex-end;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: border-color 0.2s, box-shadow 0.2s; position: relative;
         }
@@ -186,7 +186,7 @@
 
         .input-area textarea {
             flex: 1; background: transparent; border: none; color: var(--text-color);
-            font-size: calc(14px * var(--font-scale)); outline: none; padding: 8px 4px;
+            font-size: 14px; outline: none; padding: 8px 4px;
             resize: none; max-height: 120px; min-height: 20px; line-height: 1.4; font-family: inherit;
         }
         .input-area textarea::placeholder { color: #64748b; }
@@ -206,6 +206,7 @@
     <div class="toast-container" id="toastContainer">Notificação</div>
     <div class="drag-overlay" id="dragOverlay">Solte os ficheiros aqui para anexar</div>
 
+    <!-- Menu Lateral -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -225,12 +226,14 @@
     </header>
 
     <main class="chat-container" id="chatMessages" role="log">
+        <!-- Apenas uma mensagem de boas-vindas limpa -->
         <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
     </main>
 
     <div class="input-wrapper">
         <div class="preview-container" id="previewContainer"></div>
 
+        <!-- Menu de Anexos -->
         <div class="attachment-menu" id="attachmentMenu">
             <div class="menu-category-title">Adicionar Anexo</div>
             <button class="menu-item" id="btnPhoto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Imagem / Foto</button>
@@ -276,11 +279,11 @@
         let attachedFiles = [];
 
         menuToggleBtn.addEventListener('click', () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); });
-        closeSidebarBtn.addEventListener('click', () =>Pela imagem que enviaste, percebe-se exatamente o que está a acontecer: a mensagem "Olá! Como posso ajudar você hoje?" está a duplicar-se no ecrã porque a caixa de chat e o script de inicialização renderizam a mensagem padrão mais de uma vez ou repetem o loop de carregamento.
+        closeSidebarBtn.addEventListener('click', () => {Peço desculpa por o problema ainda persistir! Olhando atentamente para a tua imagem, o erro está na forma como o corpo (`body`) e o contentor do chat (`chat-container`) estão a gerir a altura. O ecrã está a duplicar o espaço porque a barra de mensagem inferior está a ficar fixa em cima de um conteúdo que não faz scroll corretamente, ou há duplicação de mensagens estáticas no código HTML.
 
-Para resolvermos isso de vez em **HTML/CSS/JavaScript puro** (já que a Chronical roda numa página web hospedada no Render), vamos ajustar a estrutura para garantir que a mensagem de boas-vindas aparece apenas uma vez e o layout flui perfeitamente.
+Vamos resolver isto de forma definitiva. O código abaixo corrige a estrutura para que o chat ocupe exatamente 100% da altura da janela, o histórico faça scroll perfeitamente no meio e a barra de input fique fixa e limpa na parte inferior sem sobreposições.
 
-Aqui tens o código **HTML completo, limpo e corrigido** para substituíres no teu ficheiro principal (por exemplo, `index.html`):
+Substitui todo o conteúdo do teu ficheiro `index.html` por este código corrigido e limpo:
 
 ```html
 <!DOCTYPE html>
@@ -303,21 +306,25 @@ Aqui tens o código **HTML completo, limpo e corrigido** para substituíres no t
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body, html {
-            height: 100vh; height: 100dvh; width: 100vw;
-            background-color: var(--bg-color); color: var(--text-color);
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex; flex-direction: column; overflow: hidden;
-            font-size: calc(14px * var(--font-scale));
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* --- TOAST --- */
         .toast-container {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-20px);
             background: #1e293b; color: #ffffff; border: 1px solid rgba(255,255,255,0.15);
-            padding: 8px 18px; border-radius: 20px; font-size: calc(12px * var(--font-scale));
+            padding: 8px 18px; border-radius: 20px; font-size: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); opacity: 0; visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10000;
+            transition: all 0.3s ease; z-index: 10000;
         }
         .toast-container.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 
@@ -326,69 +333,49 @@ Aqui tens o código **HTML completo, limpo e corrigido** para substituíres no t
             position: fixed; top: 0; left: 0; width: 280px; height: 100%;
             background: var(--sidebar-bg); border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column; z-index: 1000;
-            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(-100%); transition: transform 0.3s ease;
             padding: 20px; gap: 16px;
         }
         .sidebar.open { transform: translateX(0); }
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
-            z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+            z-index: 999; opacity: 0; visibility: hidden; transition: opacity 0.3s;
         }
         .sidebar-overlay.active { opacity: 1; visibility: visible; }
         .sidebar-header {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: calc(16px * var(--font-scale)); font-weight: 700;
-            border-bottom: 1px solid var(--border-color); padding-bottom: 12px;
+            font-size: 16px; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;
         }
-        .close-sidebar-btn { background: transparent; border: none; color: var(--text-color); font-size: 18px; cursor: pointer; padding: 4px; border-radius: 6px; }
-        .close-sidebar-btn:hover { background: rgba(255,255,255,0.1); }
+        .close-sidebar-btn { background: transparent; border: none; color: var(--text-color); font-size: 18px; cursor: pointer; padding: 4px; }
         .new-chat-btn {
             background: var(--primary-btn); color: #ffffff; border: none;
-            padding: 10px 14px; border-radius: 10px; font-weight: 600;
-            font-size: calc(13px * var(--font-scale)); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 13px; cursor: pointer;
         }
 
-        /* --- CABEÇALHO --- */
+        /* --- CABEÇALHO FIXO --- */
         .header {
-            position: absolute; top: 0; left: 0; width: 100%; 
-            display: flex; align-items: center; justify-content: center;
-            padding: 16px 20px; background: transparent; z-index: 10;
+            height: 60px; width: 100%; display: flex; align-items: center; justify-content: center;
+            padding: 0 20px; background: var(--bg-color); border-bottom: 1px solid var(--border-color);
+            position: relative; z-index: 10; flex-shrink: 0;
         }
-        .header-left {
-            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-            display: flex; align-items: center; z-index: 2;
-        }
+        .header-left { position: absolute; left: 16px; }
         .menu-toggle-btn {
-            background: transparent; border: none; color: var(--text-color);
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            padding: 6px; border-radius: 8px; transition: background 0.2s;
+            background: transparent; border: none; color: var(--text-color); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 8px;
         }
         .menu-toggle-btn:hover { background: rgba(255,255,255,0.08); }
-        .header-title {
-            font-size: calc(16px * var(--font-scale)); font-weight: 700; letter-spacing: 0.3px;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-align: center; width: 100%; pointer-events: none;
-        }
+        .header-title { font-size: 16px; font-weight: 700; letter-spacing: 0.3px; }
 
-        /* --- CHAT CONTAINER --- */
+        /* --- CHAT CONTAINER (ÁREA DE MENSAGENS COM SCROLL) --- */
         .chat-container {
-            flex: 1; width: 100%; max-width: min(92vw, 800px);
-            margin: 0 auto; padding: 75px clamp(12px, 2vw, 24px) 100px clamp(12px, 2vw, 24px);
-            display: flex; flex-direction: column; gap: clamp(12px, 2vh, 18px);
-            overflow-y: auto; scroll-behavior: smooth; position: relative;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            flex: 1; width: 100%; max-width: 800px; margin: 0 auto;
+            padding: 20px; display: flex; flex-direction: column; gap: 16px;
+            overflow-y: auto; scroll-behavior: smooth;
         }
         .message {
-            max-width: 88%; padding: clamp(10px, 1.5vw, 16px) clamp(12px, 1.8vw, 20px);
-            font-size: calc(14px * var(--font-scale)); line-height: 1.55; word-wrap: break-word;
-            border-radius: clamp(12px, 2vw, 18px); animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            position: relative;
+            max-width: 85%; padding: 12px 16px; font-size: 14px; line-height: 1.55;
+            word-wrap: break-word; border-radius: 14px;
         }
         .ai-message {
             background-color: var(--panel-bg); border: 1px solid var(--border-color);
@@ -399,98 +386,58 @@ Aqui tens o código **HTML completo, limpo e corrigido** para substituíres no t
             border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
         }
 
-        /* --- ZONA DE INPUT FIXA EM BAIXO --- */
+        /* --- ZONA DE INPUT FIXA NO FUNDO --- */
         .input-wrapper {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 10px clamp(12px, 3vw, 20px) 16px clamp(12px, 3vw, 20px);
-            display: flex; flex-direction: column; align-items: center;
-            background: linear-gradient(transparent, var(--bg-color) 40%); z-index: 50;
+            width: 100%; max-width: 800px; margin: 0 auto; padding: 12px 20px 20px 20px;
+            display: flex; flex-direction: column; align-items: center; background: var(--bg-color);
+            flex-shrink: 0; position: relative;
         }
 
-        .drag-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700; font-size: 20px;
-            opacity: 0; visibility: hidden; transition: all 0.2s ease; pointer-events: none;
-        }
-        .drag-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
-
-        .preview-container {
-            width: 100%; max-width: min(92vw, 800px); margin-bottom: 8px; display: none; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-        }
-        .preview-container.active { display: flex; }
-        .preview-card {
-            background: var(--panel-bg); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 12px;
-            display: flex; align-items: center; gap: 10px; flex-shrink: 0; max-width: 220px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        .preview-thumb {
-            width: 36px; height: 36px; border-radius: 8px; object-fit: cover; background: #1f2937;
-            display: flex; align-items: center; justify-content: center; font-size: 11px; color: #93c5fd; font-weight: 700; flex-shrink: 0;
-        }
-        .preview-meta { display: flex; flex-direction: column; overflow: hidden; }
-        .preview-info { font-size: calc(11px * var(--font-scale)); color: var(--text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; font-weight: 500; }
-        .preview-size { font-size: calc(9px * var(--font-scale)); color: #64748b; }
-        .remove-preview { background: transparent; border: none; color: #94a3b8; cursor: pointer; padding: 4px; border-radius: 4px; margin-left: auto; }
-        .remove-preview:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-
-        /* Menu de Anexos */
+        /* Menu de Anexos Flutuante */
         .attachment-menu {
             position: absolute; bottom: calc(100% + 8px); left: 20px;
-            background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 230px;
+            background: #141824; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; width: 220px;
             padding: 8px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 16px 40px rgba(0,0,0,0.8);
-            opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
+            opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95); transition: all 0.2s ease; z-index: 100;
         }
         .attachment-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        .menu-category-title { font-size: calc(10px * var(--font-scale)); font-weight: 700; color: #64748b; padding: 4px 8px 2px 8px; text-transform: uppercase; }
         .menu-item {
-            display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: var(--text-color);
-            background: transparent; border: none; border-radius: 10px; font-size: calc(13px * var(--font-scale));
-            cursor: pointer; text-align: left; width: 100%; transition: all 0.2s ease;
+            display: flex; align-items: center; gap: 10px; padding: 10px; color: var(--text-color);
+            background: transparent; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; text-align: left; width: 100%;
         }
-        .menu-item:hover { background: rgba(37, 99, 235, 0.15); color: #93c5fd; transform: translateX(2px); }
-        .menu-item svg { width: 18px; height: 18px; stroke: #94a3b8; }
+        .menu-item:hover { background: rgba(37, 99, 235, 0.15); color: #93c5fd; }
+        .menu-item svg { width: 16px; height: 16px; stroke: #94a3b8; }
 
-        /* Barra de Entrada */
+        /* Barra de Entrada de Texto */
         .input-area {
-            display: flex; width: 100%; max-width: min(92vw, 800px); gap: 8px; background: var(--panel-bg);
+            display: flex; width: 100%; gap: 8px; background: var(--panel-bg);
             padding: 8px 12px; border-radius: 32px; border: 1px solid var(--border-color); align-items: flex-end;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: border-color 0.2s, box-shadow 0.2s; position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
-        .input-area:focus-within {
-            border-color: rgba(37, 99, 235, 0.5);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15), 0 8px 24px rgba(0,0,0,0.4);
-        }
-
         .plus-btn, .mic-btn {
             background: transparent; color: #94a3b8; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0;
         }
         .plus-btn:hover, .mic-btn:hover { background: rgba(255, 255, 255, 0.08); color: var(--text-color); }
-
         .input-area textarea {
             flex: 1; background: transparent; border: none; color: var(--text-color);
-            font-size: calc(14px * var(--font-scale)); outline: none; padding: 8px 4px;
-            resize: none; max-height: 120px; min-height: 20px; line-height: 1.4; font-family: inherit;
+            font-size: 14px; outline: none; padding: 8px 4px; resize: none; max-height: 120px; min-height: 20px; line-height: 1.4;
         }
-        .input-area textarea::placeholder { color: #64748b; }
-
         .input-area button.send-btn {
             background: #ffffff; color: #000000; border: none; width: 36px; height: 36px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer;
-            transition: transform 0.2s, background 0.2s; flex-shrink: 0;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; flex-shrink: 0;
         }
-        .input-area button.send-btn:hover { background: #e2e8f0; transform: scale(1.06); }
+        .input-area button.send-btn:hover { background: #e2e8f0; }
 
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div class="toast-container" id="toastContainer">Notificação</div>
-    <div class="drag-overlay" id="dragOverlay">Solte os ficheiros aqui para anexar</div>
 
+    <div class="toast-container" id="toastContainer">Notificação</div>
+
+    <!-- Menu Lateral -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -500,14 +447,90 @@ Aqui tens o código **HTML completo, limpo e corrigido** para substituíres no t
         <button class="new-chat-btn" id="newChatBtn">Nova Conversa</button>
     </aside>
 
+    <!-- Cabeçalho -->
     <header class="header">
         <div class="header-left">
-            <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir menu">
+            <button class="menu-toggle-btn" id="menuToggleBtn">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
         </div>
         <div class="header-title">Chronical I.A</div>
     </header>
 
-    <main class="chat-container" id="chatMessages" role="log">
-        <div class="message ai-message">Olá! Como posso
+    <!-- Contentor de Mensagens (Sem duplicados) -->
+    <main class="chat-container" id="chatMessages">
+        <div class="message ai-message">Olá! Como posso ajudar você hoje?</div>
+    </main>
+
+    <!-- Zona de Input Fixa -->
+    <div class="input-wrapper">
+        <div class="attachment-menu" id="attachmentMenu">
+            <button class="menu-item" id="btnPhoto"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Imagem / Foto</button>
+            <button class="menu-item" id="btnDoc"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Documento</button>
+        </div>
+
+        <div class="input-area">
+            <button class="plus-btn" id="plusButton">
+                <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+            <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
+            <button class="mic-btn" id="micButton">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/></svg>
+            </button>
+            <button class="send-btn" id="sendButton">
+                <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const plusButton = document.getElementById('plusButton');
+        const attachmentMenu = document.getElementById('attachmentMenu');
+        
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); };
+        closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
+        sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
+
+        plusButton.onclick = (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); };
+        document.onclick = () => attachmentMenu.classList.remove('active');
+        attachmentMenu.onclick = (e) => e.stopPropagation();
+
+        userInput.oninput = function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        };
+
+        sendButton.onclick = () => {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            // Adiciona mensagem do utilizador
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.textContent = text;
+            chatMessages.appendChild(userMsg);
+
+            userInput.value = '';
+            userInput.style.height = 'auto';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simula resposta da IA após 600ms
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai-message';
+                aiMsg.textContent = "Recebido! Estou a processar a tua mensagem.";
+                chatMessages.appendChild(aiMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 600);
+        };
+    </script>
+</body>
+</html>
