@@ -69,7 +69,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* --- MENU LATERAL (SIDEBAR AVANÇADO) --- */
+        /* --- MENU LATERAL (SIDEBAR REESTRUTURADO) --- */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
@@ -89,25 +89,17 @@
 
         .sidebar-header {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 1.05rem; font-weight: 700; padding-bottom: 4px;
+            font-size: 1.05rem; font-weight: 700; padding-bottom: 2px;
         }
         .close-sidebar-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; }
 
-        .new-chat-btn {
-            background: #2563eb; color: #ffffff; border: none; padding: 12px 14px;
-            border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: background 0.2s; box-shadow: 0 4px 12px rgba(37,99,235,0.25);
-        }
-        .new-chat-btn:hover { background: #1d4ed8; }
-
-        /* Caixa de Pesquisa no Menu */
+        /* Barra de Pesquisa em Primeiro Lugar */
         .search-box {
             width: 100%;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 10px;
-            padding: 8px 12px;
+            padding: 9px 12px;
             color: #f1f5f9;
             font-size: 0.9rem;
             outline: none;
@@ -115,6 +107,29 @@
         }
         .search-box:focus { border-color: #2563eb; }
         .search-box::placeholder { color: #64748b; }
+
+        /* Nova Conversa integrada sem estilo de botão pesado */
+        .new-chat-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #cbd5e1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        .new-chat-item:hover {
+            background: rgba(37, 99, 235, 0.15);
+            border-color: rgba(37, 99, 235, 0.4);
+            color: #93c5fd;
+        }
 
         /* Lista de Histórico */
         .history-section-title {
@@ -308,12 +323,13 @@
                 <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
             </div>
             
-            <button class="new-chat-btn" id="newChatBtn">
+            <!-- 1. Barra de Pesquisa em primeiro -->
+            <input type="text" class="search-box" id="searchBox" placeholder="Pesquisar conversas...">
+
+            <!-- 2. Nova Conversa integrada sem estilo de botão pesado -->
+            <button class="new-chat-item" id="newChatBtn">
                 <span>+</span> Nova Conversa
             </button>
-
-            <!-- Barra de Pesquisa -->
-            <input type="text" class="search-box" id="searchBox" placeholder="Pesquisar conversas...">
 
             <div class="history-section-title">Conversas Anteriores</div>
             <div class="history-list" id="historyList">
@@ -368,11 +384,16 @@
         let currentChatId = localStorage.getItem('chronical_active_id') || null;
 
         // Controlo do Menu Lateral
-        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); renderHistory(); };
+        menuToggleBtn.onclick = () => { 
+            sidebar.classList.add('open'); 
+            sidebarOverlay.classList.add('active'); 
+            searchBox.value = ''; // Limpa a pesquisa ao abrir
+            renderHistory(); 
+        };
         closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
         sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
 
-        // Renderizar a lista de conversas (com suporte a filtro de pesquisa)
+        // Renderizar a lista de conversas com filtro de pesquisa
         function renderHistory(filterText = '') {
             historyList.innerHTML = '';
             const filteredChats = chats.filter(chat => chat.title.toLowerCase().includes(filterText.toLowerCase()));
@@ -406,7 +427,7 @@
             });
         }
 
-        // Evento de pesquisa em tempo real
+        // Pesquisa em tempo real
         searchBox.oninput = (e) => {
             renderHistory(e.target.value);
         };
