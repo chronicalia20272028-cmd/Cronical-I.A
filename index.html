@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
     <style>
-        /* --- VARIÁVEIS GLOBAIS DE ESCALA (Padrão: Telemóvel/Tablet) --- */
+        /* --- VARIÁVEIS GLOBAIS DE ESCALA (Responsivo Universal) --- */
         :root {
             --font-size: 14px;
             --header-height: 56px;
@@ -35,6 +35,7 @@
             position: relative;
         }
 
+        /* Cabeçalho */
         header {
             height: var(--header-height);
             min-height: var(--header-height);
@@ -44,7 +45,22 @@
             padding: 0 var(--padding-base);
             background: #000000;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
             flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .menu-toggle-btn {
+            position: absolute;
+            left: var(--padding-base);
+            background: transparent;
+            border: none;
+            color: #f1f5f9;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .app-title {
@@ -53,6 +69,39 @@
             letter-spacing: 0.3px;
         }
 
+        /* --- MENU LATERAL (SIDEBAR) --- */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
+            z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        .sidebar {
+            position: fixed; top: 0; left: 0; 
+            width: clamp(240px, 75vw, 320px); 
+            height: 100%;
+            background: #0a0d14; border-right: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 999; display: flex; flex-direction: column; padding: var(--padding-base); gap: 16px;
+            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar.open { transform: translateX(0); }
+
+        .sidebar-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 1.05rem; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
+        }
+        .close-sidebar-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; }
+
+        .new-chat-btn {
+            background: #2563eb; color: #ffffff; border: none; padding: 10px 14px;
+            border-radius: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: background 0.2s;
+        }
+        .new-chat-btn:hover { background: #1d4ed8; }
+
+        /* Área de Chat */
         .chat-main {
             flex: 1;
             width: 100%;
@@ -92,6 +141,7 @@
             box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
         }
 
+        /* Zona de Input */
         .input-section {
             width: 100%;
             max-width: var(--chat-max-width);
@@ -126,9 +176,7 @@
             line-height: 1.4;
         }
 
-        textarea::placeholder {
-            color: #64748b;
-        }
+        textarea::placeholder { color: #64748b; }
 
         .send-submit {
             background: #ffffff;
@@ -155,7 +203,7 @@
            ADAPTAÇÕES POR DISPOSITIVO (MEDIA QUERIES)
            ========================================================== */
 
-        /* 1. SMARTWATCHES E ECRÃS ULTRA-PEQUENOS (Abaixo de 320px) */
+        /* 1. Smartwatches (Abaixo de 320px) */
         @media (max-width: 320px) {
             :root {
                 --font-size: 11px;
@@ -168,7 +216,7 @@
             .send-submit svg { width: 12px; height: 12px; }
         }
 
-        /* 2. TABLETS E MONITORES MÉDIOS (A partir de 768px) */
+        /* 2. Tablets (A partir de 768px) */
         @media (min-width: 768px) {
             :root {
                 --font-size: 15px;
@@ -181,7 +229,7 @@
             .send-submit svg { width: 18px; height: 18px; }
         }
 
-        /* 3. COMPUTADORES DESKTOP E SMART TVs (A partir de 1400px) */
+        /* 3. Desktops e Smart TVs (A partir de 1400px) */
         @media (min-width: 1400px) {
             :root {
                 --font-size: 18px;
@@ -199,14 +247,32 @@
 <body>
 
     <div class="app-container">
+        <!-- Menu Lateral & Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>Menu</span>
+                <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
+            </div>
+            <button class="new-chat-btn" id="newChatBtn">
+                <span>+</span> Nova Conversa
+            </button>
+        </aside>
+
+        <!-- Cabeçalho -->
         <header>
+            <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir Menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
             <div class="app-title">Chronical I.A</div>
         </header>
 
+        <!-- Mensagens do Chat -->
         <main class="chat-main" id="chatMain">
             <div class="message ai">Olá! Como posso ajudar você hoje?</div>
         </main>
 
+        <!-- Barra de Input -->
         <div class="input-section">
             <div class="input-box">
                 <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
@@ -221,6 +287,24 @@
         const chatMain = document.getElementById('chatMain');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
+        
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const newChatBtn = document.getElementById('newChatBtn');
+
+        // Controlo do Menu Lateral
+        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); };
+        closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
+        sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
+
+        // Botão de Nova Conversa
+        newChatBtn.onclick = () => {
+            chatMain.innerHTML = '<div class="message ai">Nova conversa iniciada! Como posso ajudar?</div>';
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        };
 
         userInput.oninput = function() {
             this.style.height = 'auto';
