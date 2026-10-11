@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
     <style>
         /* --- VARIÁVEIS GLOBAIS DE ESCALA --- */
         :root {
@@ -91,7 +96,7 @@
             position: relative;
         }
 
-        /* Cabeçalho */
+        /* --- CABEÇALHO COM LOGIN NO CANTO DIREITO --- */
         header {
             height: var(--header-height);
             min-height: var(--header-height);
@@ -124,6 +129,71 @@
             font-weight: 700;
             letter-spacing: 0.3px;
         }
+
+        .header-auth-area {
+            position: absolute;
+            right: var(--padding-base);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Botão de Entrar no Cabeçalho */
+        .header-login-btn {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+        }
+        .header-login-btn:hover { background: #1d4ed8; }
+
+        /* Utilizador Logado (Avatar + Menu Suspenso) */
+        .user-profile-wrapper {
+            position: relative;
+        }
+
+        .user-avatar-btn {
+            width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+            background: #2563eb; border: 1.5px solid rgba(255,255,255,0.2); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: #fff;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .user-avatar-btn:hover { transform: scale(1.05); border-color: #3b82f6; }
+
+        .user-dropdown-menu {
+            position: absolute; right: 0; top: 46px;
+            background: #0d1117; border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px; width: 220px; padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 8px;
+            opacity: 0; visibility: hidden; transform: translateY(-8px);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+        }
+        .user-dropdown-menu.active {
+            opacity: 1; visibility: visible; transform: translateY(0);
+        }
+
+        .dropdown-user-info {
+            display: flex; flex-direction: column; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .dropdown-name { font-size: 0.88rem; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-email { font-size: 0.75rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .dropdown-logout-btn {
+            background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; padding: 8px;
+            border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: center;
+            transition: background 0.2s;
+        }
+        .dropdown-logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
+
 
         /* --- MENU LATERAL (SIDEBAR) --- */
         .sidebar-overlay {
@@ -433,7 +503,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     Limpar Histórico
                 </button>
-                <div class="app-version">Chronical I.A • v2.3</div>
+                <div class="app-version">Chronical I.A • v2.5</div>
             </div>
         </aside>
 
@@ -454,12 +524,18 @@
             </div>
         </div>
 
-        <!-- Cabeçalho -->
+        <!-- Cabeçalho com Botão de Menu à Esquerda e Login à Direita -->
         <header>
             <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir Menu">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </button>
+            
             <div class="app-title">Chronical I.A</div>
+
+            <!-- Área de Login / Perfil no Canto Superior Direito -->
+            <div class="header-auth-area" id="headerAuthArea">
+                <!-- Preenchido dinamicamente via JS -->
+            </div>
         </header>
 
         <!-- Mensagens do Chat -->
@@ -479,7 +555,80 @@
     </div>
 
     <script>
-        // Ocultação Suave e Rápida da Splash Screen
+        // --- CONFIGURAÇÃO DO FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "seu-projeto.firebaseapp.com",
+            projectId: "seu-projeto",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+
+        // --- GESTÃO DE AUTENTICAÇÃO NO CABEÇALHO (DIREITA) ---
+        const headerAuthArea = document.getElementById('headerAuthArea');
+
+        function updateHeaderAuthUI(user) {
+            if (user) {
+                // Utilizador Autenticado: Mostra Avatar com Menu Suspenso
+                headerAuthArea.innerHTML = `
+                    <div class="user-profile-wrapper">
+                        <img class="user-avatar-btn" id="userAvatarBtn" src="${user.photoURL || ''}" alt="${user.displayName}" title="${user.displayName}" onerror="this.style.display='none'">
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <div class="dropdown-user-info">
+                                <span class="dropdown-name">${user.displayName || 'Utilizador'}</span>
+                                <span class="dropdown-email">${user.email || ''}</span>
+                            </div>
+                            <button class="dropdown-logout-btn" id="logoutBtn">Terminar Sessão</button>
+                        </div>
+                    </div>
+                `;
+
+                const avatarBtn = document.getElementById('userAvatarBtn');
+                const dropdownMenu = document.getElementById('userDropdownMenu');
+                const logoutBtn = document.getElementById('logoutBtn');
+
+                // Abrir/Fechar menu suspenso ao clicar no avatar
+                avatarBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('active');
+                };
+
+                window.onclick = () => {
+                    dropdownMenu.classList.remove('active');
+                };
+
+                logoutBtn.onclick = () => {
+                    auth.signOut();
+                };
+            } else {
+                // Utilizador Não Autenticado: Botão "Entrar" com Google
+                headerAuthArea.innerHTML = `
+                    <button class="header-login-btn" id="headerLoginBtn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/></svg>
+                        Entrar
+                    </button>
+                `;
+                document.getElementById('headerLoginBtn').onclick = () => {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    auth.signInWithPopup(provider).catch((error) => {
+                        console.error("Erro no login:", error);
+                        alert("Erro ao efetuar login com o Google. Verifica as configurações do Firebase.");
+                    });
+                };
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            updateHeaderAuthUI(user);
+        });
+
+        // --- SPLASH SCREEN E CHAT ---
         window.addEventListener('load', () => {
             const splash = document.getElementById('splashScreen');
             setTimeout(() => {
@@ -509,18 +658,9 @@
         let chats = JSON.parse(localStorage.getItem('chronical_chats')) || [];
         let currentChatId = localStorage.getItem('chronical_active_id') || null;
 
-        // Gestão do Modal de Configurações
-        openSettingsBtn.onclick = () => {
-            settingsModalOverlay.classList.add('active');
-        };
-        closeSettingsBtn.onclick = () => {
-            settingsModalOverlay.classList.remove('active');
-        };
-        settingsModalOverlay.onclick = (e) => {
-            if (e.target === settingsModalOverlay) {
-                settingsModalOverlay.classList.remove('active');
-            }
-        };
+        openSettingsBtn.onclick = () => { settingsModalOverlay.classList.add('active'); };
+        closeSettingsBtn.onclick = () => { settingsModalOverlay.classList.remove('active'); };
+        settingsModalOverlay.onclick = (e) => { if (e.target === settingsModalOverlay) settingsModalOverlay.classList.remove('active'); };
 
         menuToggleBtn.onclick = () => { 
             sidebar.classList.add('open'); 
@@ -564,9 +704,7 @@
             });
         }
 
-        searchBox.oninput = (e) => {
-            renderHistory(e.target.value);
-        };
+        searchBox.oninput = (e) => { renderHistory(e.target.value); };
 
         newChatBtn.onclick = () => {
             currentChatId = 'chat_' + Date.now();
