@@ -26,18 +26,20 @@
         }
 
         header {
-            height: 56px;
-            min-height: 56px;
+            /* Cresce entre 40px (watch) e 80px (TV) */
+            height: clamp(40px, 6vh, 80px);
+            min-height: clamp(40px, 6vh, 80px);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0 16px;
+            padding: 0 clamp(8px, 2vw, 24px);
             background: #000000;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .app-title {
-            font-size: 16px;
+            /* Fonte fluida: 14px no mínimo, 32px na TV */
+            font-size: clamp(14px, 1.5vw + 10px, 32px);
             font-weight: 700;
             letter-spacing: 0.3px;
         }
@@ -45,22 +47,24 @@
         .chat-main {
             flex: 1;
             width: 100%;
-            max-width: 800px;
+            /* Limite central: adapta-se a telemóveis e monitores */
+            max-width: clamp(100%, 80vw, 900px);
             margin: 0 auto;
-            padding: 16px;
+            padding: clamp(8px, 2vw, 32px) clamp(12px, 3vw, 40px);
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: clamp(12px, 2vw, 24px);
             overflow-y: auto;
             scroll-behavior: smooth;
         }
 
         .message {
-            max-width: 85%;
-            padding: 12px 16px;
-            font-size: 14px;
+            /* O balão ocupa mais espaço no relógio (95%) e menos na TV (75%) */
+            max-width: clamp(75%, 85%, 95%);
+            padding: clamp(10px, 1.5vw, 24px) clamp(14px, 2vw, 32px);
+            font-size: clamp(13px, 1.2vw + 9px, 26px);
             line-height: 1.5;
-            border-radius: 14px;
+            border-radius: clamp(12px, 2vw, 20px);
             word-wrap: break-word;
             flex-shrink: 0;
         }
@@ -83,9 +87,9 @@
 
         .input-section {
             width: 100%;
-            max-width: 800px;
+            max-width: clamp(100%, 80vw, 900px);
             margin: 0 auto;
-            padding: 10px 16px 16px 16px;
+            padding: clamp(6px, 1.5vw, 24px) clamp(12px, 3vw, 40px) clamp(12px, 3vw, 40px) clamp(12px, 3vw, 40px);
             background: #000000;
             flex-shrink: 0;
         }
@@ -93,11 +97,11 @@
         .input-box {
             display: flex;
             align-items: flex-end;
-            gap: 8px;
+            gap: clamp(6px, 1vw, 16px);
             background: #111622;
             border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 8px 12px;
-            border-radius: 28px;
+            padding: clamp(6px, 1vw, 16px) clamp(10px, 1.5vw, 24px);
+            border-radius: clamp(20px, 3vw, 40px);
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
 
@@ -106,12 +110,12 @@
             background: transparent;
             border: none;
             color: #f1f5f9;
-            font-size: 14px;
+            font-size: clamp(13px, 1.2vw + 9px, 26px);
             outline: none;
-            padding: 8px 4px;
+            padding: clamp(4px, 0.5vw, 12px) 4px;
             resize: none;
-            max-height: 120px;
-            min-height: 22px;
+            max-height: clamp(80px, 15vh, 250px);
+            min-height: clamp(20px, 2vh, 32px);
             line-height: 1.4;
         }
 
@@ -119,8 +123,9 @@
             background: #ffffff;
             color: #000000;
             border: none;
-            width: 36px;
-            height: 36px;
+            /* Botão de envio fluído */
+            width: clamp(32px, 3vw + 16px, 56px);
+            height: clamp(32px, 3vw + 16px, 56px);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -128,10 +133,35 @@
             cursor: pointer;
             flex-shrink: 0;
         }
+        
+        .send-submit svg {
+            width: clamp(14px, 1.5vw + 8px, 24px);
+            height: clamp(14px, 1.5vw + 8px, 24px);
+        }
+        
         .send-submit:hover { background: #cbd5e1; }
 
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: clamp(4px, 0.5vw, 8px); }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        /* --- OTIMIZAÇÕES EXTREMAS --- */
+        
+        /* Smartwatches (Até 320px) */
+        @media (max-width: 320px) {
+            .chat-main { padding: 6px; }
+            .message { max-width: 98%; padding: 8px 10px; font-size: 12px; }
+            .input-section { padding: 6px; }
+            .input-box { padding: 4px 6px; border-radius: 16px; }
+            .send-submit { width: 28px; height: 28px; }
+            textarea { font-size: 12px; }
+        }
+
+        /* Smart TVs e Ultra-Wides (A partir de 1920px) */
+        @media (min-width: 1920px) {
+            .chat-main, .input-section { max-width: 1400px; } /* Permite o chat esticar mais na TV */
+            .message { max-width: 65%; } /* Evita que o texto fique de uma ponta à outra num ecrã gigante */
+            .input-box { border-radius: 48px; }
+        }
     </style>
 </head>
 <body>
@@ -147,9 +177,9 @@
 
         <div class="input-section">
             <div class="input-box">
-                <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
+                <textarea id="userInput" placeholder="Mensagem..." rows="1"></textarea>
                 <button class="send-submit" id="sendBtn" title="Enviar">
-                    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
                 </button>
             </div>
         </div>
@@ -169,7 +199,6 @@
             const text = userInput.value.trim();
             if (!text) return;
 
-            // Mensagem do utilizador
             const userDiv = document.createElement('div');
             userDiv.className = 'message user';
             userDiv.textContent = text;
@@ -179,7 +208,6 @@
             userInput.style.height = 'auto';
             chatMain.scrollTop = chatMain.scrollHeight;
 
-            // Resposta simples da IA após meio segundo
             setTimeout(() => {
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'message ai';
@@ -198,4 +226,3 @@
     </script>
 </body>
 </html>
-
