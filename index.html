@@ -27,7 +27,7 @@
             font-size: var(--font-size);
         }
 
-        /* --- TELA DE ABERTURA ULTRA-CINEMATOGRÁFICA (SÓ O NOME) --- */
+        /* --- TELA DE ABERTURA CINEMATOGRÁFICA --- */
         .splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
             background-color: #000000;
@@ -49,7 +49,6 @@
             position: relative;
         }
 
-        /* Brilho Neon Pulsante (Glow) */
         .splash-glow {
             position: absolute; width: 260px; height: 260px;
             background: radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(59, 130, 246, 0.15) 45%, rgba(0, 0, 0, 0) 70%);
@@ -57,7 +56,6 @@
             animation: breathe-glow 2.4s infinite alternate ease-in-out;
         }
 
-        /* Nome Exclusivo Chronical I.A Renovado */
         .splash-logo {
             font-size: clamp(34px, 6vw, 62px);
             font-weight: 800;
@@ -214,17 +212,53 @@
         .history-item:hover .delete-chat-btn { opacity: 1; }
         .delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
+        /* Rodapé do Menu */
         .sidebar-footer {
-            border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; display: flex; flex-direction: column; gap: 8px;
+            border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; display: flex; flex-direction: column; gap: 6px;
         }
-        .clear-history-btn {
-            background: transparent; border: none; color: #94a3b8; font-size: 0.85rem; cursor: pointer; padding: 8px; border-radius: 8px; width: 100%; text-align: center; transition: background 0.2s;
+
+        .sidebar-action-btn {
+            background: transparent; border: none; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; padding: 8px 10px; border-radius: 8px; width: 100%; display: flex; align-items: center; gap: 10px; transition: background 0.2s, color 0.2s;
         }
-        .clear-history-btn:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-        
+        .sidebar-action-btn:hover { background: rgba(255, 255, 255, 0.06); color: #ffffff; }
+        .sidebar-action-btn.danger:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
         .app-version {
-            font-size: 0.75rem; color: #475569; text-align: center;
+            font-size: 0.75rem; color: #475569; text-align: center; margin-top: 4px;
         }
+
+        /* --- MODAL DE CONFIGURAÇÕES --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
+            z-index: 10000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+            display: flex; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .settings-modal {
+            background: #0d1117; border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%; max-width: 420px; border-radius: 16px; padding: 20px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 16px;
+            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.active .settings-modal { transform: scale(1); }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px;
+        }
+        .modal-title { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
+        .close-modal-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+
+        .setting-item {
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .setting-label { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+        .setting-select {
+            background: #161b22; border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9;
+            padding: 10px; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;
+        }
+        .setting-select:focus { border-color: #2563eb; }
 
         /* Área de Chat */
         .chat-main {
@@ -364,7 +398,7 @@
 </head>
 <body>
 
-    <!-- Splash Screen Minimalista Ultra-Cinematográfica -->
+    <!-- Splash Screen Exclusiva Chronical I.A -->
     <div class="splash-screen" id="splashScreen">
         <div class="splash-glow"></div>
         <div class="splash-content">
@@ -391,10 +425,34 @@
             <div class="history-list" id="historyList"></div>
 
             <div class="sidebar-footer">
-                <button class="clear-history-btn" id="clearHistoryBtn">Limpar Histórico</button>
-                <div class="app-version">Chronical I.A • v2.2</div>
+                <button class="sidebar-action-btn" id="openSettingsBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    Configurações
+                </button>
+                <button class="sidebar-action-btn danger" id="clearHistoryBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Limpar Histórico
+                </button>
+                <div class="app-version">Chronical I.A • v2.3</div>
             </div>
         </aside>
+
+        <!-- Modal de Configurações -->
+        <div class="modal-overlay" id="settingsModalOverlay">
+            <div class="settings-modal">
+                <div class="modal-header">
+                    <span class="modal-title">Configurações</span>
+                    <button class="close-modal-btn" id="closeSettingsBtn">✕</button>
+                </div>
+                <div class="setting-item">
+                    <span class="setting-label">Modelo de I.A</span>
+                    <select class="setting-select" id="modelSelect">
+                        <option value="chronical-default">Chronical Standard (Padrão)</option>
+                        <option value="chronical-fast">Chronical Turbo (Mais Rápido)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
 
         <!-- Cabeçalho -->
         <header>
@@ -444,8 +502,25 @@
         const clearHistoryBtn = document.getElementById('clearHistoryBtn');
         const searchBox = document.getElementById('searchBox');
 
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const settingsModalOverlay = document.getElementById('settingsModalOverlay');
+
         let chats = JSON.parse(localStorage.getItem('chronical_chats')) || [];
         let currentChatId = localStorage.getItem('chronical_active_id') || null;
+
+        // Gestão do Modal de Configurações
+        openSettingsBtn.onclick = () => {
+            settingsModalOverlay.classList.add('active');
+        };
+        closeSettingsBtn.onclick = () => {
+            settingsModalOverlay.classList.remove('active');
+        };
+        settingsModalOverlay.onclick = (e) => {
+            if (e.target === settingsModalOverlay) {
+                settingsModalOverlay.classList.remove('active');
+            }
+        };
 
         menuToggleBtn.onclick = () => { 
             sidebar.classList.add('open'); 
