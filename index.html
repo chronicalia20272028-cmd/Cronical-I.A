@@ -27,21 +27,21 @@
             font-size: var(--font-size);
         }
 
-        /* --- TELA DE ABERTURA MINIMALISTA (SPLASH SCREEN) --- */
+        /* --- TELA DE ABERTURA ULTRA-CINEMATOGRÁFICA (SÓ O NOME) --- */
         .splash-screen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
             background-color: #000000;
             display: flex; align-items: center; justify-content: center;
             z-index: 99999;
-            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), filter 0.7s ease, visibility 0.7s ease;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease, visibility 0.8s ease;
         }
 
         .splash-screen.fade-out {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
-            transform: scale(1.05);
-            filter: blur(8px);
+            transform: scale(1.08);
+            filter: blur(10px);
         }
 
         .splash-content {
@@ -49,30 +49,37 @@
             position: relative;
         }
 
-        /* Brilho de fundo suave (Glow) */
+        /* Brilho Neon Pulsante (Glow) */
         .splash-glow {
-            position: absolute; width: 220px; height: 220px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 50%; filter: blur(40px); z-index: -1;
-            animation: pulse-glow 2s infinite alternate ease-in-out;
+            position: absolute; width: 260px; height: 260px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(59, 130, 246, 0.15) 45%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%; filter: blur(50px); z-index: -1;
+            animation: breathe-glow 2.4s infinite alternate ease-in-out;
         }
 
-        /* Nome Exclusivo Chronical I.A */
+        /* Nome Exclusivo Chronical I.A Renovado */
         .splash-logo {
-            font-size: clamp(32px, 6vw, 56px);
+            font-size: clamp(34px, 6vw, 62px);
             font-weight: 800;
-            background: linear-gradient(90deg, #ffffff 0%, #3b82f6 50%, #ffffff 100%);
+            background: linear-gradient(110deg, #ffffff 20%, #60a5fa 45%, #ffffff 70%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 0.5px;
-            animation: shimmer-text 3s infinite linear;
+            letter-spacing: 1px;
+            animation: intro-appear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards, shimmer-text 3s infinite linear 1s;
+            text-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
         }
 
-        @keyframes pulse-glow {
-            0% { transform: scale(0.85); opacity: 0.4; }
-            100% { transform: scale(1.25); opacity: 0.85; }
+        @keyframes intro-appear {
+            0% { opacity: 0; transform: translateY(15px) scale(0.95); letter-spacing: -1px; }
+            100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 1px; }
         }
+
+        @keyframes breathe-glow {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            100% { transform: scale(1.35); opacity: 0.9; }
+        }
+
         @keyframes shimmer-text {
             0% { background-position: 0% center; }
             100% { background-position: 200% center; }
@@ -357,7 +364,7 @@
 </head>
 <body>
 
-    <!-- Splash Screen Exclusiva Chronical I.A -->
+    <!-- Splash Screen Minimalista Ultra-Cinematográfica -->
     <div class="splash-screen" id="splashScreen">
         <div class="splash-glow"></div>
         <div class="splash-content">
@@ -414,14 +421,14 @@
     </div>
 
     <script>
-        // Ocultação da Splash Screen após 1.4 segundos
+        // Ocultação Suave e Rápida da Splash Screen
         window.addEventListener('load', () => {
             const splash = document.getElementById('splashScreen');
             setTimeout(() => {
                 if (splash) {
                     splash.classList.add('fade-out');
                 }
-            }, 1400);
+            }, 1500);
         });
 
         const chatMain = document.getElementById('chatMain');
