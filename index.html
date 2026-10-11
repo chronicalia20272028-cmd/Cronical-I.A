@@ -27,6 +27,38 @@
             font-size: var(--font-size);
         }
 
+        /* --- TELA DE ABERTURA (SPLASH SCREEN) --- */
+        .splash-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
+            background-color: #000000; display: flex; align-items: center; justify-content: center;
+            z-index: 99999; transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .splash-screen.fade-out {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+        .splash-content {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            animation: pulse-splash 1.5s infinite alternate ease-in-out;
+        }
+        .splash-logo {
+            font-size: clamp(26px, 5vw, 48px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
+        }
+        .splash-subtitle {
+            font-size: clamp(11px, 1.5vw, 15px);
+            color: #64748b;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        @keyframes pulse-splash {
+            0% { transform: scale(0.96); opacity: 0.85; }
+            100% { transform: scale(1.04); opacity: 1; }
+        }
+
         .app-container {
             display: flex;
             flex-direction: column;
@@ -69,7 +101,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* --- MENU LATERAL (SIDEBAR REESTRUTURADO) --- */
+        /* --- MENU LATERAL (SIDEBAR) --- */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
@@ -93,7 +125,6 @@
         }
         .close-sidebar-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; }
 
-        /* Barra de Pesquisa em Primeiro Lugar */
         .search-box {
             width: 100%;
             background: rgba(255, 255, 255, 0.04);
@@ -108,7 +139,6 @@
         .search-box:focus { border-color: #2563eb; }
         .search-box::placeholder { color: #64748b; }
 
-        /* Nova Conversa integrada sem estilo de botão pesado */
         .new-chat-item {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.06);
@@ -131,7 +161,6 @@
             color: #93c5fd;
         }
 
-        /* Lista de Histórico */
         .history-section-title {
             font-size: 0.75rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-top: 4px;
         }
@@ -159,7 +188,6 @@
         .history-item:hover .delete-chat-btn { opacity: 1; }
         .delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
-        /* Rodapé do Menu */
         .sidebar-footer {
             border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; display: flex; flex-direction: column; gap: 8px;
         }
@@ -171,7 +199,6 @@
         .app-version {
             font-size: 0.75rem; color: #475569; text-align: center;
         }
-
 
         /* Área de Chat */
         .chat-main {
@@ -270,7 +297,6 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 
-
         /* ==========================================================
            ADAPTAÇÕES POR DISPOSITIVO (MEDIA QUERIES)
            ========================================================== */
@@ -314,6 +340,14 @@
 </head>
 <body>
 
+    <!-- Tela de Abertura (Splash Screen) -->
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-content">
+            <div class="splash-logo">Chronical I.A</div>
+            <div class="splash-subtitle">Assistente Inteligente</div>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Menu Lateral & Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -323,22 +357,20 @@
                 <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
             </div>
             
-            <!-- 1. Barra de Pesquisa em primeiro -->
+            <!-- Barra de Pesquisa -->
             <input type="text" class="search-box" id="searchBox" placeholder="Pesquisar conversas...">
 
-            <!-- 2. Nova Conversa integrada sem estilo de botão pesado -->
+            <!-- Nova Conversa -->
             <button class="new-chat-item" id="newChatBtn">
                 <span>+</span> Nova Conversa
             </button>
 
             <div class="history-section-title">Conversas Anteriores</div>
-            <div class="history-list" id="historyList">
-                <!-- Preenchido dinamicamente via JS -->
-            </div>
+            <div class="history-list" id="historyList"></div>
 
             <div class="sidebar-footer">
                 <button class="clear-history-btn" id="clearHistoryBtn">Limpar Histórico</button>
-                <div class="app-version">Chronical I.A • v2.0</div>
+                <div class="app-version">Chronical I.A • v2.1</div>
             </div>
         </aside>
 
@@ -367,6 +399,16 @@
     </div>
 
     <script>
+        // Remover a tela de abertura após 1.6 segundos
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) {
+                    splash.classList.add('fade-out');
+                }
+            }, 1600);
+        });
+
         const chatMain = document.getElementById('chatMain');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -387,7 +429,7 @@
         menuToggleBtn.onclick = () => { 
             sidebar.classList.add('open'); 
             sidebarOverlay.classList.add('active'); 
-            searchBox.value = ''; // Limpa a pesquisa ao abrir
+            searchBox.value = ''; 
             renderHistory(); 
         };
         closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
@@ -427,12 +469,10 @@
             });
         }
 
-        // Pesquisa em tempo real
         searchBox.oninput = (e) => {
             renderHistory(e.target.value);
         };
 
-        // Criar Nova Conversa
         newChatBtn.onclick = () => {
             currentChatId = 'chat_' + Date.now();
             localStorage.setItem('chronical_active_id', currentChatId);
@@ -442,7 +482,6 @@
             searchBox.value = '';
         };
 
-        // Carregar Conversa Específica
         function loadChat(id) {
             const chat = chats.find(c => c.id === id);
             if (!chat) return;
@@ -461,7 +500,6 @@
             chatMain.scrollTop = chatMain.scrollHeight;
         }
 
-        // Apagar Conversa Individual
         function deleteChat(id) {
             chats = chats.filter(c => c.id !== id);
             localStorage.setItem('chronical_chats', JSON.stringify(chats));
@@ -472,7 +510,6 @@
             }
         }
 
-        // Limpar Todo o Histórico
         clearHistoryBtn.onclick = () => {
             if (confirm("Tens a certeza que queres limpar todo o histórico?")) {
                 chats = [];
@@ -481,7 +518,6 @@
             }
         };
 
-        // Guardar Mensagens no Histórico
         function saveMessageToCurrentChat(userText, aiText) {
             if (!currentChatId) {
                 currentChatId = 'chat_' + Date.now();
