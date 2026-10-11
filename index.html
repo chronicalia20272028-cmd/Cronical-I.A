@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A</title>
     <style>
-        /* --- VARIÁVEIS GLOBAIS DE ESCALA (Responsivo Universal) --- */
+        /* --- VARIÁVEIS GLOBAIS DE ESCALA --- */
         :root {
             --font-size: 14px;
             --header-height: 56px;
@@ -69,7 +69,7 @@
             letter-spacing: 0.3px;
         }
 
-        /* --- MENU LATERAL (SIDEBAR) --- */
+        /* --- MENU LATERAL (SIDEBAR MELHORADO) --- */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
@@ -79,10 +79,10 @@
 
         .sidebar {
             position: fixed; top: 0; left: 0; 
-            width: clamp(240px, 75vw, 320px); 
+            width: clamp(260px, 80vw, 320px); 
             height: 100%;
             background: #0a0d14; border-right: 1px solid rgba(255, 255, 255, 0.08);
-            z-index: 999; display: flex; flex-direction: column; padding: var(--padding-base); gap: 16px;
+            z-index: 999; display: flex; flex-direction: column; padding: var(--padding-base); gap: 14px;
             transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar.open { transform: translateX(0); }
@@ -94,12 +94,49 @@
         .close-sidebar-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; }
 
         .new-chat-btn {
-            background: #2563eb; color: #ffffff; border: none; padding: 10px 14px;
-            border-radius: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+            background: #2563eb; color: #ffffff; border: none; padding: 12px 14px;
+            border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: background 0.2s;
+            transition: background 0.2s; box-shadow: 0 4px 12px rgba(37,99,235,0.25);
         }
         .new-chat-btn:hover { background: #1d4ed8; }
+
+        /* Lista de Histórico */
+        .history-section-title {
+            font-size: 0.8rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-top: 6px;
+        }
+
+        .history-list {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 2px;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 10px 12px; border-radius: 10px; font-size: 0.9rem; color: #cbd5e1;
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.2s; text-align: left; width: 100%;
+        }
+        .history-item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+        .history-item.active { background: rgba(37, 99, 235, 0.18); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd; font-weight: 500; }
+
+        .history-text {
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+        }
+
+        .delete-chat-btn {
+            background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 6px; font-size: 0.9rem; border-radius: 4px; opacity: 0; transition: opacity 0.2s;
+        }
+        .history-item:hover .delete-chat-btn { opacity: 1; }
+        .delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .clear-history-btn {
+            background: transparent; border: none; color: #94a3b8; font-size: 0.85rem; cursor: pointer; padding: 6px 8px; border-radius: 6px; width: 100%; text-align: center;
+        }
+        .clear-history-btn:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
 
         /* Área de Chat */
         .chat-main {
@@ -202,8 +239,6 @@
         /* ==========================================================
            ADAPTAÇÕES POR DISPOSITIVO (MEDIA QUERIES)
            ========================================================== */
-
-        /* 1. Smartwatches (Abaixo de 320px) */
         @media (max-width: 320px) {
             :root {
                 --font-size: 11px;
@@ -216,7 +251,6 @@
             .send-submit svg { width: 12px; height: 12px; }
         }
 
-        /* 2. Tablets (A partir de 768px) */
         @media (min-width: 768px) {
             :root {
                 --font-size: 15px;
@@ -229,7 +263,6 @@
             .send-submit svg { width: 18px; height: 18px; }
         }
 
-        /* 3. Desktops e Smart TVs (A partir de 1400px) */
         @media (min-width: 1400px) {
             :root {
                 --font-size: 18px;
@@ -251,12 +284,22 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <span>Menu</span>
+                <span>Menu Principal</span>
                 <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
             </div>
+            
             <button class="new-chat-btn" id="newChatBtn">
                 <span>+</span> Nova Conversa
             </button>
+
+            <div class="history-section-title">Conversas Anteriores</div>
+            <div class="history-list" id="historyList">
+                <!-- Preenchido dinamicamente via JS -->
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="clear-history-btn" id="clearHistoryBtn">Limpar Histórico</button>
+            </div>
         </aside>
 
         <!-- Cabeçalho -->
@@ -293,18 +336,112 @@
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const newChatBtn = document.getElementById('newChatBtn');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+        let chats = JSON.parse(localStorage.getItem('chronical_chats')) || [];
+        let currentChatId = localStorage.getItem('chronical_active_id') || null;
 
         // Controlo do Menu Lateral
-        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); };
+        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); renderHistory(); };
         closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
         sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
 
-        // Botão de Nova Conversa
+        // Renderizar a lista de conversas
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (chats.length === 0) {
+                historyList.innerHTML = '<div style="font-size: 0.85rem; color: #64748b; padding: 8px 0;">Sem conversas recentes.</div>';
+                return;
+            }
+            chats.forEach(chat => {
+                const item = document.createElement('div');
+                item.className = `history-item ${chat.id === currentChatId ? 'active' : ''}`;
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'history-text';
+                textSpan.textContent = chat.title;
+                textSpan.onclick = () => loadChat(chat.id);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-chat-btn';
+                deleteBtn.textContent = '✕';
+                deleteBtn.title = 'Apagar conversa';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteChat(chat.id);
+                };
+
+                item.appendChild(textSpan);
+                item.appendChild(deleteBtn);
+                historyList.appendChild(item);
+            });
+        }
+
+        // Criar Nova Conversa
         newChatBtn.onclick = () => {
+            currentChatId = 'chat_' + Date.now();
+            localStorage.setItem('chronical_active_id', currentChatId);
             chatMain.innerHTML = '<div class="message ai">Nova conversa iniciada! Como posso ajudar?</div>';
             sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('active');
         };
+
+        // Carregar Conversa Específica
+        function loadChat(id) {
+            const chat = chats.find(c => c.id === id);
+            if (!chat) return;
+            currentChatId = chat.id;
+            localStorage.setItem('chronical_active_id', currentChatId);
+
+            chatMain.innerHTML = '';
+            chat.messages.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = `message ${msg.sender}`;
+                div.textContent = msg.text;
+                chatMain.appendChild(div);
+            });
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            chatMain.scrollTop = chatMain.scrollHeight;
+        }
+
+        // Apagar Conversa Individual
+        function deleteChat(id) {
+            chats = chats.filter(c => c.id !== id);
+            localStorage.setItem('chronical_chats', JSON.stringify(chats));
+            if (currentChatId === id) {
+                newChatBtn.click();
+            } else {
+                renderHistory();
+            }
+        }
+
+        // Limpar Todo o Histórico
+        clearHistoryBtn.onclick = () => {
+            if (confirm("Tens a certeza que queres limpar todo o histórico?")) {
+                chats = [];
+                localStorage.removeItem('chronical_chats');
+                newChatBtn.click();
+            }
+        };
+
+        // Guardar Mensagens no Histórico
+        function saveMessageToCurrentChat(userText, aiText) {
+            if (!currentChatId) {
+                currentChatId = 'chat_' + Date.now();
+                localStorage.setItem('chronical_active_id', currentChatId);
+            }
+
+            let chat = chats.find(c => c.id === currentChatId);
+            if (!chat) {
+                chat = { id: currentChatId, title: userText.substring(0, 28) + '...', messages: [] };
+                chats.unshift(chat);
+            }
+            chat.messages.push({ sender: 'user', text: userText });
+            chat.messages.push({ sender: 'ai', text: aiText });
+            localStorage.setItem('chronical_chats', JSON.stringify(chats));
+        }
 
         userInput.oninput = function() {
             this.style.height = 'auto';
@@ -324,12 +461,16 @@
             userInput.style.height = 'auto';
             chatMain.scrollTop = chatMain.scrollHeight;
 
+            const aiReply = "Mensagem recebida: " + text;
+
             setTimeout(() => {
                 const aiDiv = document.createElement('div');
                 aiDiv.className = 'message ai';
-                aiDiv.textContent = "Mensagem recebida: " + text;
+                aiDiv.textContent = aiReply;
                 chatMain.appendChild(aiDiv);
                 chatMain.scrollTop = chatMain.scrollHeight;
+
+                saveMessageToCurrentChat(text, aiReply);
             }, 500);
         };
 
