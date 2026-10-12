@@ -1,59 +1,45 @@
 import os
-import time
-from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
+from flask import Flask, request, jsonify, send_from_directory
 from google import genai
 
-# Configura o Flask para procurar o index.html na mesma pasta
-app = Flask(__name__, template_folder='.', static_folder='.')
-CORS(app)
+app = Flask(__name__, static_folder='.', static_url_path='')
 
-# Inicializa o cliente da Google GenAI (lê a chave GEMINI_API_KEY do ambiente)
-client = genai.Client()
+# Procura a chave de API em GEMINI_API_KEY ou GOOGLE_API_KEY
+api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+
+try:
+    if api_key:
+        client = genai.Client(api_key=api_key)
+    else:
+        client = genai.Client()
+except Exception as e:
+    print(f"Erro ao inicializar o cliente GenAI: {e}")
+    client = None
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    if not client:
+        return jsonify({"reply": "Erro: Cliente Gemini não inicializado. Verifica a chave de API nas variáveis do Render."}), 500
+
+    data = request.get_json() or {}
+    user_message = data.get('message', '')
+    
+    if not user_message:
+        return jsonify({"reply": "Por favor, escreve uma mensagem."}), 400
+    
     try:
-        data = request.get_json()
-        user_message = data.get('message', '')
-        
-        if not user_message:
-            return jsonify({'response': 'Por favor, envia uma mensagem válida.'}), 400
-
-        # Lista de modelos para tentar por ordem de prioridade caso algum esteja sobrecarregado
-        models_to_try = ['gemini-1.5-flash', 'gemini-2.0-flash']
-        ai_reply = None
-        last_error = None
-
-        # Tenta cada modelo com repetição em caso de falha temporária (503)
-        for model_name in models_to_try:
-            for attempt in range(2): # Tenta 2 vezes por modelo
-                try:
-                    response = client.models.generate_content(
-                        model=model_name,
-                        contents=user_message,
-                    )
-                    if response and response.text:
-                        ai_reply = response.text
-                        break
-                except Exception as err:
-                    last_error = err
-                    time.sleep(1) # Aguarda 1 segundo antes de tentar novamente
-            if ai_reply:
-                break
-
-        if ai_reply:
-            return jsonify({'response': ai_reply})
-        else:
-            raise last_error or Exception("Todos os modelos falharam.")
-        
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=user_message,
+        )
+        reply = response.text if response and response.text else "A IA não retornou conteúdo."
+        return jsonify({"reply": reply})
     except Exception as e:
-        print(f"Erro ao comunicar com a API do Gemini: {e}")
-        return jsonify({'response': 'Os servidores da IA estão temporariamente sobrecarregados. Por favor, tenta enviar a mensagem novamente em instantes.'}), 500
+        return jsonify({"reply": f"Erro ao processar com a IA: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
