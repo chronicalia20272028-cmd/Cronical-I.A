@@ -4,16 +4,15 @@ from google import genai
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
-# Procura a chave de API em GEMINI_API_KEY ou GOOGLE_API_KEY
-api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-
+# Inicializa o cliente no modo Vertex AI utilizando o ID do teu projeto do Google Cloud
 try:
-    if api_key:
-        client = genai.Client(api_key=api_key)
-    else:
-        client = genai.Client()
+    client = genai.Client(
+        vertexai=True,
+        project="704276061622",
+        location="us-central1"
+    )
 except Exception as e:
-    print(f"Erro ao inicializar o cliente GenAI: {e}")
+    print(f"Erro ao inicializar o cliente Vertex AI: {e}")
     client = None
 
 @app.route('/')
@@ -23,7 +22,7 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     if not client:
-        return jsonify({"reply": "Erro: Cliente Gemini não inicializado. Verifica a chave de API nas variáveis do Render."}), 500
+        return jsonify({"reply": "Erro: Cliente Vertex AI não inicializado."}), 500
 
     data = request.get_json() or {}
     user_message = data.get('message', '')
