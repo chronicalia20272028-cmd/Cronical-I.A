@@ -4,11 +4,9 @@ from google import genai
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 
-# Lê a chave da API configurada nas variáveis de ambiente do Render
 api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
 try:
-    # Inicializa o cliente GenAI passando a chave diretamente
     if api_key:
         client = genai.Client(api_key=api_key)
     else:
@@ -33,8 +31,9 @@ def chat():
         return jsonify({"reply": "Por favor, escreve uma mensagem."}), 400
     
     try:
+        # Atualizado para o modelo correto indicado pelo erro
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.8-flash',
             contents=user_message,
         )
         reply = response.text if response and response.text else "A IA não retornou conteúdo."
