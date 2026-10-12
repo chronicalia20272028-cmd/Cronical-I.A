@@ -175,7 +175,7 @@
 
         .auth-error { color: #ef4444; font-size: 0.8rem; text-align: center; display: none; }
 
-        /* --- MENU LATERAL (DIRETAMENTE INTEGRADO / FLAT) --- */
+        /* --- MENU LATERAL ULTRA REFINADO (FLAT & CLEAN) --- */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
@@ -186,10 +186,10 @@
         .sidebar {
             position: fixed; top: 0; left: 0; 
             width: clamp(280px, 80vw, 310px); height: 100%;
-            background: #05070a; border-right: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 999; display: flex; flex-direction: column; padding: 22px 18px; gap: 16px;
+            background: #040609; border-right: 1px solid rgba(255, 255, 255, 0.04);
+            z-index: 999; display: flex; flex-direction: column; padding: 24px 18px; gap: 16px;
             transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 15px 0 40px rgba(0,0,0,0.8);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.9);
         }
         .sidebar.open { transform: translateX(0); }
 
@@ -208,7 +208,7 @@
             position: relative;
             display: flex;
             align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             padding-bottom: 4px;
             margin-top: 4px;
         }
@@ -225,28 +225,35 @@
         .new-chat-item {
             background: transparent;
             border: none;
-            color: #cbd5e1; padding: 8px 0; font-size: 0.9rem; font-weight: 500;
-            cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; transition: color 0.2s;
+            color: #cbd5e1; padding: 8px 6px; border-radius: 8px; font-size: 0.9rem; font-weight: 500;
+            cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; transition: all 0.2s;
         }
         .new-chat-item:hover {
+            background: rgba(255, 255, 255, 0.04);
             color: #ffffff;
         }
         .new-chat-item svg { color: #64748b; transition: color 0.2s; }
         .new-chat-item:hover svg { color: #ffffff; }
 
         .history-section-title {
-            font-size: 0.7rem; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.8px; margin-top: 8px;
+            font-size: 0.7rem; text-transform: uppercase; color: #475569; font-weight: 700; letter-spacing: 0.8px; margin-top: 8px; padding-left: 4px;
         }
-        .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; padding-right: 2px; }
+        .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; padding-right: 2px; }
+        .history-list::-webkit-scrollbar { width: 3px; }
+        .history-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
+        .history-empty-state {
+            font-size: 0.82rem; color: #475569; padding: 12px 6px; font-style: italic;
+        }
 
         .history-item {
             background: transparent; border: none;
-            padding: 8px 4px; border-radius: 6px; font-size: 0.88rem; color: #94a3b8;
-            cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s, color 0.15s;
+            padding: 9px 8px; border-radius: 8px; font-size: 0.88rem; color: #94a3b8;
+            cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.15s ease;
         }
-        .history-item:hover { background: rgba(255, 255, 255, 0.04); color: #f1f5f9; }
+        .history-item:hover { background: rgba(255, 255, 255, 0.05); color: #f1f5f9; }
         .history-item.active {
-            background: rgba(255, 255, 255, 0.07); color: #ffffff; font-weight: 500;
+            background: rgba(255, 255, 255, 0.08); color: #ffffff; font-weight: 500;
         }
 
         .chat-icon { color: #475569; flex-shrink: 0; transition: color 0.15s; }
@@ -261,12 +268,12 @@
         .history-item:hover .delete-chat-btn { opacity: 1; }
         .delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.15); }
 
-        .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; display: flex; flex-direction: column; gap: 2px; }
+        .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; display: flex; flex-direction: column; gap: 3px; }
         .sidebar-action-btn {
-            background: transparent; border: none; color: #94a3b8; font-size: 0.88rem; font-weight: 400; cursor: pointer; padding: 8px 4px; border-radius: 6px; width: 100%; display: flex; align-items: center; gap: 10px; transition: background 0.15s, color 0.15s;
+            background: transparent; border: none; color: #94a3b8; font-size: 0.88rem; font-weight: 400; cursor: pointer; padding: 9px 8px; border-radius: 8px; width: 100%; display: flex; align-items: center; gap: 10px; transition: all 0.15s ease;
         }
         .sidebar-action-btn svg { color: #64748b; transition: color 0.15s; }
-        .sidebar-action-btn:hover { background: rgba(255, 255, 255, 0.04); color: #f1f5f9; }
+        .sidebar-action-btn:hover { background: rgba(255, 255, 255, 0.05); color: #f1f5f9; }
         .sidebar-action-btn:hover svg { color: #f1f5f9; }
         .sidebar-action-btn.danger:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
         .sidebar-action-btn.danger:hover svg { color: #ef4444; }
@@ -323,7 +330,7 @@
 <body>
 
     <div class="app-container">
-        <!-- Menu Lateral Flat e Integrado -->
+        <!-- Menu Lateral Ultra Refinado -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -337,7 +344,7 @@
             </div>
 
             <button class="new-chat-item" id="newChatBtn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Nova Conversa
             </button>
 
@@ -353,7 +360,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     Limpar Histórico
                 </button>
-                <div class="app-version">Chronical I.A • v3.5</div>
+                <div class="app-version">Chronical I.A • v3.6</div>
             </div>
         </aside>
 
@@ -555,7 +562,7 @@
             historyList.innerHTML = '';
             const filteredChats = chats.filter(chat => chat.title.toLowerCase().includes(filterText.toLowerCase()));
             if (filteredChats.length === 0) {
-                historyList.innerHTML = '<div style="font-size: 0.82rem; color: #475569; padding: 6px 4px;">Nenhuma conversa encontrada.</div>';
+                historyList.innerHTML = '<div class="history-empty-state">Nenhuma conversa recente.</div>';
                 return;
             }
             filteredChats.forEach(chat => {
