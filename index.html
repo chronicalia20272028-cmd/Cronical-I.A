@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -29,62 +29,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             overflow: hidden;
             font-size: var(--font-size);
-        }
-
-        /* --- TELA DE ABERTURA CINEMATOGRÁFICA --- */
-        .splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
-            background-color: #000000;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 99999;
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease, visibility 0.8s ease;
-        }
-
-        .splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transform: scale(1.08);
-            filter: blur(10px);
-        }
-
-        .splash-content {
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-        }
-
-        .splash-glow {
-            position: absolute; width: 260px; height: 260px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(59, 130, 246, 0.15) 45%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 50%; filter: blur(50px); z-index: -1;
-            animation: breathe-glow 2.4s infinite alternate ease-in-out;
-        }
-
-        .splash-logo {
-            font-size: clamp(34px, 6vw, 62px);
-            font-weight: 800;
-            background: linear-gradient(110deg, #ffffff 20%, #60a5fa 45%, #ffffff 70%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-            animation: intro-appear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards, shimmer-text 3s infinite linear 1s;
-            text-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
-        }
-
-        @keyframes intro-appear {
-            0% { opacity: 0; transform: translateY(15px) scale(0.95); letter-spacing: -1px; }
-            100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 1px; }
-        }
-
-        @keyframes breathe-glow {
-            0% { transform: scale(0.8); opacity: 0.3; }
-            100% { transform: scale(1.35); opacity: 0.9; }
-        }
-
-        @keyframes shimmer-text {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
         }
 
         .app-container {
@@ -123,11 +67,7 @@
             justify-content: center;
         }
 
-        .app-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
+        .app-title { font-size: 1.15rem; font-weight: 700; letter-spacing: 0.3px; }
 
         .header-auth-area {
             position: absolute;
@@ -136,6 +76,7 @@
             align-items: center;
         }
 
+        /* Botão de Entrar Sem Borda e Sem Ícone */
         .header-login-text-btn {
             background: transparent;
             color: #f1f5f9;
@@ -164,7 +105,7 @@
             border-radius: 12px; width: 220px; padding: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 8px;
             opacity: 0; visibility: hidden; transform: translateY(-8px);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.2s ease;
             z-index: 100;
         }
         .user-dropdown-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
@@ -180,7 +121,7 @@
         }
         .dropdown-logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
 
-        /* --- MODAL DE AUTENTICAÇÃO --- */
+        /* --- MODAL DE AUTENTICAÇÃO (ENTRAR / REGISTRAR) --- */
         .auth-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
@@ -193,14 +134,13 @@
             background: #0a0d14; border: 1px solid rgba(255, 255, 255, 0.12);
             width: 100%; max-width: 380px; border-radius: 18px; padding: 24px;
             box-shadow: 0 16px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 16px;
-            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .auth-modal-overlay.active .auth-modal { transform: scale(1); }
 
         .auth-tabs { display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 4px; }
         .auth-tab {
             flex: 1; padding: 10px 0; background: transparent; border: none; color: #64748b;
-            font-size: 0.95rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;
+            font-size: 0.95rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent;
+            transition: all 0.2s;
         }
         .auth-tab.active { color: #3b82f6; border-bottom-color: #3b82f6; }
 
@@ -233,7 +173,7 @@
 
         .auth-error { color: #ef4444; font-size: 0.8rem; text-align: center; display: none; }
 
-        /* --- MENU LATERAL --- */
+        /* --- MENU LATERAL (SIDEBAR) --- */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
@@ -243,15 +183,14 @@
 
         .sidebar {
             position: fixed; top: 0; left: 0; 
-            width: clamp(280px, 80vw, 340px); 
-            height: 100%;
+            width: clamp(280px, 80vw, 340px); height: 100%;
             background: #0a0d14; border-right: 1px solid rgba(255, 255, 255, 0.08);
             z-index: 999; display: flex; flex-direction: column; padding: var(--padding-base); gap: 12px;
             transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar.open { transform: translateX(0); }
 
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.05rem; font-weight: 700; padding-bottom: 2px; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.05rem; font-weight: 700; }
         .close-sidebar-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; }
 
         .search-box {
@@ -280,7 +219,7 @@
         .history-item.active { background: rgba(37, 99, 235, 0.18); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd; }
         .history-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
 
-        .delete-chat-btn { background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 6px; font-size: 0.9rem; border-radius: 4px; opacity: 0; transition: opacity 0.2s; }
+        .delete-chat-btn { background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 6px; font-size: 0.9rem; opacity: 0; transition: opacity 0.2s; }
         .history-item:hover .delete-chat-btn { opacity: 1; }
         .delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
@@ -309,12 +248,6 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px; }
         .modal-title { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
         .close-modal-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
-        .setting-item { display: flex; flex-direction: column; gap: 6px; }
-        .setting-label { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
-        .setting-select {
-            background: #161b22; border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9;
-            padding: 10px; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;
-        }
 
         /* Área de Chat */
         .chat-main {
@@ -349,14 +282,6 @@
 </head>
 <body>
 
-    <!-- Splash Screen Exclusiva Chronical I.A -->
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-glow"></div>
-        <div class="splash-content">
-            <div class="splash-logo">Chronical I.A</div>
-        </div>
-    </div>
-
     <div class="app-container">
         <!-- Menu Lateral & Overlay -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -376,19 +301,13 @@
             <div class="history-list" id="historyList"></div>
 
             <div class="sidebar-footer">
-                <button class="sidebar-action-btn" id="openSettingsBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    Configurações
-                </button>
-                <button class="sidebar-action-btn danger" id="clearHistoryBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    Limpar Histórico
-                </button>
-                <div class="app-version">Chronical I.A • v3.0</div>
+                <button class="sidebar-action-btn" id="openSettingsBtn">Configurações</button>
+                <button class="sidebar-action-btn danger" id="clearHistoryBtn">Limpar Histórico</button>
+                <div class="app-version">Chronical I.A • v3.1</div>
             </div>
         </aside>
 
-        <!-- Modal de Autenticação -->
+        <!-- Modal de Autenticação (Entrar / Registrar) -->
         <div class="auth-modal-overlay" id="authModalOverlay">
             <div class="auth-modal">
                 <div class="auth-tabs">
@@ -398,6 +317,7 @@
 
                 <div class="auth-error" id="authErrorMsg"></div>
 
+                <!-- Form de Login -->
                 <form class="auth-form" id="loginForm">
                     <div class="form-group">
                         <label class="form-label">E-mail</label>
@@ -410,6 +330,7 @@
                     <button type="submit" class="auth-submit-btn">Entrar</button>
                 </form>
 
+                <!-- Form de Registro -->
                 <form class="auth-form" id="registerForm" style="display: none;">
                     <div class="form-group">
                         <label class="form-label">Nome Completo</label>
@@ -442,12 +363,8 @@
                     <span class="modal-title">Configurações</span>
                     <button class="close-modal-btn" id="closeSettingsBtn">✕</button>
                 </div>
-                <div class="setting-item">
-                    <span class="setting-label">Modelo de I.A</span>
-                    <select class="setting-select" id="modelSelect">
-                        <option value="gemini-2.5-flash">Gemini Flash (Rápido e Fluido)</option>
-                        <option value="gemini-2.5-pro">Gemini Pro (Mais Detalhado)</option>
-                    </select>
+                <div style="font-size: 0.9rem; color: #94a3b8;">
+                    Chronical I.A • Assistente Inteligente Universal para qualquer tema.
                 </div>
             </div>
         </div>
@@ -460,12 +377,13 @@
             
             <div class="app-title">Chronical I.A</div>
 
+            <!-- Botão de Entrar Minimalista -->
             <div class="header-auth-area" id="headerAuthArea"></div>
         </header>
 
         <!-- Mensagens do Chat -->
         <main class="chat-main" id="chatMain">
-            <div class="message ai">Olá! Sou a Chronical I.A. Como posso te ajudar hoje?</div>
+            <div class="message ai">Olá! Sou a Chronical I.A. Sobre o que gostaria de conversar ou saber hoje?</div>
         </main>
 
         <!-- Barra de Input -->
@@ -480,9 +398,6 @@
     </div>
 
     <script>
-        // --- CHAVE DA API GEMINI ---
-        const GEMINI_API_KEY = "AQ.Ab8RN6L7SQx85OS_C0v8gaQ2uk_nVjyiHAI8pj1Ve141QyGHbQ";
-
         // --- CONFIGURAÇÃO DO FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyBWXGHYL7ncUvFCp0g14sNQc-QTG756L2Q",
@@ -493,13 +408,10 @@
             appId: "1:441734519766:web:83080edb3b69fc618a2277",
             measurementId: "G-E8DR0V8VQJ"
         };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // --- GESTÃO DO MODAL DE AUTENTICAÇÃO ---
+        // --- AUTH MODAL & TABS ---
         const authModalOverlay = document.getElementById('authModalOverlay');
         const tabLogin = document.getElementById('tabLogin');
         const tabRegister = document.getElementById('tabRegister');
@@ -507,46 +419,22 @@
         const registerForm = document.getElementById('registerForm');
         const authErrorMsg = document.getElementById('authErrorMsg');
 
-        function showError(msg) {
-            authErrorMsg.textContent = msg;
-            authErrorMsg.style.display = 'block';
-        }
-        function clearError() {
-            authErrorMsg.textContent = '';
-            authErrorMsg.style.display = 'none';
-        }
+        function showError(msg) { authErrorMsg.textContent = msg; authErrorMsg.style.display = 'block'; }
+        function clearError() { authErrorMsg.textContent = ''; authErrorMsg.style.display = 'none'; }
 
-        tabLogin.onclick = () => {
-            tabLogin.classList.add('active');
-            tabRegister.classList.remove('active');
-            loginForm.style.display = 'flex';
-            registerForm.style.display = 'none';
-            clearError();
-        };
-
-        tabRegister.onclick = () => {
-            tabRegister.classList.add('active');
-            tabLogin.classList.remove('active');
-            registerForm.style.display = 'flex';
-            loginForm.style.display = 'none';
-            clearError();
-        };
-
-        authModalOverlay.onclick = (e) => {
-            if (e.target === authModalOverlay) authModalOverlay.classList.remove('active');
-        };
+        tabLogin.onclick = () => { tabLogin.classList.add('active'); tabRegister.classList.remove('active'); loginForm.style.display = 'flex'; registerForm.style.display = 'none'; clearError(); };
+        tabRegister.onclick = () => { tabRegister.classList.add('active'); tabLogin.classList.remove('active'); registerForm.style.display = 'flex'; loginForm.style.display = 'none'; clearError(); };
+        authModalOverlay.onclick = (e) => { if (e.target === authModalOverlay) authModalOverlay.classList.remove('active'); };
 
         loginForm.onsubmit = (e) => {
-            e.preventDefault();
-            clearError();
+            e.preventDefault(); clearError();
             auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value)
                 .then(() => { authModalOverlay.classList.remove('active'); loginForm.reset(); })
                 .catch(() => showError("E-mail ou senha incorretos."));
         };
 
         registerForm.onsubmit = (e) => {
-            e.preventDefault();
-            clearError();
+            e.preventDefault(); clearError();
             const name = document.getElementById('regName').value;
             auth.createUserWithEmailAndPassword(document.getElementById('regEmail').value, document.getElementById('regPassword').value)
                 .then(uc => uc.user.updateProfile({ displayName: name }))
@@ -561,7 +449,6 @@
         };
 
         const headerAuthArea = document.getElementById('headerAuthArea');
-
         function updateHeaderAuthUI(user) {
             if (user) {
                 const initial = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
@@ -587,14 +474,9 @@
                 document.getElementById('headerLoginTextBtn').onclick = () => authModalOverlay.classList.add('active');
             }
         }
-
         auth.onAuthStateChanged(user => updateHeaderAuthUI(user));
 
-        // --- SPLASH & CHAT ---
-        window.addEventListener('load', () => {
-            setTimeout(() => { document.getElementById('splashScreen').classList.add('fade-out'); }, 1500);
-        });
-
+        // --- SIDEBAR, HISTÓRICO & CONFIGURAÇÕES ---
         const chatMain = document.getElementById('chatMain');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
@@ -650,7 +532,7 @@
         newChatBtn.onclick = () => {
             currentChatId = 'chat_' + Date.now();
             localStorage.setItem('chronical_active_id', currentChatId);
-            chatMain.innerHTML = '<div class="message ai">Nova conversa iniciada! Como posso te ajudar?</div>';
+            chatMain.innerHTML = '<div class="message ai">Nova conversa iniciada! Como posso ajudar?</div>';
             sidebar.classList.remove('open');
             sidebarOverlay.classList.remove('active');
             searchBox.value = '';
@@ -708,35 +590,7 @@
             this.style.height = (this.scrollHeight) + 'px';
         };
 
-        // --- INTEGRAÇÃO REAL COM A API DO GOOGLE GEMINI ---
-        async function fetchGeminiResponse(userPrompt) {
-            const selectedModel = document.getElementById('modelSelect').value || 'gemini-2.5-flash';
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [{ text: userPrompt }]
-                        }
-                    ],
-                    systemInstruction: {
-                        parts: [{ text: "Você é a Chronical I.A, uma assistente virtual inteligente, amigável, direta e versátil. Você responde a qualquer pergunta do usuário (receitas, tecnologia, curiosidades, conversas cotidianas, estudos, programação, conselhos) de forma clara, natural e útil." }]
-                    }
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Erro na API Gemini");
-            }
-
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-
+        // --- COMUNICAÇÃO COM O BACKEND EM PYTHON (GEMINI API) ---
         sendBtn.onclick = async () => {
             const text = userInput.value.trim();
             if (!text) return;
@@ -757,789 +611,20 @@
             chatMain.scrollTop = chatMain.scrollHeight;
 
             try {
-                const aiReply = await fetchGeminiResponse(text);
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                const data = await response.json();
+                const aiReply = data.reply || "Sem resposta do servidor.";
+
                 aiDiv.textContent = aiReply;
                 chatMain.scrollTop = chatMain.scrollHeight;
                 saveMessageToCurrentChat(text, aiReply);
             } catch (error) {
-                aiDiv.textContent = "Desculpe, tive um problema temporário ao consultar a minha inteligência. Por favor, tente enviar novamente!";
-                chatMain.scrollTop = chatMain.scrollHeight;
-            }
-        };
-
-        userInput.onkeydown = (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendBtn.click();
-            }
-        };
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chronical I.A</title>
-    
-    <!-- Firebase SDK (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-
-    <style>
-        :root {
-            --font-size: 14px;
-            --header-height: 56px;
-            --chat-max-width: 800px;
-            --padding-base: 16px;
-            --border-radius: 14px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html, body {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            background-color: #000000;
-            color: #f1f5f9;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            overflow: hidden;
-            font-size: var(--font-size);
-        }
-
-        /* --- TELA DE ABERTURA CINEMATOGRÁFICA --- */
-        .splash-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
-            background-color: #000000;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 99999;
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease, visibility 0.8s ease;
-        }
-
-        .splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transform: scale(1.08);
-            filter: blur(10px);
-        }
-
-        .splash-content {
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-        }
-
-        .splash-glow {
-            position: absolute; width: 260px; height: 260px;
-            background: radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(59, 130, 246, 0.15) 45%, rgba(0, 0, 0, 0) 70%);
-            border-radius: 50%; filter: blur(50px); z-index: -1;
-            animation: breathe-glow 2.4s infinite alternate ease-in-out;
-        }
-
-        .splash-logo {
-            font-size: clamp(34px, 6vw, 62px);
-            font-weight: 800;
-            background: linear-gradient(110deg, #ffffff 20%, #60a5fa 45%, #ffffff 70%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-            animation: intro-appear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards, shimmer-text 3s infinite linear 1s;
-            text-shadow: 0 0 40px rgba(37, 99, 235, 0.3);
-        }
-
-        @keyframes intro-appear {
-            0% { opacity: 0; transform: translateY(15px) scale(0.95); letter-spacing: -1px; }
-            100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 1px; }
-        }
-
-        @keyframes breathe-glow {
-            0% { transform: scale(0.8); opacity: 0.3; }
-            100% { transform: scale(1.35); opacity: 0.9; }
-        }
-
-        @keyframes shimmer-text {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        /* --- CABEÇALHO --- */
-        header {
-            height: var(--header-height);
-            min-height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 var(--padding-base);
-            background: #000000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            flex-shrink: 0;
-            z-index: 10;
-        }
-
-        .menu-toggle-btn {
-            position: absolute;
-            left: var(--padding-base);
-            background: transparent;
-            border: none;
-            color: #f1f5f9;
-            cursor: pointer;
-            padding: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .app-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-        }
-
-        .header-auth-area {
-            position: absolute;
-            right: var(--padding-base);
-            display: flex;
-            align-items: center;
-        }
-
-        .header-login-text-btn {
-            background: transparent;
-            color: #f1f5f9;
-            border: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 10px;
-            transition: color 0.2s, opacity 0.2s;
-        }
-        .header-login-text-btn:hover { color: #60a5fa; opacity: 0.9; }
-
-        .user-profile-wrapper { position: relative; }
-
-        .user-avatar-btn {
-            width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
-            background: #2563eb; border: 1px solid rgba(255,255,255,0.2); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: #fff;
-            transition: transform 0.2s;
-        }
-        .user-avatar-btn:hover { transform: scale(1.05); }
-
-        .user-dropdown-menu {
-            position: absolute; right: 0; top: 44px;
-            background: #0d1117; border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px; width: 220px; padding: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 8px;
-            opacity: 0; visibility: hidden; transform: translateY(-8px);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-        }
-        .user-dropdown-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
-
-        .dropdown-user-info { display: flex; flex-direction: column; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .dropdown-name { font-size: 0.88rem; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dropdown-email { font-size: 0.75rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .dropdown-logout-btn {
-            background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; padding: 8px;
-            border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: center;
-            transition: background 0.2s;
-        }
-        .dropdown-logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
-
-        /* --- MODAL DE AUTENTICAÇÃO --- */
-        .auth-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(5px);
-            z-index: 10001; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
-            display: flex; align-items: center; justify-content: center; padding: 16px;
-        }
-        .auth-modal-overlay.active { opacity: 1; visibility: visible; }
-
-        .auth-modal {
-            background: #0a0d14; border: 1px solid rgba(255, 255, 255, 0.12);
-            width: 100%; max-width: 380px; border-radius: 18px; padding: 24px;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 16px;
-            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .auth-modal-overlay.active .auth-modal { transform: scale(1); }
-
-        .auth-tabs { display: flex; border-bottom: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 4px; }
-        .auth-tab {
-            flex: 1; padding: 10px 0; background: transparent; border: none; color: #64748b;
-            font-size: 0.95rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;
-        }
-        .auth-tab.active { color: #3b82f6; border-bottom-color: #3b82f6; }
-
-        .auth-form { display: flex; flex-direction: column; gap: 12px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-label { font-size: 0.8rem; color: #94a3b8; font-weight: 500; }
-        .form-input {
-            background: #111622; border: 1px solid rgba(255, 255, 255, 0.08); color: #f1f5f9;
-            padding: 10px 12px; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
-        }
-        .form-input:focus { border-color: #2563eb; }
-
-        .auth-submit-btn {
-            background: #2563eb; color: #ffffff; border: none; padding: 11px;
-            border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 6px; transition: background 0.2s;
-        }
-        .auth-submit-btn:hover { background: #1d4ed8; }
-
-        .divider { display: flex; align-items: center; text-align: center; color: #475569; font-size: 0.75rem; margin: 4px 0; }
-        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
-        .divider::before { margin-right: .8em; }
-        .divider::after { margin-left: .8em; }
-
-        .google-auth-btn {
-            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); color: #f1f5f9;
-            padding: 10px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.2s;
-        }
-        .google-auth-btn:hover { background: rgba(255, 255, 255, 0.08); }
-
-        .auth-error { color: #ef4444; font-size: 0.8rem; text-align: center; display: none; }
-
-        /* --- MENU LATERAL --- */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px);
-            z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
-        }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-        .sidebar {
-            position: fixed; top: 0; left: 0; 
-            width: clamp(280px, 80vw, 340px); 
-            height: 100%;
-            background: #0a0d14; border-right: 1px solid rgba(255, 255, 255, 0.08);
-            z-index: 999; display: flex; flex-direction: column; padding: var(--padding-base); gap: 12px;
-            transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sidebar.open { transform: translateX(0); }
-
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.05rem; font-weight: 700; padding-bottom: 2px; }
-        .close-sidebar-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.25rem; cursor: pointer; }
-
-        .search-box {
-            width: 100%; background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px;
-            padding: 9px 12px; color: #f1f5f9; font-size: 0.9rem; outline: none;
-        }
-        .search-box:focus { border-color: #2563eb; }
-
-        .new-chat-item {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);
-            color: #cbd5e1; padding: 10px 12px; border-radius: 10px; font-size: 0.9rem; font-weight: 500;
-            cursor: pointer; display: flex; align-items: center; gap: 8px; width: 100%; transition: all 0.2s;
-        }
-        .new-chat-item:hover { background: rgba(37, 99, 235, 0.15); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd; }
-
-        .history-section-title { font-size: 0.75rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; margin-top: 4px; }
-        .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
-
-        .history-item {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.04);
-            padding: 10px 12px; border-radius: 10px; font-size: 0.9rem; color: #cbd5e1;
-            cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;
-        }
-        .history-item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
-        .history-item.active { background: rgba(37, 99, 235, 0.18); border-color: rgba(37, 99, 235, 0.4); color: #93c5fd; }
-        .history-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
-
-        .delete-chat-btn { background: transparent; border: none; color: #64748b; cursor: pointer; padding: 2px 6px; font-size: 0.9rem; border-radius: 4px; opacity: 0; transition: opacity 0.2s; }
-        .history-item:hover .delete-chat-btn { opacity: 1; }
-        .delete-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
-
-        .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
-        .sidebar-action-btn {
-            background: transparent; border: none; color: #cbd5e1; font-size: 0.88rem; cursor: pointer; padding: 8px 10px; border-radius: 8px; width: 100%; display: flex; align-items: center; gap: 10px; transition: background 0.2s;
-        }
-        .sidebar-action-btn:hover { background: rgba(255, 255, 255, 0.06); color: #ffffff; }
-        .sidebar-action-btn.danger:hover { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-        .app-version { font-size: 0.75rem; color: #475569; text-align: center; margin-top: 4px; }
-
-        /* --- MODAL DE CONFIGURAÇÕES --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px);
-            z-index: 10000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
-            display: flex; align-items: center; justify-content: center; padding: 16px;
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-
-        .settings-modal {
-            background: #0d1117; border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 100%; max-width: 420px; border-radius: 16px; padding: 20px;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 16px;
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 12px; }
-        .modal-title { font-size: 1.1rem; font-weight: 700; color: #f1f5f9; }
-        .close-modal-btn { background: transparent; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
-        .setting-item { display: flex; flex-direction: column; gap: 6px; }
-        .setting-label { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
-        .setting-select {
-            background: #161b22; border: 1px solid rgba(255, 255, 255, 0.1); color: #f1f5f9;
-            padding: 10px; border-radius: 8px; font-size: 0.9rem; outline: none; cursor: pointer;
-        }
-
-        /* Área de Chat */
-        .chat-main {
-            flex: 1; width: 100%; max-width: var(--chat-max-width); margin: 0 auto;
-            padding: var(--padding-base); display: flex; flex-direction: column; gap: 12px; overflow-y: auto; scroll-behavior: smooth;
-        }
-        .message {
-            max-width: 85%; padding: 10px 14px; font-size: 1rem; line-height: 1.5;
-            border-radius: var(--border-radius); word-wrap: break-word; flex-shrink: 0; white-space: pre-wrap;
-        }
-        .message.ai { background-color: #111622; border: 1px solid rgba(255, 255, 255, 0.08); color: #f1f5f9; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .message.user { background-color: #2563eb; color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2); }
-
-        /* Zona de Input */
-        .input-section { width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); background: #000000; flex-shrink: 0; }
-        .input-box {
-            display: flex; align-items: flex-end; gap: 8px; background: #111622;
-            border: 1px solid rgba(255, 255, 255, 0.08); padding: 8px 12px; border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
-        textarea { flex: 1; background: transparent; border: none; color: #f1f5f9; font-size: 1rem; outline: none; padding: 6px 4px; resize: none; max-height: 120px; min-height: 22px; line-height: 1.4; }
-        textarea::placeholder { color: #64748b; }
-
-        .send-submit {
-            background: #ffffff; color: #000000; border: none; width: 36px; height: 36px; min-width: 36px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: background 0.2s;
-        }
-        .send-submit:hover { background: #cbd5e1; }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    </style>
-</head>
-<body>
-
-    <!-- Splash Screen Exclusiva Chronical I.A -->
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-glow"></div>
-        <div class="splash-content">
-            <div class="splash-logo">Chronical I.A</div>
-        </div>
-    </div>
-
-    <div class="app-container">
-        <!-- Menu Lateral & Overlay -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <span>Menu Principal</span>
-                <button class="close-sidebar-btn" id="closeSidebarBtn">✕</button>
-            </div>
-            
-            <input type="text" class="search-box" id="searchBox" placeholder="Pesquisar conversas...">
-
-            <button class="new-chat-item" id="newChatBtn">
-                <span>+</span> Nova Conversa
-            </button>
-
-            <div class="history-section-title">Conversas Anteriores</div>
-            <div class="history-list" id="historyList"></div>
-
-            <div class="sidebar-footer">
-                <button class="sidebar-action-btn" id="openSettingsBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                    Configurações
-                </button>
-                <button class="sidebar-action-btn danger" id="clearHistoryBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    Limpar Histórico
-                </button>
-                <div class="app-version">Chronical I.A • v3.0</div>
-            </div>
-        </aside>
-
-        <!-- Modal de Autenticação -->
-        <div class="auth-modal-overlay" id="authModalOverlay">
-            <div class="auth-modal">
-                <div class="auth-tabs">
-                    <button class="auth-tab active" id="tabLogin">Entrar</button>
-                    <button class="auth-tab" id="tabRegister">Registrar</button>
-                </div>
-
-                <div class="auth-error" id="authErrorMsg"></div>
-
-                <form class="auth-form" id="loginForm">
-                    <div class="form-group">
-                        <label class="form-label">E-mail</label>
-                        <input type="email" class="form-input" id="loginEmail" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Senha</label>
-                        <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="auth-submit-btn">Entrar</button>
-                </form>
-
-                <form class="auth-form" id="registerForm" style="display: none;">
-                    <div class="form-group">
-                        <label class="form-label">Nome Completo</label>
-                        <input type="text" class="form-input" id="regName" placeholder="Seu nome" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">E-mail</label>
-                        <input type="email" class="form-input" id="regEmail" placeholder="seu@email.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Senha</label>
-                        <input type="password" class="form-input" id="regPassword" placeholder="••••••••" required minlength="6">
-                    </div>
-                    <button type="submit" class="auth-submit-btn">Criar Conta</button>
-                </form>
-
-                <div class="divider">ou</div>
-
-                <button class="google-auth-btn" id="googleModalBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/></svg>
-                    Continuar com o Google
-                </button>
-            </div>
-        </div>
-
-        <!-- Modal de Configurações -->
-        <div class="modal-overlay" id="settingsModalOverlay">
-            <div class="settings-modal">
-                <div class="modal-header">
-                    <span class="modal-title">Configurações</span>
-                    <button class="close-modal-btn" id="closeSettingsBtn">✕</button>
-                </div>
-                <div class="setting-item">
-                    <span class="setting-label">Modelo de I.A</span>
-                    <select class="setting-select" id="modelSelect">
-                        <option value="gemini-2.5-flash">Gemini Flash (Rápido e Fluido)</option>
-                        <option value="gemini-2.5-pro">Gemini Pro (Mais Detalhado)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cabeçalho -->
-        <header>
-            <button class="menu-toggle-btn" id="menuToggleBtn" title="Abrir Menu">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-            
-            <div class="app-title">Chronical I.A</div>
-
-            <div class="header-auth-area" id="headerAuthArea"></div>
-        </header>
-
-        <!-- Mensagens do Chat -->
-        <main class="chat-main" id="chatMain">
-            <div class="message ai">Olá! Sou a Chronical I.A. Como posso te ajudar hoje?</div>
-        </main>
-
-        <!-- Barra de Input -->
-        <div class="input-section">
-            <div class="input-box">
-                <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
-                <button class="send-submit" id="sendBtn" title="Enviar">
-                    <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- CHAVE DA API GEMINI ---
-        const GEMINI_API_KEY = "AQ.Ab8RN6L7SQx85OS_C0v8gaQ2uk_nVjyiHAI8pj1Ve141QyGHbQ";
-
-        // --- CONFIGURAÇÃO DO FIREBASE ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyBWXGHYL7ncUvFCp0g14sNQc-QTG756L2Q",
-            authDomain: "chronical--ia.firebaseapp.com",
-            projectId: "chronical--ia",
-            storageBucket: "chronical--ia.firebasestorage.app",
-            messagingSenderId: "441734519766",
-            appId: "1:441734519766:web:83080edb3b69fc618a2277",
-            measurementId: "G-E8DR0V8VQJ"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const auth = firebase.auth();
-
-        // --- GESTÃO DO MODAL DE AUTENTICAÇÃO ---
-        const authModalOverlay = document.getElementById('authModalOverlay');
-        const tabLogin = document.getElementById('tabLogin');
-        const tabRegister = document.getElementById('tabRegister');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const authErrorMsg = document.getElementById('authErrorMsg');
-
-        function showError(msg) {
-            authErrorMsg.textContent = msg;
-            authErrorMsg.style.display = 'block';
-        }
-        function clearError() {
-            authErrorMsg.textContent = '';
-            authErrorMsg.style.display = 'none';
-        }
-
-        tabLogin.onclick = () => {
-            tabLogin.classList.add('active');
-            tabRegister.classList.remove('active');
-            loginForm.style.display = 'flex';
-            registerForm.style.display = 'none';
-            clearError();
-        };
-
-        tabRegister.onclick = () => {
-            tabRegister.classList.add('active');
-            tabLogin.classList.remove('active');
-            registerForm.style.display = 'flex';
-            loginForm.style.display = 'none';
-            clearError();
-        };
-
-        authModalOverlay.onclick = (e) => {
-            if (e.target === authModalOverlay) authModalOverlay.classList.remove('active');
-        };
-
-        loginForm.onsubmit = (e) => {
-            e.preventDefault();
-            clearError();
-            auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value)
-                .then(() => { authModalOverlay.classList.remove('active'); loginForm.reset(); })
-                .catch(() => showError("E-mail ou senha incorretos."));
-        };
-
-        registerForm.onsubmit = (e) => {
-            e.preventDefault();
-            clearError();
-            const name = document.getElementById('regName').value;
-            auth.createUserWithEmailAndPassword(document.getElementById('regEmail').value, document.getElementById('regPassword').value)
-                .then(uc => uc.user.updateProfile({ displayName: name }))
-                .then(() => { authModalOverlay.classList.remove('active'); registerForm.reset(); location.reload(); })
-                .catch(err => showError(err.message || "Erro ao criar conta."));
-        };
-
-        document.getElementById('googleModalBtn').onclick = () => {
-            auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-                .then(() => authModalOverlay.classList.remove('active'))
-                .catch(() => showError("Erro ao fazer login com o Google."));
-        };
-
-        const headerAuthArea = document.getElementById('headerAuthArea');
-
-        function updateHeaderAuthUI(user) {
-            if (user) {
-                const initial = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
-                headerAuthArea.innerHTML = `
-                    <div class="user-profile-wrapper">
-                        ${user.photoURL ? `<img class="user-avatar-btn" id="userAvatarBtn" src="${user.photoURL}">` : `<div class="user-avatar-btn" id="userAvatarBtn">${initial}</div>`}
-                        <div class="user-dropdown-menu" id="userDropdownMenu">
-                            <div class="dropdown-user-info">
-                                <span class="dropdown-name">${user.displayName || 'Utilizador'}</span>
-                                <span class="dropdown-email">${user.email || ''}</span>
-                            </div>
-                            <button class="dropdown-logout-btn" id="logoutBtn">Terminar Sessão</button>
-                        </div>
-                    </div>
-                `;
-                const avatarBtn = document.getElementById('userAvatarBtn');
-                const dropdownMenu = document.getElementById('userDropdownMenu');
-                avatarBtn.onclick = (e) => { e.stopPropagation(); dropdownMenu.classList.toggle('active'); };
-                window.onclick = () => dropdownMenu.classList.remove('active');
-                document.getElementById('logoutBtn').onclick = () => auth.signOut();
-            } else {
-                headerAuthArea.innerHTML = `<button class="header-login-text-btn" id="headerLoginTextBtn">Entrar</button>`;
-                document.getElementById('headerLoginTextBtn').onclick = () => authModalOverlay.classList.add('active');
-            }
-        }
-
-        auth.onAuthStateChanged(user => updateHeaderAuthUI(user));
-
-        // --- SPLASH & CHAT ---
-        window.addEventListener('load', () => {
-            setTimeout(() => { document.getElementById('splashScreen').classList.add('fade-out'); }, 1500);
-        });
-
-        const chatMain = document.getElementById('chatMain');
-        const userInput = document.getElementById('userInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const menuToggleBtn = document.getElementById('menuToggleBtn');
-        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const newChatBtn = document.getElementById('newChatBtn');
-        const historyList = document.getElementById('historyList');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-        const searchBox = document.getElementById('searchBox');
-        const openSettingsBtn = document.getElementById('openSettingsBtn');
-        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-        const settingsModalOverlay = document.getElementById('settingsModalOverlay');
-
-        let chats = JSON.parse(localStorage.getItem('chronical_chats')) || [];
-        let currentChatId = localStorage.getItem('chronical_active_id') || null;
-
-        openSettingsBtn.onclick = () => settingsModalOverlay.classList.add('active');
-        closeSettingsBtn.onclick = () => settingsModalOverlay.classList.remove('active');
-        settingsModalOverlay.onclick = (e) => { if (e.target === settingsModalOverlay) settingsModalOverlay.classList.remove('active'); };
-
-        menuToggleBtn.onclick = () => { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); searchBox.value = ''; renderHistory(); };
-        closeSidebarBtn.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
-        sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
-
-        function renderHistory(filterText = '') {
-            historyList.innerHTML = '';
-            const filteredChats = chats.filter(chat => chat.title.toLowerCase().includes(filterText.toLowerCase()));
-            if (filteredChats.length === 0) {
-                historyList.innerHTML = '<div style="font-size: 0.85rem; color: #64748b; padding: 8px 0;">Nenhuma conversa encontrada.</div>';
-                return;
-            }
-            filteredChats.forEach(chat => {
-                const item = document.createElement('div');
-                item.className = `history-item ${chat.id === currentChatId ? 'active' : ''}`;
-                const textSpan = document.createElement('span');
-                textSpan.className = 'history-text';
-                textSpan.textContent = chat.title;
-                textSpan.onclick = () => loadChat(chat.id);
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-chat-btn';
-                deleteBtn.textContent = '✕';
-                deleteBtn.onclick = (e) => { e.stopPropagation(); deleteChat(chat.id); };
-                item.appendChild(textSpan);
-                item.appendChild(deleteBtn);
-                historyList.appendChild(item);
-            });
-        }
-
-        searchBox.oninput = (e) => renderHistory(e.target.value);
-
-        newChatBtn.onclick = () => {
-            currentChatId = 'chat_' + Date.now();
-            localStorage.setItem('chronical_active_id', currentChatId);
-            chatMain.innerHTML = '<div class="message ai">Nova conversa iniciada! Como posso te ajudar?</div>';
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            searchBox.value = '';
-        };
-
-        function loadChat(id) {
-            const chat = chats.find(c => c.id === id);
-            if (!chat) return;
-            currentChatId = chat.id;
-            localStorage.setItem('chronical_active_id', currentChatId);
-            chatMain.innerHTML = '';
-            chat.messages.forEach(msg => {
-                const div = document.createElement('div');
-                div.className = `message ${msg.sender}`;
-                div.textContent = msg.text;
-                chatMain.appendChild(div);
-            });
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-            chatMain.scrollTop = chatMain.scrollHeight;
-        }
-
-        function deleteChat(id) {
-            chats = chats.filter(c => c.id !== id);
-            localStorage.setItem('chronical_chats', JSON.stringify(chats));
-            if (currentChatId === id) newChatBtn.click();
-            else renderHistory(searchBox.value);
-        }
-
-        clearHistoryBtn.onclick = () => {
-            if (confirm("Tens a certeza que queres limpar todo o histórico?")) {
-                chats = [];
-                localStorage.removeItem('chronical_chats');
-                newChatBtn.click();
-            }
-        };
-
-        function saveMessageToCurrentChat(userText, aiText) {
-            if (!currentChatId) {
-                currentChatId = 'chat_' + Date.now();
-                localStorage.setItem('chronical_active_id', currentChatId);
-            }
-            let chat = chats.find(c => c.id === currentChatId);
-            if (!chat) {
-                chat = { id: currentChatId, title: userText.substring(0, 28) + '...', messages: [] };
-                chats.unshift(chat);
-            }
-            chat.messages.push({ sender: 'user', text: userText });
-            chat.messages.push({ sender: 'ai', text: aiText });
-            localStorage.setItem('chronical_chats', JSON.stringify(chats));
-        }
-
-        userInput.oninput = function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        };
-
-        // --- INTEGRAÇÃO REAL COM A API DO GOOGLE GEMINI ---
-        async function fetchGeminiResponse(userPrompt) {
-            const selectedModel = document.getElementById('modelSelect').value || 'gemini-2.5-flash';
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${GEMINI_API_KEY}`;
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [{ text: userPrompt }]
-                        }
-                    ],
-                    systemInstruction: {
-                        parts: [{ text: "Você é a Chronical I.A, uma assistente virtual inteligente, amigável, direta e versátil. Você responde a qualquer pergunta do usuário (receitas, tecnologia, curiosidades, conversas cotidianas, estudos, programação, conselhos) de forma clara, natural e útil." }]
-                    }
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error("Erro na API Gemini");
-            }
-
-            const data = await response.json();
-            return data.candidates[0].content.parts[0].text;
-        }
-
-        sendBtn.onclick = async () => {
-            const text = userInput.value.trim();
-            if (!text) return;
-
-            const userDiv = document.createElement('div');
-            userDiv.className = `message user`;
-            userDiv.textContent = text;
-            chatMain.appendChild(userDiv);
-
-            userInput.value = '';
-            userInput.style.height = 'auto';
-            chatMain.scrollTop = chatMain.scrollHeight;
-
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'message ai';
-            aiDiv.textContent = 'A pensar...';
-            chatMain.appendChild(aiDiv);
-            chatMain.scrollTop = chatMain.scrollHeight;
-
-            try {
-                const aiReply = await fetchGeminiResponse(text);
-                aiDiv.textContent = aiReply;
-                chatMain.scrollTop = chatMain.scrollHeight;
-                saveMessageToCurrentChat(text, aiReply);
-            } catch (error) {
-                aiDiv.textContent = "Desculpe, tive um problema temporário ao consultar a minha inteligência. Por favor, tente enviar novamente!";
+                aiDiv.textContent = "Erro ao comunicar com o servidor da Chronical I.A.";
                 chatMain.scrollTop = chatMain.scrollHeight;
             }
         };
