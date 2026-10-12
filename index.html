@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -545,7 +545,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                     Limpar Histórico
                 </button>
-                <div class="app-version">Chronical I.A • v2.6</div>
+                <div class="app-version">Chronical I.A • v2.9</div>
             </div>
         </aside>
 
@@ -629,7 +629,7 @@
 
         <!-- Mensagens do Chat -->
         <main class="chat-main" id="chatMain">
-            <div class="message ai">Olá! Como posso ajudar você hoje?</div>
+            <div class="message ai">Olá! Como posso ajudar-te hoje?</div>
         </main>
 
         <!-- Barra de Input -->
@@ -712,7 +712,7 @@
                     authModalOverlay.classList.remove('active');
                     loginForm.reset();
                 })
-                .catch((err) => {
+                .catch(() => {
                     showError("E-mail ou senha incorretos.");
                 });
         };
@@ -748,7 +748,7 @@
                 .then(() => {
                     authModalOverlay.classList.remove('active');
                 })
-                .catch((err) => {
+                .catch(() => {
                     showError("Erro ao fazer login com o Google.");
                 });
         };
@@ -791,7 +791,6 @@
                     auth.signOut();
                 };
             } else {
-                // Texto simples "Entrar" sem borda nem ícone
                 headerAuthArea.innerHTML = `
                     <button class="header-login-text-btn" id="headerLoginTextBtn">Entrar</button>
                 `;
@@ -949,10 +948,30 @@
             this.style.height = (this.scrollHeight) + 'px';
         };
 
+        // --- SISTEMA DE CONVERSA INTELIGENTE DA CHRONICAL I.A ---
+        function getChronicalAIResponse(userText) {
+            const text = userText.toLowerCase().trim();
+            
+            if (text.includes('olá') || text.includes('ola') || text.includes('oi') || text.includes('bom dia') || text.includes('boa tarde')) {
+                return "Olá! É um excelente prazer falar contigo. Como posso ajudar-te hoje com os teus projetos, estudos ou programação?";
+            } else if (text.includes('quem és tu') || text.includes('quem e voce') || text.includes('o que és') || text.includes('teu nome')) {
+                return "Eu sou a Chronical I.A, a tua assistente virtual inteligente com um design minimalista e cinematográfico. Estou aqui para conversar, ajudar a programar e resolver qualquer desafio contigo!";
+            } else if (text.includes('programação') || text.includes('codigo') || text.includes('código') || text.includes('android') || text.includes('python') || text.includes('html')) {
+                return "A programação é o teu forte! Quer estejas a estruturar layouts em XML para Android, a desenvolver scripts em Python ou a criar interfaces web, diz-me exatamente o que pretendes fazer para construirmos isso passo a passo.";
+            } else if (text.includes('ajuda') || text.includes('socorro')) {
+                return "Estou a 100% à tua disposição! Podes pedir-me para criar códigos, debater ideias, organizar tarefas ou simplesmente conversar sobre o que precisares.";
+            } else if (text.includes('tudo bem') || text.includes('como estás')) {
+                return "Comigo está tudo ótimo, pronta para processar ideias e criar soluções contigo. E connosco, como correm as coisas?";
+            } else {
+                return `Compreendi a tua mensagem: "${userText}". Como assistente da Chronical I.A, estou a analisar a melhor forma de te ajudar com isto. Queres que aprofundemos este tema ou preferes explorar outra perspetiva?`;
+            }
+        }
+
         sendBtn.onclick = () => {
             const text = userInput.value.trim();
             if (!text) return;
 
+            // Mostra a mensagem do utilizador
             const userDiv = document.createElement('div');
             userDiv.className = `message user`;
             userDiv.textContent = text;
@@ -962,17 +981,21 @@
             userInput.style.height = 'auto';
             chatMain.scrollTop = chatMain.scrollHeight;
 
-            const aiReply = "Mensagem recebida: " + text;
+            // Indicador de digitação / a pensar
+            const aiDiv = document.createElement('div');
+            aiDiv.className = 'message ai';
+            aiDiv.textContent = 'A pensar...';
+            chatMain.appendChild(aiDiv);
+            chatMain.scrollTop = chatMain.scrollHeight;
 
+            // Simula resposta natural e fluida após 600ms
             setTimeout(() => {
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'message ai';
+                const aiReply = getChronicalAIResponse(text);
                 aiDiv.textContent = aiReply;
-                chatMain.appendChild(aiDiv);
                 chatMain.scrollTop = chatMain.scrollHeight;
 
                 saveMessageToCurrentChat(text, aiReply);
-            }, 500);
+            }, 600);
         };
 
         userInput.onkeydown = (e) => {
