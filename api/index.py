@@ -16,8 +16,8 @@ def chat():
         if not user_message:
             return jsonify({'reply': 'Por favor, envie uma mensagem válida.'}), 400
 
-        # Modelo da Google GenAI
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        # Modelo atualizado conforme indicado pela API
+        model = genai.GenerativeModel('gemini-3.8-flash')
         response = model.generate_content(user_message)
 
         return jsonify({'reply': response.text})
