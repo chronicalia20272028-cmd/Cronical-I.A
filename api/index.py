@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import os
+import base64
 import google.generativeai as genai
 
 app = Flask(__name__)
@@ -11,22 +12,37 @@ def chat():
     try:
         data = request.get_json()
         messages = data.get('messages', [])
+        image_data = data.get('image', None) # Recebe {mime_type, data} em base64
         
-        if not messages:
+        if not messages and not image_data:
             return jsonify({'reply': 'Por favor, envie uma mensagem válida.'}), 400
 
-        # Separa a mensagem atual e o histórico para dar memória à IA
-        current_message = messages[-1].get('text', '')
-        history_messages = messages[:-1]
-
+        # Montar histórico para o Gemini
         gemini_history = []
-        for m in history_messages:
+        for m in messages[:-1]:
             role = 'user' if m['sender'] == 'user' else 'model'
             gemini_history.append({'role': role, 'parts': [m['text']]})
 
-        model = genai.GenerativeModel('gemini-3.8-flash')
+        current_message = messages[-1]['text'] if messages else "Analise esta imagem."
+
+        # Configurar modelo com ferramentas de pesquisa web (Grounding)
+        model = genai.GenerativeModel(
+            model_name='gemini-3.8-flash',
+            tools=[{'google_search': {}}]
+        )
+        
         chat_session = model.start_chat(history=gemini_history)
-        response = chat_session.send_message(current_message)
+
+        # Preparar conteúdos (Texto + Imagem opcional)
+        content_parts = [current_message]
+        if image_data:
+            image_bytes = base64.b64decode(image_data['data'])
+            content_parts.append({
+                'mime_type': image_data['mime_type'],
+                'data': image_bytes
+            })
+
+        response = chat_session.send_message(content_parts)
 
         return jsonify({'reply': response.text})
     except Exception as e:
