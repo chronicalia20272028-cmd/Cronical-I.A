@@ -8,7 +8,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://api.iconify.design/lucide:bot.svg?color=%232563eb">
     <meta name="google-site-verification" content="RTk2iyL1IPrMR9r0lSAnelie5gPdjB-ddA5DJ5s2mg4" />
-    <meta name="description" content="Chronical I.A - Assistente virtual de inteligência artificial avançada.">
+    <meta name="description" content="Chronical I.A - Assistente virtual de inteligência artificial avançada com voz e multimodality.">
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -118,7 +118,6 @@
         .new-chat-item { background: transparent; border: none; color: var(--text-color); padding: 8px 6px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; }
         .new-chat-item:hover { background: var(--sidebar-hover); }
 
-        .history-section-title { font-size: 0.7rem; text-transform: uppercase; color: var(--muted-color); font-weight: 700; letter-spacing: 0.8px; margin-top: 4px; padding-left: 4px; }
         .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
         .history-empty-state { font-size: 0.82rem; color: var(--muted-color); padding: 8px 6px; font-style: italic; }
 
@@ -206,8 +205,10 @@
         .input-box-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
         .input-box { display: flex; align-items: flex-end; gap: 8px; padding: 8px 12px; }
         
-        .attach-btn { background: transparent; border: none; color: var(--muted-color); width: 36px; height: 36px; min-width: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, background 0.2s; }
-        .attach-btn:hover { color: var(--text-color); background: var(--sidebar-hover); }
+        .attach-btn, .mic-btn { background: transparent; border: none; color: var(--muted-color); width: 36px; height: 36px; min-width: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, background 0.2s; }
+        .attach-btn:hover, .mic-btn:hover { color: var(--text-color); background: var(--sidebar-hover); }
+        .mic-btn.recording { color: #ef4444; animation: pulse-mic 1.2s infinite; }
+        @keyframes pulse-mic { 0% { transform: scale(1); background: rgba(239, 68, 68, 0.15); } 50% { transform: scale(1.1); background: rgba(239, 68, 68, 0.3); } 100% { transform: scale(1); background: rgba(239, 68, 68, 0.15); } }
 
         textarea { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 1rem; outline: none; padding: 6px 4px; resize: none; max-height: 120px; min-height: 22px; line-height: 1.4; }
         textarea::placeholder { color: var(--muted-color); }
@@ -293,7 +294,7 @@
                         <button id="themeLightBtn" style="padding:6px 12px; border-radius:16px; border:none; background:transparent; color:var(--muted-color); cursor:pointer;">Claro</button>
                     </div>
                 </div>
-                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Universal v6.0 Multimodal</div>
+                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Universal v7.0 Multimodal & Voice</div>
             </div>
         </div>
 
@@ -316,7 +317,7 @@
             </div>
         </main>
 
-        <!-- Input Section com Menu Popover de Anexos -->
+        <!-- Input Section com Menu Popover de Anexos e Microfone -->
         <div class="input-section">
             <!-- Menu Popover do botão + -->
             <div class="attachment-menu" id="attachmentMenu">
@@ -341,6 +342,10 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     </button>
                     <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
+                    <!-- Botão de Microfone (Reconhecimento de Voz) -->
+                    <button class="mic-btn" id="micBtn" title="Falar por voz">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                    </button>
                     <button class="send-submit" id="sendBtn" title="Enviar">
                         <svg viewBox="0 0 24 24" fill="none" width="16" height="16"><path d="M12 20L12 4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
                     </button>
@@ -420,7 +425,7 @@
         const previewName = document.getElementById('previewName');
         const removePreviewBtn = document.getElementById('removePreviewBtn');
 
-        let attachedImage = null; // Guardará { mime_type, data }
+        let attachedImage = null;
 
         attachMenuBtn.onclick = (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); };
         window.onclick = () => attachmentMenu.classList.remove('active');
@@ -445,6 +450,67 @@
             attachedImage = null;
             imagePreviewContainer.classList.remove('active');
             fileInput.value = '';
+        };
+
+        // Mecanismo de Áudio (Speech-to-Text / Microfone)
+        const micBtn = document.getElementById('micBtn');
+        let recognition = null;
+        let isRecording = false;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'pt-PT';
+            recognition.continuous = false;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                micBtn.classList.add('recording');
+                userInput.placeholder = "A ouvir a sua voz...";
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                userInput.value = transcript;
+                userInput.style.height = 'auto';
+                userInput.style.height = (userInput.scrollHeight) + 'px';
+            };
+
+            recognition.onerror = () => {
+                stopRecording();
+            };
+
+            recognition.onend = () => {
+                stopRecording();
+            };
+        } else {
+            micBtn.style.display = 'none'; // Esconde se o browser não suportar
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+            userInput.placeholder = "Mensagem para a Chronical I.A...";
+        }
+
+        micBtn.onclick = () => {
+            if (!recognition) {
+                alert("O seu navegador não suporta reconhecimento de voz.");
+                return;
+            }
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    recognition.stop();
+                }
+            }
         };
 
         // Chat & Histórico State
@@ -566,7 +632,6 @@
                 div.innerHTML = htmlContent;
                 div.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
 
-                // Ações do rodapé da mensagem (Copiar + Ouvir por Voz)
                 const actions = document.createElement('div');
                 actions.className = 'msg-footer-actions';
                 
@@ -588,8 +653,6 @@
                         const utterance = new SpeechSynthesisUtterance(text);
                         utterance.lang = 'pt-PT';
                         window.speechSynthesis.speak(utterance);
-                    } else {
-                        alert("A síntese de voz não é suportada neste navegador.");
                     }
                 };
 
@@ -617,7 +680,6 @@
 
             if (!text && !currentImg) return;
 
-            // Renderizar mensagem do utilizador com imagem se houver
             let imgDataUrl = currentImg ? `data:${currentImg.mime_type};base64,${currentImg.data}` : null;
             appendMessageUI('user', text || "[Imagem enviada]", imgDataUrl);
 
@@ -627,7 +689,6 @@
             imagePreviewContainer.classList.remove('active');
             fileInput.value = '';
 
-            // Indicador de escrita animado
             const aiDiv = document.createElement('div');
             aiDiv.className = 'message ai';
             aiDiv.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
@@ -679,7 +740,6 @@
                 actions.appendChild(speechBtn);
                 aiDiv.appendChild(actions);
 
-                // Guardar no localStorage
                 if (!currentChatId) currentChatId = 'chat_' + Date.now();
                 let activeChat = chats.find(c => c.id === currentChatId);
                 if (!activeChat) {
