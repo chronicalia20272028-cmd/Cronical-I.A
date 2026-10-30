@@ -168,7 +168,7 @@
         .attachment-option:hover { background: var(--sidebar-hover); color: #3b82f6; }
         .attachment-option svg { color: #3b82f6; }
 
-        /* Image Preview Box inside Input */
+        /* Image Preview Box */
         .image-preview-container {
             display: none; align-items: center; gap: 12px; padding: 10px 14px;
             background: var(--card-bg); border-top: 1px solid var(--border-color); border-radius: var(--border-radius) var(--border-radius) 0 0;
@@ -203,7 +203,7 @@
         .msg-footer-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
         .msg-btn { background: transparent; border: none; color: var(--muted-color); font-size: 0.78rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 6px; transition: all 0.2s; }
         .msg-btn:hover { color: var(--text-color); background: var(--sidebar-hover); }
-        .msg-btn.speaking { color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .msg-btn.speaking { color: #3b82f6; background: rgba(59, 130, 246, 0.15); font-weight: 600; }
 
         /* Typing Dots */
         .typing-dots { display: inline-flex; align-items: center; gap: 5px; padding: 4px 0; }
@@ -222,25 +222,26 @@
         .attach-btn, .mic-btn { background: transparent; border: none; color: var(--muted-color); width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, background 0.2s, transform 0.1s; }
         .attach-btn:hover, .mic-btn:hover { color: var(--text-color); background: var(--sidebar-hover); transform: scale(1.05); }
 
-        /* Recording Wave Mode */
+        /* Recording Overlay Pill (Áudio Avançado) */
         .recording-overlay-pill {
             display: none; align-items: center; justify-content: space-between; width: 100%;
-            padding: 4px 8px; animation: fadeIn 0.2s ease;
+            padding: 8px 12px; animation: fadeIn 0.2s ease;
         }
         .recording-overlay-pill.active { display: flex; }
-        .recording-indicator { display: flex; align-items: center; gap: 10px; color: #ef4444; font-weight: 600; font-size: 0.9rem; }
+        .recording-indicator { display: flex; align-items: center; gap: 12px; color: #ef4444; font-weight: 600; font-size: 0.9rem; }
         
         /* Animated Audio Waves */
-        .audio-wave { display: flex; align-items: center; gap: 3px; height: 18px; }
+        .audio-wave { display: flex; align-items: center; gap: 3px; height: 20px; }
         .audio-wave span { width: 3px; background: #ef4444; border-radius: 3px; animation: waveAnim 1.2s infinite ease-in-out; }
         .audio-wave span:nth-child(1) { height: 8px; animation-delay: 0.1s; }
-        .audio-wave span:nth-child(2) { height: 16px; animation-delay: 0.3s; }
+        .audio-wave span:nth-child(2) { height: 18px; animation-delay: 0.3s; }
         .audio-wave span:nth-child(3) { height: 12px; animation-delay: 0.2s; }
-        .audio-wave span:nth-child(4) { height: 18px; animation-delay: 0.4s; }
-        @keyframes waveAnim { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+        .audio-wave span:nth-child(4) { height: 20px; animation-delay: 0.4s; }
+        .audio-wave span:nth-child(5) { height: 10px; animation-delay: 0.15s; }
+        @keyframes waveAnim { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
 
-        .cancel-mic-btn { background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .cancel-mic-btn:hover { background: rgba(239, 68, 68, 0.2); }
+        .cancel-mic-btn { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .cancel-mic-btn:hover { background: rgba(239, 68, 68, 0.25); }
 
         textarea { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 1rem; outline: none; padding: 6px 4px; resize: none; max-height: 120px; min-height: 24px; line-height: 1.4; }
         textarea::placeholder { color: var(--muted-color); }
@@ -296,7 +297,7 @@
             </div>
         </aside>
 
-        <!-- Auth Modal Completo com Google, Login e Registo -->
+        <!-- Auth Modal -->
         <div class="modal-overlay" id="authModalOverlay">
             <div class="modal-box">
                 <div class="modal-header">
@@ -307,7 +308,6 @@
                     <button class="close-modal-btn" onclick="document.getElementById('authModalOverlay').classList.remove('active')">✕</button>
                 </div>
 
-                <!-- Botão Google -->
                 <button id="googleAuthBtn" style="display:flex; align-items:center; justify-content:center; gap:10px; background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-color); padding:10px; border-radius:10px; font-weight:600; cursor:pointer; width:100%; transition:background 0.2s;">
                     <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.13C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.63H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.37l3.99-3.13z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.63l3.99 3.13c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
                     Continuar com o Google
@@ -319,14 +319,12 @@
                     <div style="flex:1; height:1px; background:var(--border-color);"></div>
                 </div>
 
-                <!-- Formulário Entrar -->
                 <form class="auth-form" id="loginForm" style="display:flex; flex-direction:column; gap:10px;">
                     <input type="email" class="search-box" id="loginEmail" placeholder="E-mail" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
                     <input type="password" class="search-box" id="loginPassword" placeholder="Senha" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
                     <button type="submit" style="background:var(--text-color); color:var(--bg-color); border:none; padding:11px; border-radius:10px; font-weight:600; cursor:pointer;">Entrar</button>
                 </form>
 
-                <!-- Formulário Registrar -->
                 <form class="auth-form" id="registerForm" style="display:none; flex-direction:column; gap:10px;">
                     <input type="text" class="search-box" id="regName" placeholder="Nome Completo" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
                     <input type="email" class="search-box" id="regEmail" placeholder="E-mail" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
@@ -350,7 +348,7 @@
                         <button id="themeLightBtn" style="padding:6px 12px; border-radius:16px; border:none; background:transparent; color:var(--muted-color); cursor:pointer;">Claro</button>
                     </div>
                 </div>
-                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Universal v9.0 Complete</div>
+                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Audio Pro Edition</div>
             </div>
         </div>
 
@@ -390,14 +388,15 @@
                     <button class="remove-preview-btn" id="removePreviewBtn" title="Remover imagem">✕</button>
                 </div>
 
+                <!-- Painel de Gravação de Voz Avançado -->
                 <div class="recording-overlay-pill" id="recordingOverlayPill">
                     <div class="recording-indicator">
                         <div class="audio-wave">
-                            <span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span><span></span>
                         </div>
-                        A ouvir a sua voz...
+                        <span id="recordingStatusText">A ouvir a sua voz...</span>
                     </div>
-                    <button class="cancel-mic-btn" id="cancelMicBtn">Parar</button>
+                    <button class="cancel-mic-btn" id="cancelMicBtn">Parar e Enviar</button>
                 </div>
 
                 <div class="input-box" id="normalInputBox">
@@ -444,7 +443,6 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // Lógica de Abas Entrar e Registrar
         const tabLogin = document.getElementById('tabLogin');
         const tabRegister = document.getElementById('tabRegister');
         const loginForm = document.getElementById('loginForm');
@@ -554,11 +552,12 @@
             fileInput.value = '';
         };
 
-        // Áudio e Microfone
+        // --- MECANISMO DE ÁUDIO OTIMIZADO (Speech-to-Text) ---
         const micBtn = document.getElementById('micBtn');
         const recordingOverlayPill = document.getElementById('recordingOverlayPill');
         const normalInputBox = document.getElementById('normalInputBox');
         const cancelMicBtn = document.getElementById('cancelMicBtn');
+        const recordingStatusText = document.getElementById('recordingStatusText');
 
         let recognition = null;
         let isRecording = false;
@@ -566,7 +565,7 @@
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
-            recognition.lang = 'pt-PT';
+            recognition.lang = 'pt-BR'; // Suporte para Português
             recognition.continuous = false;
             recognition.interimResults = true;
 
@@ -574,6 +573,7 @@
                 isRecording = true;
                 normalInputBox.style.display = 'none';
                 recordingOverlayPill.classList.add('active');
+                recordingStatusText.textContent = "A ouvir a sua voz...";
             };
 
             recognition.onresult = (event) => {
@@ -587,7 +587,13 @@
             };
 
             recognition.onerror = () => stopRecordingUI();
-            recognition.onend = () => stopRecordingUI();
+            recognition.onend = () => {
+                stopRecordingUI();
+                // Envio automático se houver voz transcrita
+                if (userInput.value.trim().length > 0) {
+                    sendBtn.click();
+                }
+            };
         } else {
             micBtn.style.display = 'none';
         }
@@ -599,7 +605,7 @@
         }
 
         micBtn.onclick = () => {
-            if (!recognition) { alert("Reconhecimento de voz não suportado."); return; }
+            if (!recognition) { alert("Reconhecimento de voz não suportado neste navegador."); return; }
             if (isRecording) {
                 recognition.stop();
             } else {
@@ -610,9 +616,47 @@
         cancelMicBtn.onclick = () => {
             if (recognition && isRecording) {
                 recognition.stop();
-                userInput.value = '';
             }
         };
+
+        // --- SISTEMA DE LEITURA DE VOZ (Text-to-Speech) ---
+        let currentUtterance = null;
+
+        function speakText(text, btnElement) {
+            if (!('speechSynthesis' in window)) {
+                alert("Síntese de voz não suportada.");
+                return;
+            }
+
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                btnElement.classList.remove('speaking');
+                btnElement.innerHTML = `🔊 Ouvir`;
+                return;
+            }
+
+            // Remover sintaxe Markdown do texto falado para leitura mais fluida
+            const cleanText = text.replace(/[*#_`~]/g, '');
+
+            currentUtterance = new SpeechSynthesisUtterance(cleanText);
+            currentUtterance.lang = 'pt-BR';
+            currentUtterance.rate = 1.0;
+
+            btnElement.classList.add('speaking');
+            btnElement.innerHTML = `⏹️ Parar`;
+
+            currentUtterance.onend = () => {
+                btnElement.classList.remove('speaking');
+                btnElement.innerHTML = `🔊 Ouvir`;
+            };
+
+            currentUtterance.onerror = () => {
+                btnElement.classList.remove('speaking');
+                btnElement.innerHTML = `🔊 Ouvir`;
+            };
+
+            window.speechSynthesis.speak(currentUtterance);
+        }
 
         // State do Chat
         const chatMain = document.getElementById('chatMain');
@@ -747,20 +791,7 @@
                 const speechBtn = document.createElement('button');
                 speechBtn.className = 'msg-btn';
                 speechBtn.innerHTML = `🔊 Ouvir`;
-                speechBtn.onclick = () => {
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.lang = 'pt-PT';
-                        speechBtn.classList.add('speaking');
-                        speechBtn.innerHTML = `🔊 A reproduzir...`;
-                        utterance.onend = () => {
-                            speechBtn.classList.remove('speaking');
-                            speechBtn.innerHTML = `🔊 Ouvir`;
-                        };
-                        window.speechSynthesis.speak(utterance);
-                    }
-                };
+                speechBtn.onclick = () => speakText(text, speechBtn);
 
                 actions.appendChild(copyBtn);
                 actions.appendChild(speechBtn);
@@ -833,20 +864,7 @@
                 const speechBtn = document.createElement('button');
                 speechBtn.className = 'msg-btn';
                 speechBtn.innerHTML = `🔊 Ouvir`;
-                speechBtn.onclick = () => {
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        const utterance = new SpeechSynthesisUtterance(aiReply);
-                        utterance.lang = 'pt-PT';
-                        speechBtn.classList.add('speaking');
-                        speechBtn.innerHTML = `🔊 A reproduzir...`;
-                        utterance.onend = () => {
-                            speechBtn.classList.remove('speaking');
-                            speechBtn.innerHTML = `🔊 Ouvir`;
-                        };
-                        window.speechSynthesis.speak(utterance);
-                    }
-                };
+                speechBtn.onclick = () => speakText(aiReply, speechBtn);
 
                 actions.appendChild(copyBtn);
                 actions.appendChild(speechBtn);
