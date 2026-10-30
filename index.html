@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chronical I.A - Assistente Virtual Inteligente</title>
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://api.iconify.design/lucide:bot.svg?color=%232563eb">
     <meta name="google-site-verification" content="RTk2iyL1IPrMR9r0lSAnelie5gPdjB-ddA5DJ5s2mg4" />
     <meta name="description" content="Chronical I.A - Assistente virtual de inteligência artificial avançada com voz e multimodality.">
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     
-    <!-- Markdown e Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -76,7 +73,6 @@
 
         .app-title { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.2px; }
         .header-auth-area { position: absolute; right: var(--padding-base); display: flex; align-items: center; }
-
         .header-login-text-btn { background: transparent; color: var(--text-color); border: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; padding: 6px 10px; }
 
         .user-profile-wrapper { position: relative; }
@@ -154,7 +150,7 @@
         .attachment-menu {
             position: absolute; bottom: 76px; left: var(--padding-base);
             background: var(--modal-bg); backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); border-radius: 16px; width: 220px; padding: 8px;
+            border: 1px solid var(--border-color); border-radius: 16px; width: 240px; padding: 8px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 4px;
             opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95);
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100;
@@ -168,7 +164,7 @@
         .attachment-option:hover { background: var(--sidebar-hover); color: #3b82f6; }
         .attachment-option svg { color: #3b82f6; }
 
-        /* Image Preview Box */
+        /* File / Image Preview Box */
         .image-preview-container {
             display: none; align-items: center; gap: 12px; padding: 10px 14px;
             background: var(--card-bg); border-top: 1px solid var(--border-color); border-radius: var(--border-radius) var(--border-radius) 0 0;
@@ -176,12 +172,23 @@
         }
         .image-preview-container.active { display: flex; }
         .preview-thumb { width: 46px; height: 46px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-color); }
+        .preview-file-icon { width: 46px; height: 46px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.75rem; border: 1px solid var(--border-color); }
         .preview-info { font-size: 0.85rem; color: var(--text-color); font-weight: 500; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .remove-preview-btn { background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: background 0.2s; }
         .remove-preview-btn:hover { background: rgba(239, 68, 68, 0.2); }
 
+        /* Drag and Drop Dropzone Overlay */
+        .dropzone-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(37, 99, 235, 0.85); backdrop-filter: blur(4px); z-index: 500;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+            color: #ffffff; font-size: 1.2rem; font-weight: 700; opacity: 0; visibility: hidden; transition: all 0.2s ease;
+            border-radius: var(--border-radius);
+        }
+        .dropzone-overlay.active { opacity: 1; visibility: visible; }
+
         /* Chat Main & Messages */
-        .chat-main { flex: 1; width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); display: flex; flex-direction: column; gap: 14px; overflow-y: auto; scroll-behavior: smooth; }
+        .chat-main { flex: 1; width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); display: flex; flex-direction: column; gap: 14px; overflow-y: auto; scroll-behavior: smooth; position: relative; }
         .welcome-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; margin: auto 0; padding: 20px; }
         .welcome-title { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.6px; }
 
@@ -191,8 +198,8 @@
         .message.user { background-color: var(--user-msg-bg); color: #ffffff; align-self: flex-end; border-bottom-right-radius: 6px; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25); white-space: pre-wrap; }
 
         .msg-image { max-width: 100%; max-height: 260px; border-radius: 12px; margin-bottom: 10px; display: block; object-fit: contain; border: 1px solid var(--border-color); }
+        .msg-file-badge { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; font-weight: 600; }
 
-        /* Markdown & Highlight */
         .message.ai p { margin-bottom: 10px; }
         .message.ai p:last-child { margin-bottom: 0; }
         .message.ai ul, .message.ai ol { margin-left: 20px; margin-bottom: 10px; }
@@ -205,16 +212,14 @@
         .msg-btn:hover { color: var(--text-color); background: var(--sidebar-hover); }
         .msg-btn.speaking { color: #3b82f6; background: rgba(59, 130, 246, 0.15); font-weight: 600; }
 
-        /* Typing Dots */
         .typing-dots { display: inline-flex; align-items: center; gap: 5px; padding: 4px 0; }
         .typing-dots span { width: 7px; height: 7px; background: var(--muted-color); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
         .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
         .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* Input Section & Audio Wave Panel */
         .input-section { width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); background: var(--bg-color); flex-shrink: 0; position: relative; }
-        .input-box-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 26px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; flex-direction: column; transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-box-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 26px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; flex-direction: column; transition: border-color 0.2s, box-shadow 0.2s; position: relative; }
         .input-box-wrapper:focus-within { border-color: rgba(59, 130, 246, 0.5); box-shadow: 0 10px 35px rgba(59, 130, 246, 0.15); }
         
         .input-box { display: flex; align-items: flex-end; gap: 10px; padding: 10px 14px; position: relative; }
@@ -222,7 +227,6 @@
         .attach-btn, .mic-btn { background: transparent; border: none; color: var(--muted-color); width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s, background 0.2s, transform 0.1s; }
         .attach-btn:hover, .mic-btn:hover { color: var(--text-color); background: var(--sidebar-hover); transform: scale(1.05); }
 
-        /* Recording Overlay Pill (Áudio Avançado) */
         .recording-overlay-pill {
             display: none; align-items: center; justify-content: space-between; width: 100%;
             padding: 8px 12px; animation: fadeIn 0.2s ease;
@@ -230,7 +234,6 @@
         .recording-overlay-pill.active { display: flex; }
         .recording-indicator { display: flex; align-items: center; gap: 12px; color: #ef4444; font-weight: 600; font-size: 0.9rem; }
         
-        /* Animated Audio Waves */
         .audio-wave { display: flex; align-items: center; gap: 3px; height: 20px; }
         .audio-wave span { width: 3px; background: #ef4444; border-radius: 3px; animation: waveAnim 1.2s infinite ease-in-out; }
         .audio-wave span:nth-child(1) { height: 8px; animation-delay: 0.1s; }
@@ -348,7 +351,7 @@
                         <button id="themeLightBtn" style="padding:6px 12px; border-radius:16px; border:none; background:transparent; color:var(--muted-color); cursor:pointer;">Claro</button>
                     </div>
                 </div>
-                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Ultra Voice Pro v10.0</div>
+                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • File Pro Edition v11.0</div>
             </div>
         </div>
 
@@ -364,8 +367,12 @@
             <div class="header-auth-area" id="headerAuthArea"></div>
         </header>
 
-        <!-- Chat Main -->
+        <!-- Chat Main com Drag & Drop Zone -->
         <main class="chat-main" id="chatMain">
+            <div class="dropzone-overlay" id="dropzoneOverlay">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Solte o ficheiro aqui para anexar
+            </div>
             <div class="welcome-container" id="welcomeContainer">
                 <h1 class="welcome-title" id="welcomeTitle">Como posso ajudar você hoje?</h1>
             </div>
@@ -378,17 +385,20 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                     Carregar Imagem
                 </button>
+                <button class="attachment-option" id="uploadDocOption">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Carregar Documento (PDF/TXT)
+                </button>
             </div>
-            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.csv,.doc,.docx" style="display: none;">
 
             <div class="input-box-wrapper" id="inputBoxWrapper">
                 <div class="image-preview-container" id="imagePreviewContainer">
-                    <img id="previewThumb" class="preview-thumb" src="">
-                    <span class="preview-info" id="previewName">imagem.png</span>
-                    <button class="remove-preview-btn" id="removePreviewBtn" title="Remover imagem">✕</button>
+                    <div id="previewContainerVisual"></div>
+                    <span class="preview-info" id="previewName">ficheiro.ext</span>
+                    <button class="remove-preview-btn" id="removePreviewBtn" title="Remover anexo">✕</button>
                 </div>
 
-                <!-- Painel de Gravação de Voz Avançado -->
                 <div class="recording-overlay-pill" id="recordingOverlayPill">
                     <div class="recording-indicator">
                         <div class="audio-wave">
@@ -403,7 +413,7 @@
                     <button class="attach-btn" id="attachMenuBtn" title="Adicionar anexo">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     </button>
-                    <textarea id="userInput" placeholder="Mensagem para a Chronical I.A..." rows="1"></textarea>
+                    <textarea id="userInput" placeholder="Mensagem ou arraste um ficheiro..." rows="1"></textarea>
                     <button class="mic-btn" id="micBtn" title="Falar por voz">
                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                     </button>
@@ -416,7 +426,6 @@
     </div>
 
     <script>
-        // Tema e UI
         const htmlElement = document.documentElement;
         const themeDarkBtn = document.getElementById('themeDarkBtn');
         const themeLightBtn = document.getElementById('themeLightBtn');
@@ -431,7 +440,6 @@
         themeDarkBtn.onclick = () => setTheme('dark');
         themeLightBtn.onclick = () => setTheme('light');
 
-        // Firebase Auth Config
         const firebaseConfig = {
             apiKey: "AIzaSyBWXGHYL7ncUvFCp0g14sNQc-QTG756L2Q",
             authDomain: "chronical--ia.firebaseapp.com",
@@ -515,44 +523,77 @@
                 .catch(error => alert("Erro ao entrar com o Google: " + error.message));
         };
 
-        // Anexos (+)
+        // --- SISTEMA DE ANEXOS AVANÇADO (Imagens e Documentos) & Drag & Drop ---
         const attachMenuBtn = document.getElementById('attachMenuBtn');
         const attachmentMenu = document.getElementById('attachmentMenu');
         const uploadImageOption = document.getElementById('uploadImageOption');
+        const uploadDocOption = document.getElementById('uploadDocOption');
         const fileInput = document.getElementById('fileInput');
         const imagePreviewContainer = document.getElementById('imagePreviewContainer');
-        const previewThumb = document.getElementById('previewThumb');
+        const previewContainerVisual = document.getElementById('previewContainerVisual');
         const previewName = document.getElementById('previewName');
         const removePreviewBtn = document.getElementById('removePreviewBtn');
+        const dropzoneOverlay = document.getElementById('dropzoneOverlay');
 
-        let attachedImage = null;
+        let attachedFile = null;
 
         attachMenuBtn.onclick = (e) => { e.stopPropagation(); attachmentMenu.classList.toggle('active'); };
         window.onclick = () => attachmentMenu.classList.remove('active');
 
-        uploadImageOption.onclick = () => { fileInput.click(); attachmentMenu.classList.remove('active'); };
+        uploadImageOption.onclick = () => {
+            fileInput.accept = "image/*";
+            fileInput.click();
+            attachmentMenu.classList.remove('active');
+        };
 
-        fileInput.onchange = (e) => {
-            const file = e.target.files[0];
+        uploadDocOption.onclick = () => {
+            fileInput.accept = ".pdf,.txt,.csv,.doc,.docx";
+            fileInput.click();
+            attachmentMenu.classList.remove('active');
+        };
+
+        function processFile(file) {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (uploadEvent) => {
                 const base64String = uploadEvent.target.result.split(',')[1];
-                attachedImage = { mime_type: file.type, data: base64String };
-                previewThumb.src = uploadEvent.target.result;
+                attachedFile = { mime_type: file.type || 'application/octet-stream', data: base64String, name: file.name, isImage: file.type.startsWith('image/') };
+                
                 previewName.textContent = file.name;
+                if (attachedFile.isImage) {
+                    previewContainerVisual.innerHTML = `<img class="preview-thumb" src="${uploadEvent.target.result}">`;
+                } else {
+                    const ext = file.name.split('.').pop().toUpperCase();
+                    previewContainerVisual.innerHTML = `<div class="preview-file-icon">${ext}</div>`;
+                }
                 imagePreviewContainer.classList.add('active');
             };
             reader.readAsDataURL(file);
+        }
+
+        fileInput.onchange = (e) => {
+            processFile(e.target.files[0]);
         };
 
         removePreviewBtn.onclick = () => {
-            attachedImage = null;
+            attachedFile = null;
             imagePreviewContainer.classList.remove('active');
             fileInput.value = '';
         };
 
-        // --- SISTEMA DE ENTRADA DE VOZ (Speech-to-Text) ULTRARRÁPIDO ---
+        // Drag and Drop global no chat
+        const chatMain = document.getElementById('chatMain');
+        window.addEventListener('dragover', (e) => { e.preventDefault(); dropzoneOverlay.classList.add('active'); });
+        window.addEventListener('dragleave', (e) => { if (e.target === dropzoneOverlay) dropzoneOverlay.classList.remove('active'); });
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzoneOverlay.classList.remove('active');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                processFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // --- SISTEMA DE VOZ ---
         const micBtn = document.getElementById('micBtn');
         const recordingOverlayPill = document.getElementById('recordingOverlayPill');
         const normalInputBox = document.getElementById('normalInputBox');
@@ -604,78 +645,42 @@
         }
 
         micBtn.onclick = () => {
-            if (!recognition) { alert("Reconhecimento de voz não suportado neste navegador."); return; }
-            if (isRecording) {
-                recognition.stop();
-            } else {
-                try { recognition.start(); } catch (e) { recognition.stop(); }
-            }
+            if (!recognition) { alert("Reconhecimento de voz não suportado."); return; }
+            if (isRecording) { recognition.stop(); } else { try { recognition.start(); } catch (e) { recognition.stop(); } }
         };
 
-        cancelMicBtn.onclick = () => {
-            if (recognition && isRecording) {
-                recognition.stop();
-                userInput.value = '';
-            }
-        };
+        cancelMicBtn.onclick = () => { if (recognition && isRecording) { recognition.stop(); userInput.value = ''; } };
 
-        // --- SISTEMA DE SAÍDA DE VOZ (Text-to-Speech) COM PAUSA E RETOMAR ---
         let activeUtterance = null;
         let activeSpeechBtn = null;
 
         function speakText(text, btnElement) {
-            if (!('speechSynthesis' in window)) {
-                alert("Síntese de voz não suportada.");
-                return;
-            }
-
-            // Se já estiver a falar esta exata mensagem, permite pausar/retomar ou cancelar
+            if (!('speechSynthesis' in window)) return;
             if (window.speechSynthesis.speaking) {
                 if (activeSpeechBtn === btnElement) {
-                    if (window.speechSynthesis.paused) {
-                        window.speechSynthesis.resume();
-                        btnElement.innerHTML = `⏸️ Pausar`;
-                        return;
-                    } else {
-                        window.speechSynthesis.pause();
-                        btnElement.innerHTML = `▶️ Continuar`;
-                        return;
-                    }
+                    if (window.speechSynthesis.paused) { window.speechSynthesis.resume(); btnElement.innerHTML = `⏸️ Pausar`; return; }
+                    else { window.speechSynthesis.pause(); btnElement.innerHTML = `▶️ Continuar`; return; }
                 } else {
                     window.speechSynthesis.cancel();
-                    if (activeSpeechBtn) {
-                        activeSpeechBtn.classList.remove('speaking');
-                        activeSpeechBtn.innerHTML = `🔊 Ouvir`;
-                    }
+                    if (activeSpeechBtn) { activeSpeechBtn.classList.remove('speaking'); activeSpeechBtn.innerHTML = `🔊 Ouvir`; }
                 }
             }
 
             const cleanText = text.replace(/[*#_`~]/g, '');
             activeUtterance = new SpeechSynthesisUtterance(cleanText);
             activeUtterance.lang = 'pt-BR';
-            activeUtterance.rate = 1.05; // Leitura ligeiramente mais dinâmica
+            activeUtterance.rate = 1.05;
             activeSpeechBtn = btnElement;
 
             btnElement.classList.add('speaking');
             btnElement.innerHTML = `⏸️ Pausar`;
 
-            activeUtterance.onend = () => {
-                btnElement.classList.remove('speaking');
-                btnElement.innerHTML = `🔊 Ouvir`;
-                activeSpeechBtn = null;
-            };
-
-            activeUtterance.onerror = () => {
-                btnElement.classList.remove('speaking');
-                btnElement.innerHTML = `🔊 Ouvir`;
-                activeSpeechBtn = null;
-            };
+            activeUtterance.onend = () => { btnElement.classList.remove('speaking'); btnElement.innerHTML = `🔊 Ouvir`; activeSpeechBtn = null; };
+            activeUtterance.onerror = () => { btnElement.classList.remove('speaking'); btnElement.innerHTML = `🔊 Ouvir`; activeSpeechBtn = null; };
 
             window.speechSynthesis.speak(activeUtterance);
         }
 
-        // State do Chat
-        const chatMain = document.getElementById('chatMain');
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const sidebar = document.getElementById('sidebar');
@@ -697,9 +702,7 @@
         sidebarOverlay.onclick = () => { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); };
 
         window.onkeydown = (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-                e.preventDefault(); sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); searchBox.focus();
-            }
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); searchBox.focus(); }
             if (e.key === 'Escape') {
                 sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active');
                 document.getElementById('settingsModalOverlay').classList.remove('active');
@@ -731,7 +734,12 @@
         };
 
         function resetToWelcome() {
-            chatMain.innerHTML = `<div class="welcome-container" id="welcomeContainer"><h1 class="welcome-title">${welcomeTitle.textContent}</h1></div>`;
+            chatMain.innerHTML = `
+                <div class="dropzone-overlay" id="dropzoneOverlay">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Solte o ficheiro aqui para anexar
+                </div>
+                <div class="welcome-container" id="welcomeContainer"><h1 class="welcome-title">${welcomeTitle.textContent}</h1></div>`;
             clearCurrentChatBtn.style.display = 'none';
         }
 
@@ -746,9 +754,13 @@
             if (!chat) return;
             currentChatId = chat.id;
             localStorage.setItem('chronical_active_id', currentChatId);
-            chatMain.innerHTML = '';
+            chatMain.innerHTML = `
+                <div class="dropzone-overlay" id="dropzoneOverlay">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    Solte o ficheiro aqui para anexar
+                </div>`;
             clearCurrentChatBtn.style.display = 'flex';
-            chat.messages.forEach(m => appendMessageUI(m.sender, m.text, m.image));
+            chat.messages.forEach(m => appendMessageUI(m.sender, m.text, m.file));
             sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active');
             chatMain.scrollTop = chatMain.scrollHeight;
         }
@@ -775,7 +787,7 @@
 
         searchBox.oninput = (e) => renderHistory(e.target.value);
 
-        function appendMessageUI(sender, text, imageUrl = null) {
+        function appendMessageUI(sender, text, fileObj = null) {
             const welcome = document.getElementById('welcomeContainer');
             if (welcome) welcome.remove();
             clearCurrentChatBtn.style.display = 'flex';
@@ -784,8 +796,12 @@
             div.className = `message ${sender}`;
 
             let htmlContent = '';
-            if (imageUrl) {
-                htmlContent += `<img class="msg-image" src="${imageUrl}">`;
+            if (fileObj) {
+                if (fileObj.isImage) {
+                    htmlContent += `<img class="msg-image" src="data:${fileObj.mime_type};base64,${fileObj.data}">`;
+                } else {
+                    htmlContent += `<div class="msg-file-badge">📄 ${fileObj.name}</div>`;
+                }
             }
 
             if (sender === 'ai') {
@@ -830,16 +846,15 @@
 
         sendBtn.onclick = async () => {
             const text = userInput.value.trim();
-            const currentImg = attachedImage;
+            const currentFile = attachedFile;
 
-            if (!text && !currentImg) return;
+            if (!text && !currentFile) return;
 
-            let imgDataUrl = currentImg ? `data:${currentImg.mime_type};base64,${currentImg.data}` : null;
-            appendMessageUI('user', text || "[Imagem enviada]", imgDataUrl);
+            appendMessageUI('user', text || `[Ficheiro: ${currentFile.name}]`, currentFile);
 
             userInput.value = '';
             userInput.style.height = 'auto';
-            attachedImage = null;
+            attachedFile = null;
             imagePreviewContainer.classList.remove('active');
             fileInput.value = '';
 
@@ -851,13 +866,13 @@
 
             let chat = chats.find(c => c.id === currentChatId);
             let historySnapshot = chat ? [...chat.messages] : [];
-            historySnapshot.push({ sender: 'user', text: text || "[Imagem]", image: imgDataUrl });
+            historySnapshot.push({ sender: 'user', text: text || "[Ficheiro]", file: currentFile });
 
             try {
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: historySnapshot, image: currentImg })
+                    body: JSON.stringify({ messages: historySnapshot, file: currentFile })
                 });
 
                 const data = await response.json();
@@ -890,10 +905,10 @@
                 if (!currentChatId) currentChatId = 'chat_' + Date.now();
                 let activeChat = chats.find(c => c.id === currentChatId);
                 if (!activeChat) {
-                    activeChat = { id: currentChatId, title: (text || "Imagem").substring(0, 28) + '...', messages: [] };
+                    activeChat = { id: currentChatId, title: (text || currentFile?.name || "Conversa").substring(0, 28) + '...', messages: [] };
                     chats.unshift(activeChat);
                 }
-                activeChat.messages.push({ sender: 'user', text: text || "[Imagem]", image: imgDataUrl });
+                activeChat.messages.push({ sender: 'user', text: text || "[Ficheiro]", file: currentFile });
                 activeChat.messages.push({ sender: 'ai', text: aiReply });
                 localStorage.setItem('chronical_chats', JSON.stringify(chats));
                 renderHistory();
