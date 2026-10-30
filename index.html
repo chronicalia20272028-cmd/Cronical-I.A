@@ -348,7 +348,7 @@
                         <button id="themeLightBtn" style="padding:6px 12px; border-radius:16px; border:none; background:transparent; color:var(--muted-color); cursor:pointer;">Claro</button>
                     </div>
                 </div>
-                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Audio Pro Edition</div>
+                <div style="font-size:0.8rem; color:var(--muted-color); border-top:1px solid var(--border-color); padding-top:10px;">Chronical I.A • Ultra Voice Pro v10.0</div>
             </div>
         </div>
 
@@ -552,7 +552,7 @@
             fileInput.value = '';
         };
 
-        // --- MECANISMO DE ÁUDIO OTIMIZADO (Speech-to-Text) ---
+        // --- SISTEMA DE ENTRADA DE VOZ (Speech-to-Text) ULTRARRÁPIDO ---
         const micBtn = document.getElementById('micBtn');
         const recordingOverlayPill = document.getElementById('recordingOverlayPill');
         const normalInputBox = document.getElementById('normalInputBox');
@@ -565,7 +565,7 @@
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR'; // Suporte para Português
+            recognition.lang = 'pt-BR';
             recognition.continuous = false;
             recognition.interimResults = true;
 
@@ -589,7 +589,6 @@
             recognition.onerror = () => stopRecordingUI();
             recognition.onend = () => {
                 stopRecordingUI();
-                // Envio automático se houver voz transcrita
                 if (userInput.value.trim().length > 0) {
                     sendBtn.click();
                 }
@@ -616,11 +615,13 @@
         cancelMicBtn.onclick = () => {
             if (recognition && isRecording) {
                 recognition.stop();
+                userInput.value = '';
             }
         };
 
-        // --- SISTEMA DE LEITURA DE VOZ (Text-to-Speech) ---
-        let currentUtterance = null;
+        // --- SISTEMA DE SAÍDA DE VOZ (Text-to-Speech) COM PAUSA E RETOMAR ---
+        let activeUtterance = null;
+        let activeSpeechBtn = null;
 
         function speakText(text, btnElement) {
             if (!('speechSynthesis' in window)) {
@@ -628,34 +629,49 @@
                 return;
             }
 
+            // Se já estiver a falar esta exata mensagem, permite pausar/retomar ou cancelar
             if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-                btnElement.classList.remove('speaking');
-                btnElement.innerHTML = `🔊 Ouvir`;
-                return;
+                if (activeSpeechBtn === btnElement) {
+                    if (window.speechSynthesis.paused) {
+                        window.speechSynthesis.resume();
+                        btnElement.innerHTML = `⏸️ Pausar`;
+                        return;
+                    } else {
+                        window.speechSynthesis.pause();
+                        btnElement.innerHTML = `▶️ Continuar`;
+                        return;
+                    }
+                } else {
+                    window.speechSynthesis.cancel();
+                    if (activeSpeechBtn) {
+                        activeSpeechBtn.classList.remove('speaking');
+                        activeSpeechBtn.innerHTML = `🔊 Ouvir`;
+                    }
+                }
             }
 
-            // Remover sintaxe Markdown do texto falado para leitura mais fluida
             const cleanText = text.replace(/[*#_`~]/g, '');
-
-            currentUtterance = new SpeechSynthesisUtterance(cleanText);
-            currentUtterance.lang = 'pt-BR';
-            currentUtterance.rate = 1.0;
+            activeUtterance = new SpeechSynthesisUtterance(cleanText);
+            activeUtterance.lang = 'pt-BR';
+            activeUtterance.rate = 1.05; // Leitura ligeiramente mais dinâmica
+            activeSpeechBtn = btnElement;
 
             btnElement.classList.add('speaking');
-            btnElement.innerHTML = `⏹️ Parar`;
+            btnElement.innerHTML = `⏸️ Pausar`;
 
-            currentUtterance.onend = () => {
+            activeUtterance.onend = () => {
                 btnElement.classList.remove('speaking');
                 btnElement.innerHTML = `🔊 Ouvir`;
+                activeSpeechBtn = null;
             };
 
-            currentUtterance.onerror = () => {
+            activeUtterance.onerror = () => {
                 btnElement.classList.remove('speaking');
                 btnElement.innerHTML = `🔊 Ouvir`;
+                activeSpeechBtn = null;
             };
 
-            window.speechSynthesis.speak(currentUtterance);
+            window.speechSynthesis.speak(activeUtterance);
         }
 
         // State do Chat
@@ -689,6 +705,7 @@
                 document.getElementById('settingsModalOverlay').classList.remove('active');
                 document.getElementById('authModalOverlay').classList.remove('active');
                 attachmentMenu.classList.remove('active');
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
             }
         };
 
