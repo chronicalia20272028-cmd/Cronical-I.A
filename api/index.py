@@ -12,9 +12,9 @@ def chat():
     try:
         data = request.get_json()
         messages = data.get('messages', [])
-        file_data = data.get('file', None) # Suporte genérico para imagens, PDFs, textos, etc.
+        files_data = data.get('files', []) # Lista de múltiplos ficheiros
         
-        if not messages and not file_data:
+        if not messages and not files_data:
             return jsonify({'reply': 'Por favor, envie uma mensagem válida.'}), 400
 
         gemini_history = []
@@ -22,16 +22,16 @@ def chat():
             role = 'user' if m['sender'] == 'user' else 'model'
             gemini_history.append({'role': role, 'parts': [m['text']]})
 
-        current_message = messages[-1]['text'] if messages else "Analise este anexo."
+        current_message = messages[-1]['text'] if messages else "Analise estes anexos."
 
         model = genai.GenerativeModel('gemini-3.8-flash')
         chat_session = model.start_chat(history=gemini_history)
 
         content_parts = [current_message]
-        if file_data:
-            file_bytes = base64.b64decode(file_data['data'])
+        for f in files_data:
+            file_bytes = base64.b64decode(f['data'])
             content_parts.append({
-                'mime_type': file_data['mime_type'],
+                'mime_type': f['mime_type'],
                 'data': file_bytes
             })
 
