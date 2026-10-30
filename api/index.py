@@ -5,6 +5,7 @@ import google.generativeai as genai
 
 app = Flask(__name__)
 
+# Configuração da chave de API do Gemini a partir das variáveis de ambiente da Vercel
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 @app.route('/chat', methods=['POST'])
@@ -12,12 +13,12 @@ def chat():
     try:
         data = request.get_json()
         messages = data.get('messages', [])
-        image_data = data.get('image', None) # Recebe {mime_type, data} em base64
+        image_data = data.get('image', None) # Recebe {mime_type, data} em base64 se houver anexo
         
         if not messages and not image_data:
             return jsonify({'reply': 'Por favor, envie uma mensagem válida.'}), 400
 
-        # Montar histórico para o Gemini
+        # Montar o histórico de mensagens para a sessão de chat do Gemini
         gemini_history = []
         for m in messages[:-1]:
             role = 'user' if m['sender'] == 'user' else 'model'
@@ -25,15 +26,12 @@ def chat():
 
         current_message = messages[-1]['text'] if messages else "Analise esta imagem."
 
-        # Configurar modelo com ferramentas de pesquisa web (Grounding)
-        model = genai.GenerativeModel(
-            model_name='gemini-3.8-flash',
-            tools=[{'google_search': {}}]
-        )
+        # Modelo oficial Gemini 3.8-Flash otimizado e atualizado
+        model = genai.GenerativeModel('gemini-3.8-flash')
         
         chat_session = model.start_chat(history=gemini_history)
 
-        # Preparar conteúdos (Texto + Imagem opcional)
+        # Suporte a texto e imagens
         content_parts = [current_message]
         if image_data:
             image_bytes = base64.b64decode(image_data['data'])
