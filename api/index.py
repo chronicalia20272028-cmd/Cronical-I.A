@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response, jsonify
 import os
 import base64
+import json
 import google.generativeai as genai
 
 app = Flask(__name__)
@@ -13,14 +14,14 @@ if api_key:
 def chat():
     try:
         if not api_key:
-            return jsonify({'reply': 'Erro: A variável GEMINI_API_KEY não está configurada no painel da Vercel.'}), 500
+            return jsonify({'reply': 'Erro: GEMINI_API_KEY não configurada na Vercel.'}), 500
 
         data = request.get_json() or {}
         messages = data.get('messages', [])
         files_data = data.get('files', [])
         
         if not messages and not files_data:
-            return jsonify({'reply': 'Por favor, envie uma mensagem válida.'}), 400
+            return jsonify({'reply': 'Envie uma mensagem válida.'}), 400
 
         gemini_history = []
         for m in messages[:-1]:
@@ -29,12 +30,15 @@ def chat():
             if text_content:
                 gemini_history.append({'role': role, 'parts': [text_content]})
 
-        current_message = messages[-1].get('text', 'Analise estes anexos.') if messages else "Olá"
+        current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
-        model = genai.GenerativeModel('gemini-3.8-flash')
+        model = genai.GenerativeModel('gemini-1.5-flash')
         chat_session = model.start_chat(history=gemini_history)
 
-        content_parts = [current_message]
+        content_parts = []
+        if current_message:
+            content_parts.append(current_message)
+
         for f in files_data:
             try:
                 file_bytes = base64.b64decode(f['data'])
@@ -45,11 +49,18 @@ def chat():
             except Exception:
                 pass
 
-        response = chat_session.send_message(content_parts)
-        return jsonify({'reply': response.text})
+        # Geração em tempo real (Stream)
+        def generate():
+            response_stream = chat_session.send_message(content_parts, stream=True)
+            for chunk in response_stream:
+                if chunk.text:
+                    yield f"data: {json.dumps({'chunk': chunk.text})}\n\n"
+            yield "data: [DONE]\n\n"
+
+        return Response(generate(), mimetype='text/event-stream')
 
     except Exception as e:
-        return jsonify({'reply': f'Erro interno no servidor Python: {str(e)}'}), 500
+        return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run()
