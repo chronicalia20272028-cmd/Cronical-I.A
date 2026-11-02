@@ -49,7 +49,6 @@ def chat():
             except Exception:
                 pass
 
-        # Geração em tempo real (Stream)
         def generate():
             response_stream = chat_session.send_message(content_parts, stream=True)
             for chunk in response_stream:
@@ -57,7 +56,12 @@ def chat():
                     yield f"data: {json.dumps({'chunk': chunk.text})}\n\n"
             yield "data: [DONE]\n\n"
 
-        return Response(generate(), mimetype='text/event-stream')
+        # O cabeçalho X-Vercel-Buffering desativa o armazenamento em cache e força o streaming real
+        response = Response(generate(), mimetype='text/event-stream')
+        response.headers['X-Vercel-Buffering'] = 'no'
+        response.headers['Cache-Control'] = 'no-cache'
+        response.headers['Connection'] = 'keep-alive'
+        return response
 
     except Exception as e:
         return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
