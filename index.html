@@ -24,9 +24,9 @@
             --sidebar-bg: #040609;
             --sidebar-hover: rgba(255, 255, 255, 0.08);
             --card-bg: #0b0f19;
-            --border-color: transparent; /* Removidas todas as bordas gerais */
+            --border-color: transparent;
             --muted-color: #64748b;
-            --user-msg-bg: #1e293b; /* Removido o azul corporativo forte */
+            --user-msg-bg: #1e293b;
             --modal-bg: #080b11;
         }
 
@@ -141,7 +141,7 @@
         .modal-title { font-size: 1.1rem; font-weight: 700; }
         .close-modal-btn { background: transparent; border: none; color: var(--muted-color); font-size: 1.2rem; cursor: pointer; }
 
-        /* Attachment Menu & Preview - Sem Bordas e Sem Azul */
+        /* Attachment Menu & Preview */
         .attachment-menu {
             position: absolute; bottom: 70px; left: var(--padding-base);
             background: var(--card-bg);
@@ -204,7 +204,7 @@
         .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* Input & Painel Inferior Totalmente Sem Bordas */
+        /* Input Section */
         .input-section { width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); background: var(--bg-color); flex-shrink: 0; position: relative; }
         
         .input-box-wrapper { 
@@ -416,7 +416,6 @@
             <div class="input-box-wrapper">
                 <div class="multi-preview-container" id="multiPreviewContainer"></div>
 
-                <!-- Painel de Voz Sem Bordas -->
                 <div class="recording-overlay-pill" id="recordingOverlayPill">
                     <div class="recording-left-group">
                         <div class="mic-pulse-icon">
@@ -578,20 +577,54 @@
             uploadDocOption.onclick = () => { fileInput.accept = ".pdf,.txt,.csv,.doc,.docx"; fileInput.click(); attachmentMenu.classList.remove('active'); };
         }
 
+        // Função de Compressão Automática de Imagens (Super Aceleração)
+        function compressAndProcessImage(file, callback) {
+            if (!file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => callback(e.target.result.split(',')[1], file.type, file.name, false, e.target.result);
+                reader.readAsDataURL(file);
+                return;
+            }
+
+            const img = new Image();
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                img.src = e.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1000;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                    callback(compressedDataUrl.split(',')[1], 'image/jpeg', file.name, true, compressedDataUrl);
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
         function handleFiles(filesList) {
             Array.from(filesList).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
+                compressAndProcessImage(file, (base64Data, mimeType, fileName, isImg, url) => {
                     attachedFiles.push({
-                        mime_type: file.type || 'application/octet-stream',
-                        data: e.target.result.split(',')[1],
-                        name: file.name,
-                        isImage: file.type.startsWith('image/'),
-                        url: e.target.result
+                        mime_type: mimeType,
+                        data: base64Data,
+                        name: fileName,
+                        isImage: isImg,
+                        url: url
                     });
                     renderMultiPreviews();
-                };
-                reader.readAsDataURL(file);
+                });
             });
         }
 
@@ -832,6 +865,7 @@
             };
         }
 
+        // ENVIO COM STREAMING INSTANTÂNEO
         if(sendBtn) {
             sendBtn.onclick = async () => {
                 const text = userInput.value.trim();
@@ -859,11 +893,42 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ messages: historySnapshot, files: currentFiles })
                     });
-                    const data = await response.json();
-                    const aiReply = data.reply || "Sem resposta.";
 
-                    aiDiv.innerHTML = marked.parse(aiReply);
-                    aiDiv.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+                    if (!response.ok) throw new Error("Erro na requisição.");
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let fullText = "";
+                    let isFirstChunk = true;
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        const chunkText = decoder.decode(value, { stream: true });
+                        const lines = chunkText.split("\n\n");
+
+                        for (const line of lines) {
+                            if (line.startsWith("data: ")) {
+                                const dataStr = line.replace("data: ", "").trim();
+                                if (dataStr === "[DONE]") break;
+
+                                try {
+                                    const parsed = JSON.parse(dataStr);
+                                    if (parsed.chunk) {
+                                        if (isFirstChunk) {
+                                            aiDiv.innerHTML = "";
+                                            isFirstChunk = false;
+                                        }
+                                        fullText += parsed.chunk;
+                                        aiDiv.innerHTML = marked.parse(fullText);
+                                        aiDiv.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+                                        chatMain.scrollTop = chatMain.scrollHeight;
+                                    }
+                                } catch (e) {}
+                            }
+                        }
+                    }
 
                     if (!currentChatId) currentChatId = 'chat_' + Date.now();
                     let activeChat = chats.find(c => c.id === currentChatId);
@@ -873,12 +938,12 @@
                     }
                     activeChat.messages = activeChat.messages || [];
                     activeChat.messages.push({ sender: 'user', text: text || "[Ficheiros]", files: currentFiles });
-                    activeChat.messages.push({ sender: 'ai', text: aiReply });
+                    activeChat.messages.push({ sender: 'ai', text: fullText });
                     localStorage.setItem('chronical_chats', JSON.stringify(chats));
                     renderHistory();
-                    if(chatMain) chatMain.scrollTop = chatMain.scrollHeight;
+
                 } catch (error) {
-                    aiDiv.innerHTML = "Erro ao comunicar com o servidor.";
+                    aiDiv.innerHTML = "Erro de conexão ao gerar resposta.";
                 }
             };
         }
@@ -889,7 +954,7 @@
             };
         }
 
-        (currentChatId);
+        if (currentChatId) loadChat(currentChatId);
     </script>
 </body>
 </html>
