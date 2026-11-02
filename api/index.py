@@ -1,7 +1,6 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, jsonify
 import os
 import base64
-import json
 import google.generativeai as genai
 
 app = Flask(__name__)
@@ -49,19 +48,10 @@ def chat():
             except Exception:
                 pass
 
-        def generate():
-            response_stream = chat_session.send_message(content_parts, stream=True)
-            for chunk in response_stream:
-                if chunk.text:
-                    yield f"data: {json.dumps({'chunk': chunk.text})}\n\n"
-            yield "data: [DONE]\n\n"
+        response = chat_session.send_message(content_parts)
+        ai_reply = response.text if response and response.text else "Sem resposta gerada."
 
-        # O cabeçalho X-Vercel-Buffering desativa o armazenamento em cache e força o streaming real
-        response = Response(generate(), mimetype='text/event-stream')
-        response.headers['X-Vercel-Buffering'] = 'no'
-        response.headers['Cache-Control'] = 'no-cache'
-        response.headers['Connection'] = 'keep-alive'
-        return response
+        return jsonify({'reply': ai_reply})
 
     except Exception as e:
         return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
