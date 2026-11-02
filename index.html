@@ -315,7 +315,7 @@
                     Exportar Conversa (.md)
                 </button>
                 <button class="sidebar-action-btn" id="openSettingsBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     Configurações
                 </button>
                 <button class="sidebar-action-btn danger" id="clearHistoryBtn">
@@ -577,7 +577,6 @@
             uploadDocOption.onclick = () => { fileInput.accept = ".pdf,.txt,.csv,.doc,.docx"; fileInput.click(); attachmentMenu.classList.remove('active'); };
         }
 
-        // Função de Compressão Automática de Imagens (Super Aceleração)
         function compressAndProcessImage(file, callback) {
             if (!file.type.startsWith('image/')) {
                 const reader = new FileReader();
@@ -865,7 +864,7 @@
             };
         }
 
-        // ENVIO COM STREAMING INSTANTÂNEO
+        // ENVIO COM JSON ROBUSTO E COMPATÍVEL COM VERCEL
         if(sendBtn) {
             sendBtn.onclick = async () => {
                 const text = userInput.value.trim();
@@ -894,41 +893,11 @@
                         body: JSON.stringify({ messages: historySnapshot, files: currentFiles })
                     });
 
-                    if (!response.ok) throw new Error("Erro na requisição.");
+                    const data = await response.json();
+                    const aiReply = data.reply || "Sem resposta.";
 
-                    const reader = response.body.getReader();
-                    const decoder = new TextDecoder("utf-8");
-                    let fullText = "";
-                    let isFirstChunk = true;
-
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-
-                        const chunkText = decoder.decode(value, { stream: true });
-                        const lines = chunkText.split("\n\n");
-
-                        for (const line of lines) {
-                            if (line.startsWith("data: ")) {
-                                const dataStr = line.replace("data: ", "").trim();
-                                if (dataStr === "[DONE]") break;
-
-                                try {
-                                    const parsed = JSON.parse(dataStr);
-                                    if (parsed.chunk) {
-                                        if (isFirstChunk) {
-                                            aiDiv.innerHTML = "";
-                                            isFirstChunk = false;
-                                        }
-                                        fullText += parsed.chunk;
-                                        aiDiv.innerHTML = marked.parse(fullText);
-                                        aiDiv.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
-                                        chatMain.scrollTop = chatMain.scrollHeight;
-                                    }
-                                } catch (e) {}
-                            }
-                        }
-                    }
+                    aiDiv.innerHTML = marked.parse(aiReply);
+                    aiDiv.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
 
                     if (!currentChatId) currentChatId = 'chat_' + Date.now();
                     let activeChat = chats.find(c => c.id === currentChatId);
@@ -938,12 +907,13 @@
                     }
                     activeChat.messages = activeChat.messages || [];
                     activeChat.messages.push({ sender: 'user', text: text || "[Ficheiros]", files: currentFiles });
-                    activeChat.messages.push({ sender: 'ai', text: fullText });
+                    activeChat.messages.push({ sender: 'ai', text: aiReply });
                     localStorage.setItem('chronical_chats', JSON.stringify(chats));
                     renderHistory();
+                    if(chatMain) chatMain.scrollTop = chatMain.scrollHeight;
 
                 } catch (error) {
-                    aiDiv.innerHTML = "Erro de conexão ao gerar resposta.";
+                    aiDiv.innerHTML = "Erro de conexão ao comunicar com o servidor.";
                 }
             };
         }
