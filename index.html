@@ -198,34 +198,80 @@
         .message.ai pre { background: #040609; padding: 12px; border-radius: 10px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border-color); }
         .message.ai code { font-family: monospace; font-size: 0.88rem; }
 
-        .msg-footer-actions { display: flex; gap: 8px; margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
-        .msg-btn { background: transparent; border: none; color: var(--muted-color); font-size: 0.78rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 6px; }
-        .msg-btn:hover { color: var(--text-color); background: var(--sidebar-hover); }
-        .msg-btn.speaking { color: #3b82f6; background: rgba(59, 130, 246, 0.15); }
-
         .typing-dots { display: inline-flex; align-items: center; gap: 5px; padding: 4px 0; }
         .typing-dots span { width: 7px; height: 7px; background: var(--muted-color); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
         .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
         .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* Input */
+        /* Input & Ultra Modern Audio Interface */
         .input-section { width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); background: var(--bg-color); flex-shrink: 0; position: relative; }
-        .input-box-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 26px; display: flex; flex-direction: column; position: relative; }
+        .input-box-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 26px; display: flex; flex-direction: column; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .input-box { display: flex; align-items: flex-end; gap: 10px; padding: 10px 14px; position: relative; }
         
-        .attach-btn, .mic-btn { background: transparent; border: none; color: var(--muted-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .attach-btn:hover, .mic-btn:hover { color: var(--text-color); background: var(--sidebar-hover); }
+        .attach-btn, .mic-btn { background: transparent; border: none; color: var(--muted-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .attach-btn:hover, .mic-btn:hover { color: var(--text-color); background: var(--sidebar-hover); transform: scale(1.05); }
 
-        .recording-overlay-pill { display: none; align-items: center; justify-content: space-between; width: 100%; padding: 8px 12px; }
+        /* Voice Recording Capsule Modernizada */
+        .recording-overlay-pill {
+            display: none; align-items: center; justify-content: space-between; width: 100%;
+            padding: 10px 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(37, 99, 235, 0.15));
+            border-radius: 26px; border: 1px solid rgba(239, 68, 68, 0.3); animation: fadeIn 0.25s ease;
+        }
         .recording-overlay-pill.active { display: flex; }
-        .recording-indicator { display: flex; align-items: center; gap: 12px; color: #ef4444; font-weight: 600; font-size: 0.9rem; }
-        .cancel-mic-btn { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 6px 14px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; }
+        
+        .recording-left-group { display: flex; align-items: center; gap: 14px; }
+        
+        /* Pulse Animation Icon */
+        .mic-pulse-icon {
+            width: 32px; height: 32px; border-radius: 50%; background: #ef4444; color: #fff;
+            display: flex; align-items: center; justify-content: center; position: relative;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); animation: pulseGlow 1.5s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Animated Audio Wave */
+        .audio-wave-bars { display: flex; align-items: center; gap: 3px; height: 22px; }
+        .audio-wave-bars span {
+            width: 3px; background: #ef4444; border-radius: 4px;
+            animation: soundWave 1.2s infinite ease-in-out alternate;
+        }
+        .audio-wave-bars span:nth-child(1) { height: 8px; animation-delay: 0.1s; }
+        .audio-wave-bars span:nth-child(2) { height: 18px; animation-delay: 0.3s; }
+        .audio-wave-bars span:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+        .audio-wave-bars span:nth-child(4) { height: 22px; animation-delay: 0.4s; }
+        .audio-wave-bars span:nth-child(5) { height: 14px; animation-delay: 0.15s; }
+        .audio-wave-bars span:nth-child(6) { height: 19px; animation-delay: 0.35s; }
+
+        @keyframes soundWave {
+            0% { transform: scaleY(0.3); opacity: 0.5; }
+            100% { transform: scaleY(1.2); opacity: 1; }
+        }
+
+        .recording-status-text { font-size: 0.9rem; font-weight: 600; color: #ef4444; letter-spacing: -0.2px; }
+
+        .recording-actions { display: flex; gap: 8px; align-items: center; }
+        .mic-action-btn {
+            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 6px 14px; border-radius: 18px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .mic-action-btn:hover { background: rgba(255, 255, 255, 0.15); }
+        .mic-action-btn.cancel { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
+        .mic-action-btn.cancel:hover { background: rgba(239, 68, 68, 0.2); }
+        .mic-action-btn.submit { color: #ffffff; background: #2563eb; border-color: #2563eb; }
+        .mic-action-btn.submit:hover { opacity: 0.9; }
 
         textarea { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 1rem; outline: none; padding: 6px 4px; resize: none; max-height: 120px; }
         textarea::placeholder { color: var(--muted-color); }
 
-        .send-submit { background: var(--text-color); color: var(--bg-color); border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .send-submit { background: var(--text-color); color: var(--bg-color); border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.1s; }
+        .send-submit:hover { transform: scale(1.05); }
+        
         .clear-current-chat-btn { background: transparent; border: none; color: var(--muted-color); font-size: 0.8rem; cursor: pointer; padding: 4px 8px; border-radius: 6px; display: none; align-items: center; gap: 4px; }
         .clear-current-chat-btn:hover { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
     </style>
@@ -357,19 +403,28 @@
             <div class="input-box-wrapper">
                 <div class="multi-preview-container" id="multiPreviewContainer"></div>
 
+                <!-- Painel de Voz Ultra-Moderno com Ondas Dinâmicas -->
                 <div class="recording-overlay-pill" id="recordingOverlayPill">
-                    <div class="recording-indicator">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path></svg>
-                        <span>A ouvir a sua voz...</span>
+                    <div class="recording-left-group">
+                        <div class="mic-pulse-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path></svg>
+                        </div>
+                        <div class="audio-wave-bars">
+                            <span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <span class="recording-status-text" id="recordingStatusText">Ouvindo... Fale agora</span>
                     </div>
-                    <button class="cancel-mic-btn" id="cancelMicBtn">Parar</button>
+                    <div class="recording-actions">
+                        <button class="mic-action-btn cancel" id="cancelMicBtn">Cancelar</button>
+                        <button class="mic-action-btn submit" id="submitMicBtn">Enviar</button>
+                    </div>
                 </div>
 
                 <div class="input-box" id="normalInputBox">
                     <button class="attach-btn" id="attachMenuBtn" title="Adicionar anexo">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     </button>
-                    <textarea id="userInput" placeholder="Mensagem ou arraste ficheiros..." rows="1"></textarea>
+                    <textarea id="userInput" placeholder="Mensagem, voz ou arraste ficheiros..." rows="1"></textarea>
                     <button class="mic-btn" id="micBtn" title="Falar por voz">
                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v1a7 7 0 0 1-14 0v-1"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                     </button>
@@ -555,12 +610,14 @@
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
         });
 
-        // --- VOZ ---
+        // --- SISTEMA DE VOZ ULTRA MODERNO ---
         const micBtn = document.getElementById('micBtn');
         const recordingOverlayPill = document.getElementById('recordingOverlayPill');
         const normalInputBox = document.getElementById('normalInputBox');
         const cancelMicBtn = document.getElementById('cancelMicBtn');
+        const submitMicBtn = document.getElementById('submitMicBtn');
         const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
 
         let recognition = null;
         let isRecording = false;
@@ -569,22 +626,67 @@
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.lang = 'pt-BR';
-            recognition.onstart = () => { isRecording = true; if(normalInputBox) normalInputBox.style.display = 'none'; if(recordingOverlayPill) recordingOverlayPill.classList.add('active'); };
-            recognition.onresult = (e) => { if(userInput) userInput.value = e.results[0][0].transcript; };
-            recognition.onend = () => { isRecording = false; if(recordingOverlayPill) recordingOverlayPill.classList.remove('active'); if(normalInputBox) normalInputBox.style.display = 'flex'; };
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                isRecording = true;
+                if(normalInputBox) normalInputBox.style.display = 'none';
+                if(recordingOverlayPill) recordingOverlayPill.classList.add('active');
+            };
+
+            recognition.onresult = (e) => {
+                let transcript = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    transcript += e.results[i][0].transcript;
+                }
+                if(userInput) {
+                    userInput.value = transcript;
+                    userInput.style.height = 'auto';
+                    userInput.style.height = (userInput.scrollHeight) + 'px';
+                }
+            };
+
+            recognition.onerror = () => stopRecordingUI();
+            recognition.onend = () => stopRecordingUI();
+        }
+
+        function stopRecordingUI() {
+            isRecording = false;
+            if(recordingOverlayPill) recordingOverlayPill.classList.remove('active');
+            if(normalInputBox) normalInputBox.style.display = 'flex';
         }
 
         if(micBtn) {
             micBtn.onclick = () => {
-                if (!recognition) { alert("Voz não suportada."); return; }
-                if (isRecording) recognition.stop(); else recognition.start();
+                if (!recognition) { alert("Reconhecimento de voz não suportado neste navegador."); return; }
+                if (isRecording) {
+                    recognition.stop();
+                } else {
+                    userInput.value = '';
+                    try { recognition.start(); } catch(err) { recognition.stop(); }
+                }
             };
         }
-        if(cancelMicBtn && recognition) cancelMicBtn.onclick = () => recognition.stop();
+
+        if(cancelMicBtn && recognition) {
+            cancelMicBtn.onclick = () => {
+                recognition.stop();
+                userInput.value = '';
+            };
+        }
+
+        if(submitMicBtn && recognition) {
+            submitMicBtn.onclick = () => {
+                recognition.stop();
+                if (userInput.value.trim().length > 0 && sendBtn) {
+                    sendBtn.click();
+                }
+            };
+        }
 
         // --- CHAT & HISTÓRICO ---
         const chatMain = document.getElementById('chatMain');
-        const sendBtn = document.getElementById('sendBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const newChatBtn = document.getElementById('newChatBtn');
