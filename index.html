@@ -141,12 +141,12 @@
         .modal-title { font-size: 1.1rem; font-weight: 700; }
         .close-modal-btn { background: transparent; border: none; color: var(--muted-color); font-size: 1.2rem; cursor: pointer; }
 
-        /* Attachment Menu & Preview */
+        /* Attachment Menu & Preview - Sem Bordas Exageradas */
         .attachment-menu {
-            position: absolute; bottom: 76px; left: var(--padding-base);
-            background: var(--modal-bg); backdrop-filter: blur(12px);
-            border: 1px solid var(--border-color); border-radius: 16px; width: 240px; padding: 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 4px;
+            position: absolute; bottom: 70px; left: var(--padding-base);
+            background: var(--card-bg);
+            border: none; border-radius: 14px; width: 240px; padding: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 2px;
             opacity: 0; visibility: hidden; transform: translateY(10px) scale(0.95); transition: all 0.2s ease; z-index: 100;
         }
         .attachment-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
@@ -158,15 +158,15 @@
         .attachment-option svg { color: #3b82f6; }
 
         .multi-preview-container {
-            display: none; flex-direction: row; gap: 8px; padding: 10px 14px; overflow-x: auto;
-            background: var(--card-bg); border-top: 1px solid var(--border-color); border-radius: var(--border-radius) var(--border-radius) 0 0;
+            display: none; flex-direction: row; gap: 8px; padding: 8px 12px; overflow-x: auto;
+            background: transparent; border-bottom: none;
             max-height: 90px;
         }
         .multi-preview-container.active { display: flex; }
         
         .preview-chip {
-            display: flex; align-items: center; gap: 8px; background: var(--bg-color); border: 1px solid var(--border-color);
-            padding: 4px 8px; border-radius: 10px; flex-shrink: 0; position: relative;
+            display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: none;
+            padding: 4px 8px; border-radius: 8px; flex-shrink: 0; position: relative;
         }
         .chip-thumb { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; }
         .chip-file-icon { width: 36px; height: 36px; border-radius: 6px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; }
@@ -188,14 +188,14 @@
         .welcome-title { font-size: 1.8rem; font-weight: 700; }
 
         .message { max-width: 85%; padding: 14px 18px; font-size: 0.98rem; line-height: 1.6; border-radius: var(--border-radius); word-wrap: break-word; position: relative; }
-        .message.ai { background-color: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); align-self: flex-start; }
+        .message.ai { background-color: var(--card-bg); border: none; color: var(--text-color); align-self: flex-start; }
         .message.user { background-color: var(--user-msg-bg); color: #ffffff; align-self: flex-end; white-space: pre-wrap; }
 
         .msg-image { max-width: 100%; max-height: 260px; border-radius: 12px; margin-bottom: 8px; display: block; object-fit: contain; }
         .msg-files-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
         .msg-file-badge { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; }
 
-        .message.ai pre { background: #040609; padding: 12px; border-radius: 10px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border-color); }
+        .message.ai pre { background: #040609; padding: 12px; border-radius: 10px; overflow-x: auto; margin: 10px 0; border: none; }
         .message.ai code { font-family: monospace; font-size: 0.88rem; }
 
         .typing-dots { display: inline-flex; align-items: center; gap: 5px; padding: 4px 0; }
@@ -204,25 +204,34 @@
         .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* Input & Ultra Modern Audio Interface */
+        /* Input & Painel Inferior Totalmente Sem Bordas Externas */
         .input-section { width: 100%; max-width: var(--chat-max-width); margin: 0 auto; padding: var(--padding-base); background: var(--bg-color); flex-shrink: 0; position: relative; }
-        .input-box-wrapper { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 26px; display: flex; flex-direction: column; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .input-box { display: flex; align-items: flex-end; gap: 10px; padding: 10px 14px; position: relative; }
+        
+        .input-box-wrapper { 
+            background: var(--card-bg); 
+            border: none; /* Removida a borda externa */
+            box-shadow: none; /* Removida sombra pesada */
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+        }
+        
+        .input-box { display: flex; align-items: flex-end; gap: 10px; padding: 8px 12px; position: relative; }
         
         .attach-btn, .mic-btn { background: transparent; border: none; color: var(--muted-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
         .attach-btn:hover, .mic-btn:hover { color: var(--text-color); background: var(--sidebar-hover); transform: scale(1.05); }
 
-        /* Voice Recording Capsule Modernizada */
+        /* Voice Recording Capsule Modernizada Sem Borda */
         .recording-overlay-pill {
             display: none; align-items: center; justify-content: space-between; width: 100%;
-            padding: 10px 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(37, 99, 235, 0.15));
-            border-radius: 26px; border: 1px solid rgba(239, 68, 68, 0.3); animation: fadeIn 0.25s ease;
+            padding: 10px 16px; background: transparent;
+            border: none; animation: fadeIn 0.25s ease;
         }
         .recording-overlay-pill.active { display: flex; }
         
         .recording-left-group { display: flex; align-items: center; gap: 14px; }
         
-        /* Pulse Animation Icon */
         .mic-pulse-icon {
             width: 32px; height: 32px; border-radius: 50%; background: #ef4444; color: #fff;
             display: flex; align-items: center; justify-content: center; position: relative;
@@ -234,7 +243,6 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
-        /* Animated Audio Wave */
         .audio-wave-bars { display: flex; align-items: center; gap: 3px; height: 22px; }
         .audio-wave-bars span {
             width: 3px; background: #ef4444; border-radius: 4px;
@@ -256,14 +264,14 @@
 
         .recording-actions { display: flex; gap: 8px; align-items: center; }
         .mic-action-btn {
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-color);
+            background: rgba(255, 255, 255, 0.08); border: none; color: var(--text-color);
             padding: 6px 14px; border-radius: 18px; font-size: 0.82rem; font-weight: 600; cursor: pointer;
             transition: all 0.2s; display: flex; align-items: center; gap: 6px;
         }
         .mic-action-btn:hover { background: rgba(255, 255, 255, 0.15); }
-        .mic-action-btn.cancel { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
+        .mic-action-btn.cancel { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
         .mic-action-btn.cancel:hover { background: rgba(239, 68, 68, 0.2); }
-        .mic-action-btn.submit { color: #ffffff; background: #2563eb; border-color: #2563eb; }
+        .mic-action-btn.submit { color: #ffffff; background: #2563eb; }
         .mic-action-btn.submit:hover { opacity: 0.9; }
 
         textarea { flex: 1; background: transparent; border: none; color: var(--text-color); font-size: 1rem; outline: none; padding: 6px 4px; resize: none; max-height: 120px; }
@@ -328,19 +336,19 @@
                     </div>
                     <button class="close-modal-btn" onclick="document.getElementById('authModalOverlay').classList.remove('active')">✕</button>
                 </div>
-                <button id="googleAuthBtn" style="background:var(--card-bg); border:1px solid var(--border-color); color:var(--text-color); padding:10px; border-radius:10px; font-weight:600; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
+                <button id="googleAuthBtn" style="background:var(--card-bg); border:none; color:var(--text-color); padding:10px; border-radius:10px; font-weight:600; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;">
                     <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.13C3.26 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.63H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.37l3.99-3.13z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.63l3.99 3.13c.95-2.85 3.6-4.96 6.72-4.96z"/></svg>
                     Continuar com Google
                 </button>
                 <form id="loginForm" style="display:flex; flex-direction:column; gap:10px;">
-                    <input type="email" class="search-box" id="loginEmail" placeholder="E-mail" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
-                    <input type="password" class="search-box" id="loginPassword" placeholder="Senha" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
+                    <input type="email" class="search-box" id="loginEmail" placeholder="E-mail" style="border:none; border-radius:10px; padding:10px; background:var(--bg-color);" required>
+                    <input type="password" class="search-box" id="loginPassword" placeholder="Senha" style="border:none; border-radius:10px; padding:10px; background:var(--bg-color);" required>
                     <button type="submit" style="background:var(--text-color); color:var(--bg-color); border:none; padding:10px; border-radius:10px; font-weight:600; cursor:pointer;">Entrar</button>
                 </form>
                 <form id="registerForm" style="display:none; flex-direction:column; gap:10px;">
-                    <input type="text" class="search-box" id="regName" placeholder="Nome Completo" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
-                    <input type="email" class="search-box" id="regEmail" placeholder="E-mail" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required>
-                    <input type="password" class="search-box" id="regPassword" placeholder="Senha" style="border:1px solid var(--border-color); border-radius:10px; padding:10px;" required minlength="6">
+                    <input type="text" class="search-box" id="regName" placeholder="Nome Completo" style="border:none; border-radius:10px; padding:10px; background:var(--bg-color);" required>
+                    <input type="email" class="search-box" id="regEmail" placeholder="E-mail" style="border:none; border-radius:10px; padding:10px; background:var(--bg-color);" required>
+                    <input type="password" class="search-box" id="regPassword" placeholder="Senha" style="border:none; border-radius:10px; padding:10px; background:var(--bg-color);" required minlength="6">
                     <button type="submit" style="background:var(--text-color); color:var(--bg-color); border:none; padding:10px; border-radius:10px; font-weight:600; cursor:pointer;">Criar Conta</button>
                 </form>
             </div>
@@ -355,7 +363,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <span>Tema da Interface</span>
-                    <div style="display:flex; background:var(--card-bg); border:1px solid var(--border-color); border-radius:20px; padding:3px; gap:2px;">
+                    <div style="display:flex; background:var(--bg-color); border-radius:20px; padding:3px; gap:2px;">
                         <button id="themeDarkBtn" style="padding:6px 12px; border-radius:16px; border:none; background:transparent; color:var(--muted-color); cursor:pointer;">Escuro</button>
                         <button id="themeLightBtn" style="padding:6px 12px; border-radius:16px; border:none; background:transparent; color:var(--muted-color); cursor:pointer;">Claro</button>
                     </div>
@@ -403,7 +411,7 @@
             <div class="input-box-wrapper">
                 <div class="multi-preview-container" id="multiPreviewContainer"></div>
 
-                <!-- Painel de Voz Ultra-Moderno com Ondas Dinâmicas -->
+                <!-- Painel de Voz Sem Bordas -->
                 <div class="recording-overlay-pill" id="recordingOverlayPill">
                     <div class="recording-left-group">
                         <div class="mic-pulse-icon">
@@ -437,7 +445,6 @@
     </div>
 
     <script>
-        // --- TEMA ---
         const htmlElement = document.documentElement;
         const themeDarkBtn = document.getElementById('themeDarkBtn');
         const themeLightBtn = document.getElementById('themeLightBtn');
@@ -457,7 +464,6 @@
         if(themeDarkBtn) themeDarkBtn.onclick = () => setTheme('dark');
         if(themeLightBtn) themeLightBtn.onclick = () => setTheme('light');
 
-        // --- FIREBASE AUTH ---
         let auth = null;
         try {
             const firebaseConfig = {
@@ -541,7 +547,6 @@
             };
         }
 
-        // --- MÚLTIPLOS ANEXOS & DRAG AND DROP ---
         const attachMenuBtn = document.getElementById('attachMenuBtn');
         const attachmentMenu = document.getElementById('attachmentMenu');
         const uploadImageOption = document.getElementById('uploadImageOption');
@@ -610,7 +615,6 @@
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) handleFiles(e.dataTransfer.files);
         });
 
-        // --- SISTEMA DE VOZ ULTRA MODERNO ---
         const micBtn = document.getElementById('micBtn');
         const recordingOverlayPill = document.getElementById('recordingOverlayPill');
         const normalInputBox = document.getElementById('normalInputBox');
@@ -685,7 +689,6 @@
             };
         }
 
-        // --- CHAT & HISTÓRICO ---
         const chatMain = document.getElementById('chatMain');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
