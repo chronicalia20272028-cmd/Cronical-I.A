@@ -31,7 +31,13 @@ def chat():
 
         current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Tenta utilizar o modelo flash padrão ou o modelo alternativo
+        model_name = 'gemini-1.5-flash'
+        try:
+            model = genai.GenerativeModel(model_name)
+        except Exception:
+            model = genai.GenerativeModel('gemini-pro')
+
         chat_session = model.start_chat(history=gemini_history)
 
         content_parts = []
@@ -54,7 +60,14 @@ def chat():
         return jsonify({'reply': ai_reply})
 
     except Exception as e:
-        return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
+        # Fallback de diagnóstico caso haja erro com o nome do modelo
+        try:
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            chat_session = model.start_chat(history=[])
+            response = chat_session.send_message(current_message)
+            return jsonify({'reply': response.text})
+        except Exception as err2:
+            return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run()
