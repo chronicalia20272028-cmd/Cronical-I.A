@@ -9,6 +9,32 @@ api_key = os.environ.get("GEMINI_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
 
+def get_working_model():
+    """Busca dinamicamente um modelo compatível com a API key"""
+    try:
+        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        
+        # Ordem de preferência de modelos rápidos
+        preferences = [
+            'models/gemini-1.5-flash',
+            'models/gemini-1.5-flash-latest',
+            'models/gemini-2.0-flash',
+            'models/gemini-1.5-pro',
+            'models/gemini-pro'
+        ]
+        
+        for pref in preferences:
+            if pref in models:
+                return pref
+        
+        # Se nenhum da lista preferencial for encontrado, usa o primeiro modelo disponível
+        if models:
+            return models[0]
+    except Exception as e:
+        print("Erro ao listar modelos:", e)
+    
+    return 'gemini-1.5-flash'
+
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
@@ -31,12 +57,9 @@ def chat():
 
         current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
-        # Tenta utilizar o modelo flash padrão ou o modelo alternativo
-        model_name = 'gemini-1.5-flash'
-        try:
-            model = genai.GenerativeModel(model_name)
-        except Exception:
-            model = genai.GenerativeModel('gemini-pro')
+        # Seleciona o modelo correto de forma dinâmica
+        chosen_model_name = get_working_model()
+        model = genai.GenerativeModel(chosen_model_name)
 
         chat_session = model.start_chat(history=gemini_history)
 
@@ -60,14 +83,7 @@ def chat():
         return jsonify({'reply': ai_reply})
 
     except Exception as e:
-        # Fallback de diagnóstico caso haja erro com o nome do modelo
-        try:
-            model = genai.GenerativeModel('gemini-1.5-flash-latest')
-            chat_session = model.start_chat(history=[])
-            response = chat_session.send_message(current_message)
-            return jsonify({'reply': response.text})
-        except Exception as err2:
-            return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
+        return jsonify({'reply': f'Erro no servidor: {str(e)}'}), 500
 
 if __name__ == '__main__':
     app.run()
