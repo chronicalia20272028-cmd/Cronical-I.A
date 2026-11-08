@@ -13,14 +13,14 @@ if api_key:
 def chat():
     try:
         if not api_key:
-            return jsonify({'reply': 'Erro: A variável GEMINI_API_KEY não está configurada nas variáveis de ambiente da Vercel.'}), 200
+            return jsonify({'reply': 'Erro: GEMINI_API_KEY não configurada na Vercel.'}), 200
 
         data = request.get_json() or {}
         messages = data.get('messages', [])
         files_data = data.get('files', [])
         
         if not messages and not files_data:
-            return jsonify({'reply': 'Por favor, envie uma mensagem válida.'}), 200
+            return jsonify({'reply': 'Envie uma mensagem válida.'}), 200
 
         gemini_history = []
         for m in messages[:-1]:
@@ -31,8 +31,8 @@ def chat():
 
         current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
-        # Modelo estável e rápido
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Utiliza o gemini-pro, que é universal e compatível com todas as chaves do Google AI Studio
+        model = genai.GenerativeModel('gemini-pro')
         chat_session = model.start_chat(history=gemini_history)
 
         content_parts = []
@@ -50,12 +50,11 @@ def chat():
                 pass
 
         response = chat_session.send_message(content_parts)
-        ai_reply = response.text if response and response.text else "Não foi possível gerar uma resposta."
+        ai_reply = response.text if response and response.text else "Sem resposta gerada."
 
         return jsonify({'reply': ai_reply})
 
     except Exception as e:
-        # Garante que qualquer erro retorna um JSON para o frontend nunca congelar
         return jsonify({'reply': f'Erro no servidor ao processar o pedido: {str(e)}'}), 200
 
 if __name__ == '__main__':
