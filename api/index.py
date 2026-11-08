@@ -9,6 +9,26 @@ api_key = os.environ.get("GEMINI_API_KEY")
 if api_key:
     genai.configure(api_key=api_key)
 
+def get_gemini_model():
+    # 1. Procura dinamicamente por qualquer modelo disponível que suporte geração de conteúdo
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                return genai.GenerativeModel(m.name)
+    except Exception as e:
+        print("Aviso ao listar modelos:", e)
+
+    # 2. Lista de fallback com os modelos mais estáveis
+    fallbacks = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-pro', 'gemini-1.0-pro']
+    for name in fallbacks:
+        try:
+            return genai.GenerativeModel(name)
+        except Exception:
+            continue
+            
+    # 3. Padrão final de segurança
+    return genai.GenerativeModel('gemini-1.5-flash')
+
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
@@ -31,8 +51,8 @@ def chat():
 
         current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
-        # Utiliza o gemini-pro, que é universal e compatível com todas as chaves do Google AI Studio
-        model = genai.GenerativeModel('gemini-pro')
+        # Obtém o modelo ativo automaticamente
+        model = get_gemini_model()
         chat_session = model.start_chat(history=gemini_history)
 
         content_parts = []
