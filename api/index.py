@@ -31,8 +31,8 @@ def chat():
 
         current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
-        # Modelo rápido e estável
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Utiliza o modelo correto gemini-3.8-flash
+        model = genai.GenerativeModel('gemini-3.8-flash')
         chat_session = model.start_chat(history=gemini_history)
 
         content_parts = []
