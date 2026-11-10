@@ -27,8 +27,7 @@ def chat():
             role = 'user' if m.get('sender') == 'user' else 'model'
             text_content = m.get('text', '')
             if text_content:
-                geminit_history_item = {'role': role, 'parts': [text_content]}
-                gemini_history.append(geminit_history_item)
+                gemini_history.append({'role': role, 'parts': [text_content]})
 
         current_message = messages[-1].get('text', '') if messages else "Análise de anexos"
 
@@ -57,7 +56,7 @@ def chat():
     except Exception as e:
         error_msg = str(e)
         if "429" in error_msg or "quota" in error_msg.lower():
-            return jsonify({'reply': '⚠️ **Limite de requisições excedido:** O plano gratuito permite no máximo 5 pedidos por minuto. Aguarde cerca de 15 segundos e tente enviar a mensagem novamente.'}), 200
+            return jsonify({'reply': '⚠️ **Muitos pedidos em pouco tempo:** O plano gratuito limita a 5 mensagens por minuto[span_2](start_span)[span_2](end_span). Aguarde cerca de 15 a 30 segundos e envie a mensagem novamente.'}), 200
         return jsonify({'reply': f'Erro no servidor ao processar o pedido: {error_msg}'}), 200
 
 if __name__ == '__main__':
