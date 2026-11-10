@@ -357,7 +357,7 @@
         </div>
     </div>
 
-    <!-- Script com a nova chave e modelo correto -->
+    <!-- Script com suporte a chaves AQ e Bearer Token / API Key -->
     <script>
         const GEMINI_API_KEY = "AQ.Ab8RN6JeCrwnGg6IdSlG7lueHfE2PJSbXmGXKQR4SWKjoOH-9w";
         const MODEL_NAME = "gemini-1.5-flash";
@@ -619,7 +619,7 @@
             };
         }
 
-        // COMUNICAÇÃO DIRETA E INSTANTÂNEA COM A API DO GOOGLE
+        // COMUNICAÇÃO SUPORTANDO CHAVES DO TIPO AQ VIA BEARER OU QUERY
         if(sendBtn) {
             sendBtn.onclick = async () => {
                 const text = userInput.value.trim();
@@ -662,11 +662,19 @@
                 contentsPayload.push({ role: 'user', parts: currentParts });
 
                 try {
-                    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${GEMINI_API_KEY}`;
-                    
+                    // Se for chave AQ (Bearer Token), enviamos no cabeçalho Authorization. Se for chave comum, enviamos por URL key.
+                    let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
+                    let headers = { 'Content-Type': 'application/json' };
+
+                    if (GEMINI_API_KEY.startsWith('AQ.')) {
+                        headers['Authorization'] = `Bearer ${GEMINI_API_KEY}`;
+                    } else {
+                        endpoint += `?key=${GEMINI_API_KEY}`;
+                    }
+
                     const response = await fetch(endpoint, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: headers,
                         body: JSON.stringify({ contents: contentsPayload })
                     });
 
