@@ -37,7 +37,6 @@ module.exports = async (req, res) => {
 
         const rawText = await apiResponse.text();
         
-        // Tenta converter o texto para JSON de forma segura
         let data;
         try {
             data = JSON.parse(rawText);
@@ -45,7 +44,7 @@ module.exports = async (req, res) => {
             return res.status(500).json({ error: `Resposta inválida do Google: ${rawText}` });
         }
 
-        return.status(200).json(data);
+        return res.status(200).json(data);
 
     } catch (err) {
         return res.status(500).json({ error: err.message });
