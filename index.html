@@ -56,10 +56,11 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                // Passa a chave no URL através do parâmetro ?key=
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+                const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+                // Utiliza um proxy para evitar restrições de cabeçalho e origem do navegador com chaves AQ...
+                const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(targetUrl);
 
-                const response = await fetch(endpoint, {
+                const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -76,13 +77,13 @@
                 try {
                     data = rawText ? JSON.parse(rawText) : {};
                 } catch (e) {
-                    throw new Error("Erro ao interpretar resposta do Google: " + rawText);
+                    throw new Error("Erro ao interpretar resposta: " + rawText);
                 }
 
                 document.getElementById(loadingId)?.remove();
 
                 if (!response.ok) {
-                    throw new Error(data.error?.message || 'Erro na API do Google.');
+                    throw new Error(data.error?.message || 'Erro na API.');
                 }
 
                 const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta do modelo.";
