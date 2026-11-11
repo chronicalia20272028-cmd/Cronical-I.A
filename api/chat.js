@@ -1,66 +1,22 @@
-module.exports = async (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+try {
+    const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [...] }) // o teu array de mensagens atual
+    });
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+    const text = await response.text(); // Lê primeiro como texto bruto para evitar o erro de JSON
+    const data = text ? JSON.parse(text) : {};
+
+    if (!response.ok) {
+        throw new Error(data.error || 'Erro desconhecido no servidor');
     }
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
+    // Processa a resposta normal do Gemini aqui...
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    console.log(reply);
 
-    try {
-        const apiKey = process.env.GEMINI_API_KEY;
-        if (!apiKey) {
-            return res.status(500).json({ error: 'GEMINI_API_KEY em falta nas variáveis da Vercel.' });
-        }
-
-        let bodyData = req.body;
-        if (!bodyData || (typeof bodyData === 'object' && Object.keys(bodyData).length === 0)) {
-            let raw = '';
-            for await (const chunk of req) {
-                raw += chunk;
-            }
-            if (raw) {
-                try { bodyData = JSON.parse(raw); } catch (e) { bodyData = {}; }
-            }
-        }
-
-        const contents = bodyData?.contents;
-        if (!contents) {
-            return res.status(400).json({ error: 'Conteúdo da mensagem vazio.' });
-        }
-
-        // Endpoint direto com o modelo compatível
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
-
-        const apiResponse = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({ contents })
-        });
-
-        const rawText = await apiResponse.text();
-        
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            return res.status(500).json({ error: `Resposta inválida do Google: ${rawText}` });
-        }
-
-        if (!apiResponse.ok) {
-            return res.status(500).json({ error: data?.error?.message || `Erro Google (${apiResponse.status}): ${rawText}` });
-        }
-
-        return res.status(200).json(data);
-
-    } catch (err) {
-        return res.status(500).json({ error: 'Erro interno: ' + err.message });
-    }
-};
+} catch (err) {
+    console.error("Erro capturado:", err.message);
+    alert("Erro ao processar: " + err.message);
+}
