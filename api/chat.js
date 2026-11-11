@@ -1,23 +1,27 @@
 export default async function handler(req, res) {
-    // Permitir CORS para o domínio
-    res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+        return res.status(200).end();
     }
 
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Método não permitido' });
     }
 
-    const { prompt } = req.body;
-    const API_KEY = "AQ.Ab8RN6K9nVvNcnnjMh5fDNgZSkllNtk88oYbvVMTq0vDaIO2Kg";
-
     try {
+        // Garantir leitura correta do corpo do pedido em ambiente Vercel
+        const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+        const prompt = body?.prompt;
+
+        if (!prompt) {
+            return res.status(400).json({ error: 'Prompt não fornecido' });
+        }
+
+        const API_KEY = "AQ.Ab8RN6K9nVvNcnnjMh5fDNgZSkllNtk88oYbvVMTq0vDaIO2Kg";
+
         const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -33,7 +37,7 @@ export default async function handler(req, res) {
         } else if (data.error) {
             return res.status(500).json({ error: data.error.message });
         } else {
-            return res.status(500).json({ error: 'Resposta inválida da API da Google' });
+            return res.status(500).json({ error: 'Estrutura de resposta inválida da Google' });
         }
     } catch (error) {
         return res.status(500).json({ error: error.message });
