@@ -14,6 +14,15 @@
     <meta property="og:description" content="Assistente virtual inteligente e responsiva.">
     <meta property="og:type" content="website">
 
+    <!-- Importando o SDK oficial do Google Generative AI -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.run/@google/genai"
+        }
+      }
+    </script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #0d1117; color: #e6edf3; display: flex; flex-direction: column; height: 100vh; width: 100vw; justify-content: space-between; align-items: center; overflow: hidden; }
@@ -46,7 +55,7 @@
     <header>Chronical I.A</header>
     
     <div id="chat-container">
-        <div class="message ai-message">Olá! Sou o Chronical I.A, a tua inteligência artificial. Pergunta-me o que quiseres!</div>
+        <div class="message ai-message">Olá! Sou o Chronical I.A, a tua inteligência artificial. Podes perguntar o que quiseres!</div>
     </div>
 
     <div id="input-container">
@@ -56,18 +65,16 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { GoogleGenAI } from "@google/genai";
+
+        // Inicialização oficial com a tua chave de API
+        const ai = new GoogleGenAI({ apiKey: "AQ.Ab8RN6K9nVvNcnnjMh5fDNgZSkllNtk88oYbvVMTq0vDaIO2Kg" });
+
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
-        
-        // A tua chave de API real integrada
-        const API_KEY = "AQ.Ab8RN6K9nVvNcnnjMh5fDNgZSkllNtk88oYbvVMTq0vDaIO2Kg";
 
-        userInput.addEventListener('keypress', (e) => { 
-            if (e.key === 'Enter') sendMessage(); 
-        });
-
-        async function sendMessage() {
+        window.sendMessage = async function() {
             const text = userInput.value.trim();
             if (!text) return;
 
@@ -79,35 +86,30 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: text }] }]
-                    })
+                // Chamada direta e nativa ao modelo Gemini Flash usando o SDK oficial
+                const response = await ai.models.generateContent({
+                    model: 'gemini-1.5-flash',
+                    contents: text,
                 });
 
-                const data = await response.json();
                 document.getElementById(loadingId)?.remove();
 
-                if (data && data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                    const aiReply = data.candidates[0].content.parts[0].text;
-                    appendMessage(aiReply, 'ai-message');
-                } else if (data.error) {
-                    throw new Error(data.error.message || "Erro na API");
+                if (response && response.text) {
+                    appendMessage(response.text, 'ai-message');
                 } else {
-                    throw new Error("Resposta vazia da API");
+                    throw new Error("Resposta vazia");
                 }
             } catch (error) {
                 document.getElementById(loadingId)?.remove();
-                
-                // Mensagem detalhada caso ocorra bloqueio de CORS no ambiente estático do browser
-                const errorReply = `[Modo Inteligente Ativo] Recebi o teu pedido sobre "${text}". Para garantir que processas perguntas complexas sem restrições de rede do navegador, a IA está configurada para responder dinamicamente. Podes testar qualquer questão de programação, história ou ciências!`;
-                appendMessage(errorReply, 'ai-message');
+                appendMessage("Ocorreu um erro ao processar a tua pergunta. Tenta novamente.", 'ai-message');
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
+
+        userInput.addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') window.sendMessage(); 
+        });
 
         function appendMessage(text, className) {
             const msgDiv = document.createElement('div');
