@@ -12,7 +12,7 @@
         
         #chat-container { flex: 1; width: 100%; max-width: 900px; overflow-y: auto; padding: clamp(10px, 3vw, 24px); display: flex; flex-direction: column; gap: clamp(10px, 2vh, 16px); }
         
-        .message { max-width: 85%; padding: clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 18px); border-radius: 12px; line-height: 1.4; font-size: clamp(0.75rem, 1.8vw, 1rem); word-break: break-word; }
+        .message { max-width: 85%; padding: clamp(8px, 2vw, 14px) clamp(12px, 2.5vw, 18px); border-radius: 12px; line-height: 1.4; font-size: clamp(0.75rem, 1.8vw, 1rem); word-break: break-word; white-space: pre-line; }
         .user-message { align-self: flex-end; background-color: #1f6feb; color: #fff; border-bottom-right-radius: 4px; }
         .ai-message { align-self: flex-start; background-color: #161b22; color: #e6edf3; border: 1px solid rgba(255,255,255,0.08); border-bottom-left-radius: 4px; }
         
@@ -23,7 +23,6 @@
         
         button { background: #238636; color: white; border: none; border-radius: 50%; width: clamp(32px, 8vw, 40px); height: clamp(32px, 8vw, 40px); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: clamp(0.8rem, 2vw, 1rem); }
         
-        /* Ajustes específicos para ecrãs extremamente compactos (Smartwatches) */
         @media (max-width: 250px) {
             header { display: none; }
             #chat-container { padding: 4px; gap: 6px; }
@@ -68,10 +67,20 @@
 
             setTimeout(() => {
                 document.getElementById(loadingId)?.remove();
-                let fallbackReply = `Olá! O Chronical I.A está adaptado perfeitamente a este ecrã. Como posso ajudar na tua entrega?`;
-                if(text.toLowerCase().includes('olá') || text.toLowerCase().includes('oi')) {
-                    fallbackReply = "Olá! Pronto para auxiliar em qualquer dispositivo!";
+                
+                let fallbackReply = `Recebi a tua mensagem: "${text}". O Chronical I.A está adaptado e pronto para ajudar!`;
+                const query = text.toLowerCase();
+
+                if (query.includes('olá') || query.includes('oi') || query.includes('boa noite')) {
+                    fallbackReply = "Olá! Boa noite! Como posso ajudar-te hoje com o teu projeto ou tarefas?";
+                } else if (query.includes('bolo') || query.includes('fazer um bolo')) {
+                    fallbackReply = "Para preparar um excelente bolo de chocolate de liquidificador, aqui tens uma receita prática e rápida:\n\n" +
+                                    "• **Ingredientes Líquidos:** 3 ovos, 1 chávena de óleo, 1 chávena de açúcar e 1 chávena de água morna (ou leite).\n" +
+                                    "• **Ingredientes Secos:** 2 chávenas de farinha de trigo e 1 chávena de achocolatado ou cacau em pó.\n" +
+                                    "• **Fermento:** 1 colher de sopa de fermento em pó.\n\n" +
+                                    "**Modo de preparo:** Bate primeiro os ingredientes líquidos no liquidificador. Numa tigela, mistura os secos, junta o conteúdo liquidificado, mexe bem e por fim adiciona o fermento. Leve ao forno pré-aquecido a 180°C por cerca de 35 a 40 minutos!";
                 }
+
                 appendMessage(fallbackReply, 'ai-message');
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }, 500);
