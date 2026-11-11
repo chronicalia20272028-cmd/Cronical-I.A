@@ -357,11 +357,8 @@
         </div>
     </div>
 
-    <!-- Script completo com suporte à chave AQ via Bearer Token -->
+    <!-- Script completo com comunicação via Backend Vercel (/api/chat) -->
     <script>
-        const GEMINI_API_KEY = "AQ.Ab8RN6Kgo-c_kYnhnSerfQkdSTbU2No9eJogo4eSF-fWSQmsoQ";
-        const MODEL_NAME = "gemini-1.5-flash";
-
         const htmlElement = document.documentElement;
         const themeDarkBtn = document.getElementById('themeDarkBtn');
         const themeLightBtn = document.getElementById('themeLightBtn');
@@ -619,7 +616,7 @@
             };
         }
 
-        // COMUNICAÇÃO USANDO BEARER TOKEN PARA CHAVES DO TIPO AQ
+        // COMUNICAÇÃO SEGURA VIA BACKEND VERCEL (/api/chat)
         if(sendBtn) {
             sendBtn.onclick = async () => {
                 const text = userInput.value.trim();
@@ -662,21 +659,16 @@
                 contentsPayload.push({ role: 'user', parts: currentParts });
 
                 try {
-                    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
-                    
-                    const response = await fetch(endpoint, {
+                    const response = await fetch('/api/chat', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${GEMINI_API_KEY}`
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: contentsPayload })
                     });
 
                     const data = await response.json();
                     
                     if (data.error) {
-                        throw new Error(data.error.message || "Erro na API do Google");
+                        throw new Error(data.error.message || "Erro no servidor da API");
                     }
 
                     const aiReply = data.candidates[0].content.parts[0].text;
