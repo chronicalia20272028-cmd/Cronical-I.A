@@ -63,7 +63,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                // Comunicação segura com a Serverless Function interna da Vercel
+                // Envia o pedido para a Serverless Function da Vercel
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -76,7 +76,7 @@
                 if (data && data.text) {
                     appendMessage(data.text, 'ai-message');
                 } else {
-                    throw new Error(data.error || "Erro desconhecido");
+                    throw new Error(data.error || "Erro desconhecido na resposta");
                 }
             } catch (error) {
                 document.getElementById(loadingId)?.remove();
