@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://cronical-i-a.onrender.com/sitemap.xml
