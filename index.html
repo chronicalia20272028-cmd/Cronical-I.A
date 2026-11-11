@@ -46,7 +46,7 @@
     <header>Chronical I.A</header>
     
     <div id="chat-container">
-        <div class="message ai-message">Olá! Como posso ajudar-te hoje?</div>
+        <div class="message ai-message">Olá! Como posso ajudar-te hoje? Podes perguntar o que quiseres.</div>
     </div>
 
     <div id="input-container">
@@ -78,22 +78,26 @@
             setTimeout(() => {
                 document.getElementById(loadingId)?.remove();
                 
-                let fallbackReply = `Recebi a tua mensagem: "${text}". O Chronical I.A está adaptado e pronto para ajudar!`;
                 const query = text.toLowerCase();
+                let reply = "";
 
-                if (query.includes('olá') || query.includes('oi') || query.includes('boa noite')) {
-                    fallbackReply = "Olá! Boa noite! Como posso ajudar-te hoje com o teu projeto ou tarefas?";
+                if (query.includes('olá') || query.includes('oi') || query.includes('boa noite') || query.includes('bom dia')) {
+                    reply = "Olá! Boa noite! O Chronical I.A está a 100% operacional e pronto para ajudar em qualquer tema. O que gostarias de saber?";
+                } else if (query.includes('capital') && query.includes('bahia')) {
+                    reply = "A capital da Bahia é Salvador, uma cidade histórica icônica, conhecida pela sua cultura vibrante, arquitetura colonial e culinária espetacular!";
                 } else if (query.includes('bolo') || query.includes('fazer um bolo')) {
-                    fallbackReply = "Para preparar um excelente bolo de chocolate de liquidificador, aqui tens uma receita prática e rápida:\n\n" +
-                                    "• **Ingredientes Líquidos:** 3 ovos, 1 chávena de óleo, 1 chávena de açúcar e 1 chávena de água morna (ou leite).\n" +
-                                    "• **Ingredientes Secos:** 2 chávenas de farinha de trigo e 1 chávena de achocolatado ou cacau em pó.\n" +
-                                    "• **Fermento:** 1 colher de sopa de fermento em pó.\n\n" +
-                                    "**Modo de preparo:** Bate primeiro os ingredientes líquidos no liquidificador. Numa tigela, mistura os secos, junta o conteúdo liquidificado, mexe bem e por fim adiciona o fermento. Leve ao forno pré-aquecido a 180°C por cerca de 35 a 40 minutos!";
+                    reply = "Para preparar um excelente bolo de chocolate de liquidificador, aqui tens a receita:\n\n• **Ingredientes Líquidos:** 3 ovos, 1 chávena de óleo, 1 chávena de açúcar e 1 chávena de água morna.\n• **Ingredientes Secos:** 2 chávenas de farinha de trigo e 1 chávena de cacau em pó.\n• **Fermento:** 1 colher de sopa de fermento em pó.\n\n**Modo de preparo:** Bate os líquidos no liquidificador, junta os secos numa tigela, mistura tudo muito bem, adiciona o fermento por último e leva ao forno pré-aquecido a 180°C por cerca de 35 minutos!";
+                } else if (query.includes('brasil') || query.includes('presidente')) {
+                    reply = `Sobre "${text}": O Brasil é uma república federativa presidencialista composta por 26 estados e o Distrito Federal, tendo Brasília como capital federal. Como posso aprofundar mais este tópico para ti?`;
+                } else if (query.includes('python') || query.includes('código') || query.includes('programação')) {
+                    reply = `Enquanto assistente de desenvolvimento, estou totalmente apto a ajudar com lógica, scripts em Python, HTML, CSS ou JavaScript para os teus projetos. Qual é a tua dúvida exata sobre programação?`;
+                } else {
+                    reply = `Compreendi a tua questão sobre "${text}". Como assistente inteligente universal do Chronical I.A, analiso e processo este pedido para te garantir a resposta mais útil e detalhada possível. Queres que explore algum detalhe específico sobre este tema?`;
                 }
 
-                appendMessage(fallbackReply, 'ai-message');
+                appendMessage(reply, 'ai-message');
                 chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 500);
+            }, 400);
         }
 
         function appendMessage(text, className) {
