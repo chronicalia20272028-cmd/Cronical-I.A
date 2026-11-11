@@ -1,5 +1,3 @@
-const { GoogleGenAI } = require('@google/genai');
-
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -35,33 +33,34 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Conteúdo da mensagem vazio.' });
         }
 
-        // Inicializa o SDK oficial do Google GenAI com a chave AQ...
-        const ai = new GoogleGenAI({ apiKey: apiKey });
+        // Endpoint direto com o modelo compatível
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
 
-        // Extrai a última mensagem do utilizador para enviar ao modelo
-        const lastMessage = contents[contents.length - 1]?.parts?.[0]?.text || "Olá";
-
-        const response = await ai.models.generateContent({
-            model: 'gemini-1.5-flash',
-            contents: lastMessage,
+        const apiResponse = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({ contents })
         });
 
-        // Formata a resposta exatamente como o teu index.html espera
-        const formattedResponse = {
-            candidates: [
-                {
-                    content: {
-                        parts: [
-                            { text: response.text }
-                        ]
-                    }
-                }
-            ]
-        };
+        const rawText = await apiResponse.text();
+        
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            return res.status(500).json({ error: `Resposta inválida do Google: ${rawText}` });
+        }
 
-        return res.status(200).json(formattedResponse);
+        if (!apiResponse.ok) {
+            return res.status(500).json({ error: data?.error?.message || `Erro Google (${apiResponse.status}): ${rawText}` });
+        }
+
+        return res.status(200).json(data);
 
     } catch (err) {
-        return res.status(500).json({ error: 'Erro no servidor: ' + err.message });
+        return res.status(500).json({ error: 'Erro interno: ' + err.message });
     }
 };
