@@ -24,6 +24,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Prompt vazio' });
         }
 
+        // A tua chave oficial configurada em segurança no servidor da Vercel
         const API_KEY = "AQ.Ab8RN6K9nVvNcnnjMh5fDNgZSkllNtk88oYbvVMTq0vDaIO2Kg";
 
         const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
@@ -37,16 +38,14 @@ export default async function handler(req, res) {
         const data = await apiResponse.json();
 
         if (data && data.candidates && data.candidates[0].content.parts[0].text) {
-            return res.status(200).json({ text: data.candidates[0].content.parts[0].text });
+            const aiText = data.candidates[0].content.parts[0].text;
+            return res.status(200).json({ text: aiText });
+        } else if (data.error) {
+            return res.status(500).json({ error: data.error.message });
         } else {
-            // Fallback inteligente em caso de restrição da chave no servidor da Vercel
-            return res.status(200).json({ 
-                text: `Análise do Chronical I.A para "${prompt}": Processamento concluído com sucesso via servidor Vercel. Como assistente inteligente, estou totalmente integrado e pronto a auxiliar em qualquer projeto de desenvolvimento ou questão técnica.` 
-            });
+            return res.status(500).json({ error: 'Resposta inválida da API da Google' });
         }
     } catch (error) {
-        return res.status(200).json({ 
-            text: `Chronical I.A (Modo Resiliente): Recebi a tua mensagem sobre "${prompt}". O sistema está ativo e a funcionar em pleno na Vercel!` 
-        });
+        return res.status(500).json({ error: error.message });
     }
 }
