@@ -357,9 +357,9 @@
         </div>
     </div>
 
-    <!-- Script com suporte a chaves AQ e Bearer Token / API Key -->
+    <!-- Script completo com suporte à chave AQ via Bearer Token -->
     <script>
-        const GEMINI_API_KEY = "AQ.Ab8RN6JeCrwnGg6IdSlG7lueHfE2PJSbXmGXKQR4SWKjoOH-9w";
+        const GEMINI_API_KEY = "AQ.Ab8RN6Kgo-c_kYnhnSerfQkdSTbU2No9eJogo4eSF-fWSQmsoQ";
         const MODEL_NAME = "gemini-1.5-flash";
 
         const htmlElement = document.documentElement;
@@ -619,7 +619,7 @@
             };
         }
 
-        // COMUNICAÇÃO SUPORTANDO CHAVES DO TIPO AQ VIA BEARER OU QUERY
+        // COMUNICAÇÃO USANDO BEARER TOKEN PARA CHAVES DO TIPO AQ
         if(sendBtn) {
             sendBtn.onclick = async () => {
                 const text = userInput.value.trim();
@@ -662,19 +662,14 @@
                 contentsPayload.push({ role: 'user', parts: currentParts });
 
                 try {
-                    // Se for chave AQ (Bearer Token), enviamos no cabeçalho Authorization. Se for chave comum, enviamos por URL key.
-                    let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
-                    let headers = { 'Content-Type': 'application/json' };
-
-                    if (GEMINI_API_KEY.startsWith('AQ.')) {
-                        headers['Authorization'] = `Bearer ${GEMINI_API_KEY}`;
-                    } else {
-                        endpoint += `?key=${GEMINI_API_KEY}`;
-                    }
-
+                    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
+                    
                     const response = await fetch(endpoint, {
                         method: 'POST',
-                        headers: headers,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${GEMINI_API_KEY}`
+                        },
                         body: JSON.stringify({ contents: contentsPayload })
                     });
 
