@@ -1,3 +1,5 @@
+const { GoogleGenAI } = require('@google/genai');
+
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -17,7 +19,6 @@ module.exports = async (req, res) => {
             return res.status(500).json({ error: 'GEMINI_API_KEY em falta nas variáveis da Vercel.' });
         }
 
-        // Leitura robusta do body (funciona quer venha parseado ou como stream)
         let bodyData = req.body;
         if (!bodyData || (typeof bodyData === 'object' && Object.keys(bodyData).length === 0)) {
             let raw = '';
@@ -25,46 +26,42 @@ module.exports = async (req, res) => {
                 raw += chunk;
             }
             if (raw) {
-                try {
-                    bodyData = JSON.parse(raw);
-                } catch (e) {
-                    bodyData = {};
-                }
+                try { bodyData = JSON.parse(raw); } catch (e) { bodyData = {}; }
             }
         }
 
         const contents = bodyData?.contents;
         if (!contents) {
-            return res.status(400).json({ error: 'Conteúdo da mensagem vazio (contents em falta).' });
+            return res.status(400).json({ error: 'Conteúdo da mensagem vazio.' });
         }
 
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+        // Inicializa o SDK oficial do Google GenAI com a chave AQ...
+        const ai = new GoogleGenAI({ apiKey: apiKey });
 
-        const apiResponse = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({ contents })
+        // Extrai a última mensagem do utilizador para enviar ao modelo
+        const lastMessage = contents[contents.length - 1]?.parts?.[0]?.text || "Olá";
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: lastMessage,
         });
 
-        const rawText = await apiResponse.text();
-        
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (e) {
-            return res.status(500).json({ error: `Resposta inválida do Google: ${rawText}` });
-        }
+        // Formata a resposta exatamente como o teu index.html espera
+        const formattedResponse = {
+            candidates: [
+                {
+                    content: {
+                        parts: [
+                            { text: response.text }
+                        ]
+                    }
+                }
+            ]
+        };
 
-        if (!apiResponse.ok) {
-            return res.status(500).json({ error: data?.error?.message || `Erro Google API (${apiResponse.status}): ${rawText}` });
-        }
-
-        return res.status(200).json(data);
+        return res.status(200).json(formattedResponse);
 
     } catch (err) {
-        return res.status(500).json({ error: 'Erro interno no servidor: ' + err.message });
+        return res.status(500).json({ error: 'Erro no servidor: ' + err.message });
     }
 };
